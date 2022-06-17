@@ -22,48 +22,50 @@ class DatabaseSeeder extends Seeder
      */
     public function run(Faker $faker)
     {
-        /**/
-         User::create([
-            'name' => 'user',
-            'email' => 'user@rumz.com',
+        User::factory()->count(
+            collect()->range(10, 30)->random()
+        )->create([
             'password' => Hash::make('123'),
-         ]);
-
-        Rum::create([
-            'user_id' => User::first()->id,
-            'title' => $faker->text,
-            'description' => $faker->text,
-            'image' => $faker->image,
-            'type' => Rum::TYPE_FREE,
-            'privilege' => Rum::FOR_ALL,
         ]);
 
-        RumHashtag::create([
-            'rum_id' => Rum::first()->id,
-            'hashtag' => $faker->name,
-        ]);
+        Rum::factory()
+            ->has(RumPost::factory()->count(
+                collect()->range(3, 12)->random()
+            ), 'posts')
+            ->count(7)
+            ->create()
+            ->each(function(Rum $rum) {
+                UserRum::factory()->create([
+                    'rum_id' => $rum->id,
+                    'user_id' => User::all()->random()->id
+                ]);
 
-        UserRum::create([
-            'user_id' => User::first()->id,
-            'rum_id' => Rum::first()->id,
-        ]);
+                RumHashtag::factory()
+                    ->count(
+                        collect()->range(3, 20)->random()
+                    )
+                    ->create([
+                        'rum_id' => $rum->id,
+                    ]);
 
-        RumPost::create([
-            'rum_id' => Rum::first()->id,
-            'approved' => 0,
-            'title' => $faker->text,
-            'description' => $faker->text,
-        ]);
-
-        Like::create([
-            'user_id' => User::first()->id,
-            'post_id' => RumPost::first()->id,
-        ]);
-
-        Comment::create([
-            'user_id' => User::first()->id,
-            'post_id' => RumPost::first()->id,
-            'comment' => $faker->text,
-        ]);
+                $rum->posts()->each(function(RumPost $post) use($rum) {
+                    Like::factory()
+                        ->count(
+                            collect()->range(7, 150)->random()
+                        )
+                        ->create([
+                            'user_id' => $rum->users->random()->id,
+                            'post_id' => $post->id,
+                        ]);
+                    Comment::factory()
+                        ->count(
+                            collect()->range(3, 50)->random()
+                        )
+                        ->create([
+                            'user_id' => $rum->users->random()->id,
+                            'post_id' => $post->id,
+                        ]);
+                });
+            });
     }
 }

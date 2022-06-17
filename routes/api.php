@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Rum;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -46,4 +48,17 @@ Route::post('/login', function (Request $request) {
     }
 
     return $user->createToken('sanctum-token')->plainTextToken;
+});
+
+Route::get('/queries', function(Request $request) {
+    $userId = User::first()->id;
+
+    //user that belongs to rum > for policies
+    $userRum = Rum::whereHas('users', function (Builder $query) use($userId) {
+        $query->where('users.id', $userId)->where('users_rums.granted', 1);
+    })->where('type', Rum::TYPE_FREE)->first();
+    // rum posts with number of likes, users who liked, number of comments and comments
+    $posts = $userRum->posts;
+
+    return $posts;
 });

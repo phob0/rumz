@@ -27,4 +27,21 @@ class Rum extends Model
         'type',
         'privilege',
     ];
+
+    public function users(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            User::class,
+            UserRum::class,
+            'user_id',
+            'id',
+            'user_id',
+            'user_id'
+        );
+    }
+
+    public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RumPost::class);
+    }
 }
