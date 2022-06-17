@@ -51,14 +51,14 @@ Route::post('/login', function (Request $request) {
 });
 
 Route::get('/queries', function(Request $request) {
-    $userId = User::first()->id;
-
+    $userId = User::where('id', '3e370e8d-4efb-4904-b561-665251247bfc')->first()->id;
     //user that belongs to rum > for policies
-    $userRum = Rum::whereHas('users', function (Builder $query) use($userId) {
-        $query->where('users.id', $userId)->where('users_rums.granted', 1);
-    })->where('type', Rum::TYPE_FREE)->first();
+//    $userRum = Rum::whereHas('users', function (Builder $query) use($userId) {
+//        $query->where('users.id', $userId)->where('users_rums.granted', 1);
+//    })->where('type', Rum::TYPE_FREE)->get();
+    $userRum = Rum::with('posts')->whereHas('users')->get();
     // rum posts with number of likes, users who liked, number of comments and comments
-    $posts = $userRum->posts;
+//    $posts = $userRum->posts;
 
-    return $posts;
+    return $userRum;
 });
