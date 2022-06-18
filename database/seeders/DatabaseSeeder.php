@@ -35,37 +35,39 @@ class DatabaseSeeder extends Seeder
             ->count(7)
             ->create()
             ->each(function(Rum $rum) {
-                UserRum::factory()->create([
-                    'rum_id' => $rum->id,
-                    'user_id' => User::all()->random()->id
-                ]);
-
-                RumHashtag::factory()
-                    ->count(
-                        collect()->range(3, 20)->random()
-                    )
-                    ->create([
+                if ($rum->type !== Rum::TYPE_PAID) {
+                    UserRum::factory()->create([
                         'rum_id' => $rum->id,
+                        'user_id' => User::all()->random()->id
                     ]);
 
-                $rum->posts()->each(function(RumPost $post) use($rum) {
-                    Like::factory()
+                    RumHashtag::factory()
                         ->count(
-                            collect()->range(7, 150)->random()
+                            collect()->range(3, 20)->random()
                         )
                         ->create([
-                            'user_id' => $rum->users->random()->id,
-                            'post_id' => $post->id,
+                            'rum_id' => $rum->id,
                         ]);
-                    Comment::factory()
-                        ->count(
-                            collect()->range(3, 50)->random()
-                        )
-                        ->create([
-                            'user_id' => $rum->users->random()->id,
-                            'post_id' => $post->id,
-                        ]);
-                });
+
+                    $rum->posts()->each(function(RumPost $post) use($rum) {
+                        Like::factory()
+                            ->count(
+                                collect()->range(7, 150)->random()
+                            )
+                            ->create([
+                                'user_id' => $rum->users->random()->id,
+                                'post_id' => $post->id,
+                            ]);
+                        Comment::factory()
+                            ->count(
+                                collect()->range(3, 50)->random()
+                            )
+                            ->create([
+                                'user_id' => $rum->users->random()->id,
+                                'post_id' => $post->id,
+                            ]);
+                    });
+                }
             });
     }
 }

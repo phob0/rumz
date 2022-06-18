@@ -28,20 +28,29 @@ class Rum extends Model
         'privilege',
     ];
 
-    public function users(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasManyThrough(
+        return $this->belongsToMany(
             User::class,
             UserRum::class,
-            'user_id',
-            'id',
-            'user_id',
-            'user_id'
-        );
+        )->withPivot('granted');
     }
 
     public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(RumPost::class);
+    }
+
+    public function subscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function subscribed(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            Subscription::class,
+        )->withPivot(['amount', 'is_paid', 'expire_at', 'created_at', 'updated_at']);
     }
 }

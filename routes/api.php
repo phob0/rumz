@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RumController;
 use App\Models\Rum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,10 +28,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     })->name('user');
-
-    Route::get('/', function () {
-        return 'welcome';
-    });
+    //rum routes
+    Route::get('/', [RumController::class, 'index'])->name('homepage');
+    Route::get('/view-rum/{rum}', [RumController::class, 'viewRum'])->name('viewRum');
 });
 
 Route::post('/login', function (Request $request) {
@@ -49,7 +49,11 @@ Route::post('/login', function (Request $request) {
 
     return $user->createToken('sanctum-token')->plainTextToken;
 });
-
+/*
+ *
+ * Test queries
+ *
+ * */
 Route::get('/queries', function(Request $request) {
     $userId = User::where('id', '3e370e8d-4efb-4904-b561-665251247bfc')->first()->id;
     //user that belongs to rum > for policies
