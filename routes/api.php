@@ -31,7 +31,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //rum routes
     Route::group(['prefix' => 'rum', 'as' => 'rums'], function() {
         Route::post('/create', [RumController::class, 'store'])->name('storeRum');
+        // TODO: add hashtag sugestions route
         Route::get('/view/{rum}', [RumController::class, 'view'])->name('viewRum');
+        Route::get('/edit/{rum}', [RumController::class, 'edit'])->name('editRum');
+        Route::put('/update/{rum}', [RumController::class, 'update'])->name('updateRum');
+        Route::delete('/delete/{rum}', [RumController::class, 'delete'])->name('deleteRum');
     });
     Route::get('/', [RumController::class, 'index'])->name('homepage');
 });
