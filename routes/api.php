@@ -29,8 +29,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     })->name('user');
     //rum routes
+    Route::group(['prefix' => 'rum', 'as' => 'rums'], function() {
+        Route::post('/create', [RumController::class, 'store'])->name('storeRum');
+        Route::get('/view/{rum}', [RumController::class, 'view'])->name('viewRum');
+    });
     Route::get('/', [RumController::class, 'index'])->name('homepage');
-    Route::get('/view-rum/{rum}', [RumController::class, 'viewRum'])->name('viewRum');
 });
 
 Route::post('/login', function (Request $request) {
@@ -64,5 +67,5 @@ Route::get('/queries', function(Request $request) {
     // rum posts with number of likes, users who liked, number of comments and comments
 //    $posts = $userRum->posts;
 
-    return $userRum;
+    return 'queries';
 });

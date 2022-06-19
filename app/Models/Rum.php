@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Traits\HasUuid;
+use Faker\Generator;
+use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +22,13 @@ class Rum extends Model
     const FOR_ALL = 'all';
     const FOR_MEMBERS = 'members';
 
+    /**
+     * The current Faker instance.
+     *
+     * @var \Faker\Generator
+     */
+    protected Generator $faker;
+
     protected $fillable = [
         'user_id',
         'title',
@@ -27,6 +37,37 @@ class Rum extends Model
         'type',
         'privilege',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->faker = $this->withFaker();
+    }
+
+    /**
+     * Get a new Faker instance.
+     *
+     * @return \Faker\Generator
+     */
+    protected function withFaker(): Generator
+    {
+        return Container::getInstance()->make(Generator::class);
+    }
+
+    /**
+     * Interact with the rums image.
+     *
+     * @param  string  $value
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value,
+            set: fn ($value) => (!is_null($value) ? $value : $this->faker->imageUrl('300', '300', null, false, env('APP_NAME')))
+        );
+    }
 
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
