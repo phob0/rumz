@@ -10,9 +10,14 @@ class Subscription extends Model
     use HasFactory;
 
     protected $fillable = [
-        'price_paid',
+        'user_id',
+        'amount',
         'is_paid',
         'expire_at',
+    ];
+
+    protected $casts = [
+        'expire_at' => 'datetime:Y-m-d H:00',
     ];
 
     public function rum(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -23,5 +28,10 @@ class Subscription extends Model
     public function members(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function history_payments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(HistoryPayment::class);
     }
 }

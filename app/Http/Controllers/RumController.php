@@ -3,25 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRumRequest;
+use App\Models\HistoryPayment;
 use App\Models\Rum;
+use App\Models\RumHashtag;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class RumController extends Controller
 {
-    // TODO: uprade returns with resources
-    public function index(): \Illuminate\Http\JsonResponse
+    // TODO: uprade returns with specific resources
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return response()->json(Rum::where('type', '!=', 'confidential')->get());
+        return JsonResource::collection(Rum::where('type', '!=', 'confidential')->get());
     }
 
     /**
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function view(Rum $rum): \Illuminate\Http\JsonResponse
+    public function view(Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $this->authorize('view', $rum);
-        return response()->json(['rum' => $rum->posts]);
+        return JsonResource::collection($rum->posts);
     }
 
     public function store(StoreRumRequest $request)
@@ -38,11 +43,11 @@ class RumController extends Controller
         return response()->noContent();
     }
 
-    public function edit(Rum $rum): \Illuminate\Http\JsonResponse
+    public function edit(Rum $rum): JsonResource
     {
         $this->authorize('edit', $rum);
 
-        return response()->json(['rum' => $rum]);
+        return JsonResource::make($rum);
     }
 
     public function update(StoreRumRequest $request, Rum $rum): \Illuminate\Http\Response
@@ -59,6 +64,42 @@ class RumController extends Controller
         $this->authorize('delete', $rum);
 
         $rum->delete();
+
+        return response()->noContent();
+    }
+
+    public function hashtagSuggestions(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return JsonResource::collection(RumHashtag::where('hashtag', 'like', $request->q.'%')->get());
+    }
+
+    public function join(Request $request, Rum $rum, $type = false): \Illuminate\Http\Response
+    {
+        $this->authorize('join', [$rum, $type]);
+
+        if($type === 'paid') {
+            DB::transaction(function() use($rum, $request) {
+                $subscription = $rum->subscriptions()->updateOrCreate([
+                    'user_id' => auth()->user()->id,
+                ], [
+                    'is_paid' => 1,
+                    'expire_at' => Carbon::now()->addMonth(),
+                    'amount' => $request->amount
+                ]);
+
+                $subscription->history_payments()->create([
+                    'amount' => $request->amount
+                ]);
+            });
+
+            // send notification info
+        } else {
+            $rum->joined()->create([
+                'user_id' => auth()->user()->id
+            ]);
+
+            // send notification approval
+        }
 
         return response()->noContent();
     }

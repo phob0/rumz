@@ -56,6 +56,7 @@ class Rum extends Model
     }
 
     /**
+     * TODO: add image upload to storage
      * Interact with the rums image.
      *
      * @param  string  $value
@@ -75,6 +76,11 @@ class Rum extends Model
             User::class,
             UserRum::class,
         )->withPivot('granted');
+    }
+
+    public function joined(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserRum::class);
     }
 
     public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany

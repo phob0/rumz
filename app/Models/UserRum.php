@@ -11,7 +11,10 @@ class UserRum extends Pivot
 
     protected $table = 'users_rums';
 
-    protected $fillable = ['granted'];
+    protected $fillable = [
+        'user_id',
+        'granted'
+    ];
 
     protected $casts = ['granted'];
 

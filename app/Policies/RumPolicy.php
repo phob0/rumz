@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Rum;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class RumPolicy
@@ -56,5 +57,18 @@ class RumPolicy
     public function delete(User $user, Rum $rum)
     {
         return $user->id === $rum->user_id;
+    }
+
+    public function join(User $user, Rum $rum, $type)
+    {
+        $has_members = $rum->users->contains(function($item) use($user) { return $item->id === $user->id; });
+        $has_subscribers = $rum->subscribed->contains(function($item) use($user) { return $item->id === $user->id; });
+
+        return $user->id !== $rum->user_id
+            && ($type === 'private' || $type === 'confidential' ?
+                !$has_members
+                : ($has_subscribers && $rum->subscriptions->firstWhere('user_id', '=', $user->id)->expire_at->isPast()) || !$has_subscribers
+            )
+            && $rum->type === $type;
     }
 }
