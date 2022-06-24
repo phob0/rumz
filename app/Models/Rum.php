@@ -100,4 +100,9 @@ class Rum extends Model
             Subscription::class,
         )->withPivot(['amount', 'is_paid', 'expire_at', 'created_at', 'updated_at']);
     }
+
+    public function master(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }

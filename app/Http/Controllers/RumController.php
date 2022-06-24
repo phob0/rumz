@@ -6,6 +6,8 @@ use App\Http\Requests\StoreRumRequest;
 use App\Models\HistoryPayment;
 use App\Models\Rum;
 use App\Models\RumHashtag;
+use App\Notifications\RumSubscriptionApproval;
+use App\Notifications\RumSubscriptionPaymentInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -92,13 +94,13 @@ class RumController extends Controller
                 ]);
             });
 
-            // send notification info
+            $rum->master->notify(new RumSubscriptionPaymentInfo($rum->without('master')->first(), auth()->user(), auth()->user()->name . ' payed $'.$request->amount.' membership to join your rum.'));
         } else {
             $rum->joined()->create([
                 'user_id' => auth()->user()->id
             ]);
 
-            // send notification approval
+            $rum->master->notify(new RumSubscriptionApproval($rum->without('master')->first(), auth()->user(), auth()->user()->name . ' is waiting your approval.'));
         }
 
         return response()->noContent();

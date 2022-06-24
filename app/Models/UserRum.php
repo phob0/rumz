@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class UserRum extends Pivot
+class UserRum extends Model
 {
     use HasFactory;
 
@@ -13,13 +14,17 @@ class UserRum extends Pivot
 
     protected $fillable = [
         'user_id',
+        'rum_id',
         'granted'
     ];
 
-    protected $casts = ['granted'];
-
-    public function rums()
+    public function rum(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasMany(Rum::class, 'id', 'rum_id');
+        return $this->hasOne(Rum::class, 'id', 'rum_id');
+    }
+
+    public function subscriber(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 }
