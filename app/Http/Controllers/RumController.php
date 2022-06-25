@@ -6,13 +6,16 @@ use App\Http\Requests\StoreRumRequest;
 use App\Models\HistoryPayment;
 use App\Models\Rum;
 use App\Models\RumHashtag;
+use App\Models\User;
 use App\Notifications\RumSubscriptionApproval;
 use App\Notifications\RumSubscriptionPaymentInfo;
 use Carbon\Carbon;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 
 class RumController extends Controller
 {
@@ -31,16 +34,29 @@ class RumController extends Controller
         return JsonResource::collection($rum->posts);
     }
 
-    public function store(StoreRumRequest $request)
+    public function store(StoreRumRequest $request): \Illuminate\Http\Response
     {
-        // TODO: add hashtags
-        Rum::create(
+        $hashtags = array_filter($request->validated()['hashtags'], 'strlen');
+        $path = $request->file('image')->store('public/images/rums');
+
+        $data = $request->validated();
+        $data['image'] = $path;
+
+        $rum = Rum::create(
             Arr::add(
-                $request->validated(),
+                Arr::except($data, 'hashtags'),
                 'user_id',
                 auth()->user()->id
             )
         );
+
+        if(!empty($hashtags)) {
+            collect($hashtags)->each(function($hashtag) use($rum) {
+                $rum->hashtags()->create([
+                    'hashtag' => $hashtag
+                ]);
+            });
+        }
 
         return response()->noContent();
     }
@@ -102,6 +118,23 @@ class RumController extends Controller
 
             $rum->master->notify(new RumSubscriptionApproval($rum->without('master')->first(), auth()->user(), auth()->user()->name . ' is waiting your approval.'));
         }
+
+        return response()->noContent();
+    }
+
+    public function grant(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
+    {
+        if(!isset($request->granted)) {
+            throw new HttpResponseException(
+                response()->json(['error' => 'Granted value is missing.'], Response::HTTP_UNPROCESSABLE_ENTITY)
+            );
+        }
+
+        $this->authorize('grant', [$rum, $user]);
+
+        $rum->joined()->where('user_id', $user->id)->first()->update([
+            'granted' => $request->granted
+        ]);
 
         return response()->noContent();
     }

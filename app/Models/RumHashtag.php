@@ -9,5 +9,8 @@ class RumHashtag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['hashtag'];
+    protected $fillable = [
+        'rum_id',
+        'hashtag'
+    ];
 }

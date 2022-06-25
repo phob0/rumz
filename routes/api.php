@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/delete/{rum}', [RumController::class, 'delete'])->name('deleteRum');
         Route::get('/hashtag-suggestions/{q?}', [RumController::class, 'hashtagSuggestions'])->name('hashtagSuggestions'); /* q param */
         Route::patch('/join/{rum}/{type}', [RumController::class, 'join'])->name('joinRum')->whereIn('type', ['private', 'confidential', 'paid']);
+        Route::patch('/grant/{rum}/{user}', [RumController::class, 'grant'])->name('grantRum');
     });
     Route::get('/', [RumController::class, 'index'])->name('homepage');
 });

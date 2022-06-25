@@ -71,4 +71,10 @@ class RumPolicy
             )
             && $rum->type === $type;
     }
+
+    public function grant(User $master, Rum $rum, User $user)
+    {
+        return $rum->user_id === $master->id
+            && $rum->joined->contains(function($item) use($user) { return $item->user_id === $user->id; });
+    }
 }

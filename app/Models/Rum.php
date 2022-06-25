@@ -105,4 +105,9 @@ class Rum extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+
+    public function hashtags(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RumHashtag::class, 'rum_id', 'id');
+    }
 }

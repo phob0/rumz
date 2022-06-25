@@ -48,7 +48,10 @@ class StoreRumRequest extends FormRequest
                     Rum::FOR_ALL,
                 ]),
             ],
-            "image" => []
+            'image' => 'image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            'hashtags' => [
+                'array'
+            ]
         ];
     }
 
