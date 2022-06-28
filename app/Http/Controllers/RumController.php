@@ -131,13 +131,13 @@ class RumController extends Controller
                 ]);
             });
 
-            $rum->master->notify(new RumSubscriptionPaymentInfo($rum->without('master')->first(), auth()->user(), auth()->user()->name . ' payed $'.$request->amount.' membership to join your rum.'));
+            $rum->master->notify(new RumSubscriptionPaymentInfo($rum, auth()->user()->name . ' payed $'.$request->amount.' membership to join your rum.'));
         } else {
             $rum->joined()->create([
                 'user_id' => auth()->user()->id
             ]);
 
-            $rum->master->notify(new RumSubscriptionApproval($rum->without('master')->first(), auth()->user(), auth()->user()->name . ' is waiting your approval.'));
+            $rum->master->notify(new RumSubscriptionApproval($rum, auth()->user()->name . ' is waiting your approval.'));
         }
 
         return response()->noContent();
@@ -156,6 +156,21 @@ class RumController extends Controller
         $rum->joined()->where('user_id', $user->id)->first()->update([
             'granted' => $request->granted
         ]);
+
+        auth()->user()->notifications()->whereJsonContains('data->rum->id', $rum->id)->first()->markAsRead();
+
+        // send approval notification to subscriber
+
+        return response()->noContent();
+    }
+
+    public function reject(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
+    {
+        $rum->joined()->where('user_id', $user->id)->first()->delete();
+
+        $user->notifications()->whereJsonContains('data->rum->id', $rum->id)->first()->markAsRead();
+
+        // send rejection notification to subscriber
 
         return response()->noContent();
     }

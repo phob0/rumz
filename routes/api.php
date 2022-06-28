@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RumController;
 use App\Models\Rum;
 use App\Models\User;
@@ -38,7 +39,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('hashtag-suggestions/{q?}', [RumController::class, 'hashtagSuggestions'])->name('hashtagSuggestions'); /* q param */
         Route::patch('join/{rum}/{type}', [RumController::class, 'join'])->name('joinRum')->whereIn('type', ['private', 'confidential', 'paid']);
         Route::patch('grant/{rum}/{user}', [RumController::class, 'grant'])->name('grantRum');
+        Route::patch('reject/{rum}/{user}', [RumController::class, 'reject'])->name('rejectRum');
         Route::post('image', [RumController::class, 'image'])->name('imageRum');
+    });
+    Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {
+        Route::get('lookup', [NotificationController::class, 'lookup'])->name('lookupNotification');
+        Route::get('all', [NotificationController::class, 'allNotifications'])->name('allNotification');
     });
     Route::get('/', [RumController::class, 'index'])->name('homepage');
 });
