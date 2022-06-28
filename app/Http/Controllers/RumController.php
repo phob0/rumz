@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRumRequest;
-use App\Models\HistoryPayment;
+use App\Http\Requests\UpdateRumRequest;
 use App\Models\Rum;
 use App\Models\RumHashtag;
 use App\Models\User;
@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class RumController extends Controller
@@ -37,7 +38,7 @@ class RumController extends Controller
     public function store(StoreRumRequest $request): \Illuminate\Http\Response
     {
         $hashtags = array_filter($request->validated()['hashtags'], 'strlen');
-        $path = $request->file('image')->store('public/images/rums');
+        $path = !is_null($request->file('image')) ? $request->file('image')->store('public/images/rums') : null;
 
         $data = $request->validated();
         $data['image'] = $path;
@@ -68,11 +69,31 @@ class RumController extends Controller
         return JsonResource::make($rum);
     }
 
-    public function update(StoreRumRequest $request, Rum $rum): \Illuminate\Http\Response
+    public function update(UpdateRumRequest $request, Rum $rum): \Illuminate\Http\Response
     {
         $this->authorize('update', $rum);
 
-        $rum->update($request->validated());
+        $hashtags = array_filter($request->validated()['hashtags'], 'strlen'); null;
+
+        $data = $request->validated();
+
+        if (Storage::disk('local')->exists('public/images/temp/'.$request->image)) {
+            Storage::disk('local')->move('public/images/temp/'.$request->image, 'public/images/rums/'.$request->image);
+        }
+
+        $rum->update(
+            Arr::except($data, 'hashtags')
+        );
+
+        $rum->hashtags()->delete();
+
+        if(!empty($hashtags)) {
+            collect($hashtags)->each(function($hashtag) use($rum) {
+                $rum->hashtags()->create([
+                    'hashtag' => $hashtag
+                ]);
+            });
+        }
 
         return response()->noContent();
     }
@@ -137,6 +158,17 @@ class RumController extends Controller
         ]);
 
         return response()->noContent();
+    }
+
+    public function image(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $file = $request->file('image');
+        $path = $file->store('public/images/temp');
+
+        return response()->json([
+            'path' => $path,
+            'file_name' => $file->hashName()
+        ]);
     }
 
 }

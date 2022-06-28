@@ -8,10 +8,11 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Rum extends Model
 {
-    use HasFactory,  HasUuid;
+    use HasFactory,  HasUuid, SoftDeletes;
 
     const TYPE_FREE = 'free';
     const TYPE_PAID = 'paid';
@@ -38,6 +39,11 @@ class Rum extends Model
         'privilege',
     ];
 
+    protected $with = [
+        'hashtags',
+        'users'
+    ];
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -56,7 +62,7 @@ class Rum extends Model
     }
 
     /**
-     * TODO: add image upload to storage
+     * TODO: move image upload to storage from controller
      * Interact with the rums image.
      *
      * @param  string  $value

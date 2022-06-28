@@ -30,7 +30,7 @@ class StoreRumRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255|string|unique:rums',
-            'description' => 'required|string',
+            'description' => 'string',
             'type' => [
                 'required',
                 Rule::in([
@@ -49,6 +49,7 @@ class StoreRumRequest extends FormRequest
                 ]),
             ],
             'image' => 'image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+//            'image' => 'string',
             'hashtags' => [
                 'array'
             ]
