@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateRumRequest;
 use App\Models\Rum;
 use App\Models\RumHashtag;
 use App\Models\User;
+use App\Notifications\RumApprovalSubscriber;
+use App\Notifications\RumRejectionSubscriber;
 use App\Notifications\RumSubscriptionApproval;
 use App\Notifications\RumSubscriptionPaymentInfo;
 use Carbon\Carbon;
@@ -158,8 +160,8 @@ class RumController extends Controller
         ]);
 
         auth()->user()->notifications()->whereJsonContains('data->rum->id', $rum->id)->first()->markAsRead();
-
-        // send approval notification to subscriber
+        // TODO: add subscriber
+        $user->notify(new RumApprovalSubscriber($rum, 'Your request to join has been approved'));
 
         return response()->noContent();
     }
@@ -170,7 +172,7 @@ class RumController extends Controller
 
         $user->notifications()->whereJsonContains('data->rum->id', $rum->id)->first()->markAsRead();
 
-        // send rejection notification to subscriber
+        $user->notify(new RumRejectionSubscriber($rum, 'Your request to join has been rejected'));
 
         return response()->noContent();
     }

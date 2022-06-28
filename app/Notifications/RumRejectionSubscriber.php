@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Rum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,14 +12,18 @@ class RumRejectionSubscriber extends Notification
 {
     use Queueable;
 
+    public Rum $rum;
+    public string $message;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($rum, $message = '')
     {
-        //
+        $this->rum = $rum;
+        $this->message = $message;
     }
 
     /**
@@ -29,7 +34,7 @@ class RumRejectionSubscriber extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -55,7 +60,9 @@ class RumRejectionSubscriber extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            "message" => $this->message,
+            "subscriber" => $notifiable,
+            "rum" => $this->rum,
         ];
     }
 }

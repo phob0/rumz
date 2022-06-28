@@ -42,10 +42,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::patch('reject/{rum}/{user}', [RumController::class, 'reject'])->name('rejectRum');
         Route::post('image', [RumController::class, 'image'])->name('imageRum');
     });
+
     Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {
         Route::get('lookup', [NotificationController::class, 'lookup'])->name('lookupNotification');
         Route::get('all', [NotificationController::class, 'allNotifications'])->name('allNotification');
     });
+
     Route::get('/', [RumController::class, 'index'])->name('homepage');
 });
 
