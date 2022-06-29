@@ -15,6 +15,8 @@ class RumFactory extends Factory
      */
     public function definition()
     {
+        $faker = \Faker\Factory::create();
+
         $type = collect([
             Rum::TYPE_FREE,
             Rum::TYPE_PAID,
@@ -30,9 +32,9 @@ class RumFactory extends Factory
 
         return [
             'user_id' => User::where('email', 'user@rumz.com')->first()->id,
-            'title' => $this->faker->text,
-            'description' => $this->faker->text,
-            'image' => $this->faker->imageUrl('300', '300', null, false, env('APP_NAME')),
+            'title' => $faker->text,
+            'description' => $faker->text,
+            'image' => $faker->imageUrl('300', '300', null, false, env('APP_NAME')),
             'type' => $type->random(),
             'privilege' => $privilege->random(),
         ];

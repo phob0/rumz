@@ -37,7 +37,7 @@ class RumController extends Controller
         return JsonResource::collection($rum->posts);
     }
 
-    public function store(StoreRumRequest $request): \Illuminate\Http\Response
+    public function store(StoreRumRequest $request): JsonResource
     {
         $hashtags = array_filter($request->validated()['hashtags'], 'strlen');
         $path = !is_null($request->file('image')) ? $request->file('image')->store('public/images/rums') : null;
@@ -61,7 +61,7 @@ class RumController extends Controller
             });
         }
 
-        return response()->noContent();
+        return JsonResource::make($rum);
     }
 
     public function edit(Rum $rum): JsonResource
