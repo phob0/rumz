@@ -15,6 +15,7 @@ class RumSubscriptionApproval extends Notification
     use Queueable;
 
     public Rum $rum;
+    public User $subscriber;
     public string $message;
 
     /**
@@ -22,9 +23,10 @@ class RumSubscriptionApproval extends Notification
      *
      * @return void
      */
-    public function __construct($rum, $message = '')
+    public function __construct($rum, $subscriber, $message = '')
     {
         $this->rum = $rum;
+        $this->subscriber = $subscriber;
         $this->message = $message;
     }
 
@@ -64,6 +66,7 @@ class RumSubscriptionApproval extends Notification
         return [
             "message" => $this->message,
             "rum" => $this->rum,
+            "subscriber" => $this->subscriber
         ];
     }
 }

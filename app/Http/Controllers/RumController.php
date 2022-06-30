@@ -139,7 +139,7 @@ class RumController extends Controller
                 'user_id' => auth()->user()->id
             ]);
 
-            $rum->master->notify(new RumSubscriptionApproval($rum, auth()->user()->name . ' is waiting your approval.'));
+            $rum->master->notify(new RumSubscriptionApproval($rum, auth()->user(),auth()->user()->name . ' is waiting your approval.'));
         }
 
         return response()->noContent();
@@ -159,7 +159,9 @@ class RumController extends Controller
             'granted' => $request->granted
         ]);
 
-        auth()->user()->notifications()->whereJsonContains('data->rum->id', $rum->id)->first()->markAsRead();
+        auth()->user()->notifications->filter(function($item) use($rum) {
+            return $item->data['rum']['id'] === $rum->id;
+        })->markAsRead();
         // TODO: add subscriber
         $user->notify(new RumApprovalSubscriber($rum, 'Your request to join has been approved'));
 
@@ -170,7 +172,9 @@ class RumController extends Controller
     {
         $rum->joined()->where('user_id', $user->id)->first()->delete();
 
-        $user->notifications()->whereJsonContains('data->rum->id', $rum->id)->first()->markAsRead();
+        auth()->user()->unreadNotifications->filter(function($item) use($rum) {
+            return $item->data['rum']['id'] === $rum->id;
+        })->markAsRead();
 
         $user->notify(new RumRejectionSubscriber($rum, 'Your request to join has been rejected'));
 
