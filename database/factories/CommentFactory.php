@@ -18,7 +18,11 @@ class CommentFactory extends Factory
         return [
             'user_id' => User::all()->random()->id,
             'post_id' => RumPost::all()->random()->id,
-            'comment' => $this->faker->text
+            'comment' => $this->faker->text,
+            'reply' => json_encode([
+                'user_id' => User::all()->random()->id,
+                'comment' => $this->faker->text
+            ])
         ];
     }
 }

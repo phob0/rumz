@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,9 +13,15 @@ class RumPost extends Model
 
     protected $fillable = [
         'rum_id',
+        'user_id',
         'approved',
         'title',
         'description',
+        'metadata',
+    ];
+
+    protected $casts = [
+        'metadata' => 'array'
     ];
 
     protected $withCount = [
@@ -48,4 +55,15 @@ class RumPost extends Model
     {
         return $this->hasMany(Comment::class, 'post_id', 'id');
     }
+
+    public function rum(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Rum::class, 'rum_id', 'id');
+    }
+
+    public function master(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
 }

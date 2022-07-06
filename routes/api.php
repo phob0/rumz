@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RumController;
+use App\Http\Controllers\RumPostController;
 use App\Models\Rum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\DomCrawler\Crawler;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +43,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::patch('grant/{rum}/{user}', [RumController::class, 'grant'])->name('grantRum');
         Route::patch('reject/{rum}/{user}', [RumController::class, 'reject'])->name('rejectRum');
         Route::post('image', [RumController::class, 'image'])->name('imageRum');
+
+        Route::group(['prefix' => 'post', 'as' => 'posts'], function() {
+            Route::post('create', [RumPostController::class, 'store'])->name('storeRumPost');
+            Route::get('edit/{rum_post}', [RumPostController::class, 'edit'])->name('editRumPost');
+            Route::put('update/{rum_post}', [RumPostController::class, 'update'])->name('updateRumPost');
+            Route::patch('like/{rum_post}', [RumPostController::class, 'like'])->name('likeRumPost');
+            Route::patch('comment/{rum_post}', [RumPostController::class, 'comment'])->name('commentRumPost');
+            Route::patch('update-comment/{rum_post}/{comment}', [RumPostController::class, 'updateComment'])->name('updateCommentRumPost');
+            Route::delete('delete-comment/{rum_post}/{comment}', [RumPostController::class, 'deleteComment'])->name('deleteCommentRumPost');
+            Route::patch('reply-comment/{rum_post}/{comment}', [RumPostController::class, 'replyComment'])->name('replyCommentRumPost');
+            Route::patch('update-reply/{rum_post}/{comment}/{reply_id}', [RumPostController::class, 'updateReply'])->name('updateReplyRumPost');
+            Route::patch('report-reply/{rum_post}/{comment}/{reply_id}', [RumPostController::class, 'reportReply'])->name('reportReplyRumPost');
+            Route::delete('delete-reply/{rum_post}/{comment}/{reply_id}', [RumPostController::class, 'deleteReply'])->name('deleteReplyRumPost');
+            Route::post('lookup-metadata', [RumPostController::class, 'lookupMetadata'])->name('lookupMetadata');
+            Route::get('{rum}', [RumPostController::class, 'index'])->name('postPage');
+        });
     });
 
     Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {
@@ -73,14 +91,43 @@ Route::post('/login', function (Request $request) {
  *
  * */
 Route::get('/queries', function(Request $request) {
-    $userId = User::where('id', '3e370e8d-4efb-4904-b561-665251247bfc')->first()->id;
+//    $userId = User::where('id', '3e370e8d-4efb-4904-b561-665251247bfc')->first()->id;
     //user that belongs to rum > for policies
 //    $userRum = Rum::whereHas('users', function (Builder $query) use($userId) {
 //        $query->where('users.id', $userId)->where('users_rums.granted', 1);
 //    })->where('type', Rum::TYPE_FREE)->get();
-    $userRum = Rum::with('posts')->whereHas('users')->get();
+//    $userRum = Rum::with('posts')->whereHas('users')->get();
     // rum posts with number of likes, users who liked, number of comments and comments
 //    $posts = $userRum->posts;
+
+    //check valid address
+    $crawler = Goutte::request('GET', 'https://9gag.com/gag/ay9rmpV');
+    $r = $crawler->filterXpath("//meta[@property='og:title']")->extract(['content']);
+    var_dump($r);
+    //    $description = $crawler->filterXpath('//meta[@property="og:description"]')->attr('content');
+//    $image = $crawler->filterXpath('//meta[@property="og:description"]')->extract('content');
+//    var_dump($image);
+    ///gag/ay9rmpV
+//    $url = "https://9gag.com/gag/ay9rmpV";
+//    var_dump($url);
+//    $html = file_get_contents($url);
+//    $crawler = new Crawler($html);
+//
+//    $data = $crawler->filterXpath("//meta[@property='og:title']")->extract(['content']);
+//    var_dump($data);
+//    $title = $crawler->filterXpath('//meta[@property="og:site_name"]');
+    //title or site_name for homepage
+    //description
+    //image or video
+    //url
+//    try {
+//        $image->attr('content');
+//    } catch (InvalidArgumentException $e) {
+//        $image = false;
+//    }
+
+    //try catch validator
+    // homepage url checker
 
     return 'queries';
 });

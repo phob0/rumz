@@ -162,7 +162,7 @@ class RumController extends Controller
         auth()->user()->notifications->filter(function($item) use($rum) {
             return $item->data['rum']['id'] === $rum->id;
         })->markAsRead();
-        // TODO: add subscriber
+
         $user->notify(new RumApprovalSubscriber($rum, 'Your request to join has been approved'));
 
         return response()->noContent();

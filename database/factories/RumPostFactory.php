@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Rum;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RumPostFactory extends Factory
@@ -16,9 +17,11 @@ class RumPostFactory extends Factory
     {
         return [
             'rum_id' => Rum::all()->random()->id,
+            'user_id' => User::all()->random()->id,
             'approved' => collect([0, 1])->random(),
             'title' => $this->faker->text,
             'description' => $this->faker->text,
+            'metadata' => null
         ];
     }
 }

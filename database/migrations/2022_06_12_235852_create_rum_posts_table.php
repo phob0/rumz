@@ -20,9 +20,15 @@ class CreateRumPostsTable extends Migration
                 ->onUpdate("restrict")
                 ->onDelete("restrict");
             $table->index(["rum_id"], 'rum_posts_rums_id_foreign');
+            $table->foreignUuid('user_id', 'rum_posts_users_id_foreign')
+                ->references('id')->on('users')
+                ->onUpdate("restrict")
+                ->onDelete("restrict");
+            $table->index(["user_id"], 'rum_posts_users_id_foreign');
             $table->boolean('approved')->default(0);
             $table->string('title');
             $table->string('description');
+            $table->json('metadata')->nullable();
             $table->timestamps();
         });
     }

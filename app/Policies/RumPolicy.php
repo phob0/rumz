@@ -18,7 +18,7 @@ class RumPolicy
      */
     public function __construct()
     {
-        //
+
     }
 
     public function view(User $user, Rum $rum)

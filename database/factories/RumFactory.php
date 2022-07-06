@@ -31,7 +31,7 @@ class RumFactory extends Factory
         ]);
 
         return [
-            'user_id' => User::where('email', 'user@rumz.com')->first()->id,
+            'user_id' => User::first()->id,
             'title' => $faker->text,
             'description' => $faker->text,
             'image' => $faker->imageUrl('300', '300', null, false, env('APP_NAME')),

@@ -14,7 +14,7 @@ class CreateCommentsTable extends Migration
     public function up()
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignUuid('user_id', 'comments_users_id_foreign')
                 ->references('id')->on('users')
                 ->onUpdate("restrict")
@@ -26,6 +26,7 @@ class CreateCommentsTable extends Migration
                 ->onDelete("restrict");
             $table->index(["post_id"], 'comments_rum_posts_id_foreign');
             $table->tinyText('comment');
+            $table->json('reply')->nullable();
             $table->timestamps();
         });
     }
