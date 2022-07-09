@@ -192,4 +192,16 @@ class RumController extends Controller
         ]);
     }
 
+    /*
+     * TODO
+     *  Common users can see Rum info.
+        Common users can see Rum members list.
+        Common users can report Rum.
+        add search method
+        split into explore|collection:
+        Explore is a tailored experience providing the user with a feed of rumz in accordance with their interest, experience and localization.
+        Collection is a mix made from rumz joined by user and rumz created by user, will appear after user create or join first rum.
+
+     */
+
 }

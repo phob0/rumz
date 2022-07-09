@@ -22,6 +22,14 @@ class RumPostPolicy
 
     }
 
+    public function create(User $user, $rum_id)
+    {
+        // get rum
+        // check privilege
+        // return response
+        return true;
+    }
+
     public function edit(User $user, RumPost $rumPost)
     {
         return $user->id === $rumPost->user_id;
@@ -78,6 +86,16 @@ class RumPostPolicy
                 $rumPost->rum->users->contains(function ($record) use($user){
                     return $record->user_id === $user->id;
                 }));
+    }
+
+    public function reportPost(User $user, RumPost $rumPost)
+    {
+        return ($rumPost->rum->subscribed->contains(function ($record) use($user){
+                return $record->user_id === $user->id;
+            }) ||
+            $rumPost->rum->users->contains(function ($record) use($user){
+                return $record->user_id === $user->id;
+            }));
     }
 
 }

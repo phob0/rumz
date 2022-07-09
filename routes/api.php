@@ -48,6 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('create', [RumPostController::class, 'store'])->name('storeRumPost');
             Route::get('edit/{rum_post}', [RumPostController::class, 'edit'])->name('editRumPost');
             Route::put('update/{rum_post}', [RumPostController::class, 'update'])->name('updateRumPost');
+            Route::patch('report-post/{rum_post}', [RumPostController::class, 'reportPost'])->name('reportRumPost');
             Route::patch('like/{rum_post}', [RumPostController::class, 'like'])->name('likeRumPost');
             Route::patch('comment/{rum_post}', [RumPostController::class, 'comment'])->name('commentRumPost');
             Route::patch('update-comment/{rum_post}/{comment}', [RumPostController::class, 'updateComment'])->name('updateCommentRumPost');

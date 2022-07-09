@@ -26,7 +26,8 @@ class RumPostController extends Controller
     public function store(StoreRumPostRequest $request): JsonResource
     {
         $data = $request->validated();
-        // TODO: notificate all rum members
+//        $this->authorize('create', $data['rum_id']);
+        // TODO: notificate all rum members and create privileged users table
         return JsonResource::make(
             RumPost::create(
                 Arr::add($data, 'user_id', auth()->user()->id)
@@ -59,6 +60,20 @@ class RumPostController extends Controller
         $this->authorize('delete', $rumPost);
 
         $rumPost->delete();
+    }
+    // TODO: Write test to check response
+    public function reportPost(Request $request, RumPost $rumPost): \Illuminate\Http\Response
+    {
+        $this->authorize('reportPost', $rumPost);
+
+        $rumPost->rum->master()->notify(
+            new PostReport(
+                $rumPost,
+            'A post has been reported. Please verify and submit a response.'
+            )
+        );
+
+        return response()->noContent();
     }
 
     public function like(Request $request, RumPost $rumPost): \Illuminate\Http\JsonResponse
@@ -189,7 +204,7 @@ class RumPostController extends Controller
         return response()->noContent();
     }
     // TODO: Write test to check response
-    public function reportReply(Request $request, RumPost $rumPost, Comment $comment, $reply_id)
+    public function reportReply(Request $request, RumPost $rumPost, Comment $comment, $reply_id): \Illuminate\Http\Response
     {
         $this->authorize('reportReply', [$rumPost, $comment, $reply_id]);
 
@@ -203,6 +218,12 @@ class RumPostController extends Controller
 
         return response()->noContent();
     }
+
+    /*
+     * TODO
+     *  Common users can like, dislike and share comments
+     *  Common users can save posts on favorites, share posts.
+     */
 
     public function lookupMetadata(Request $request): \Illuminate\Http\JsonResponse
     {
