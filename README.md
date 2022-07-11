@@ -9,5 +9,6 @@
 #### composer install
 #### php artisan generate:key
 #### sudo chmod -R 777 /storage
+#### php artisan storage:link
 #### php artisan migrate
 #### php artisan db:seed

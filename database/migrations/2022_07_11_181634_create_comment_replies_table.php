@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCommentsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,19 @@ class CreateCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('comment_replies', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id', 'comments_users_id_foreign')
                 ->references('id')->on('users')
                 ->onUpdate("restrict")
                 ->onDelete("restrict");
             $table->index(["user_id"], 'comments_users_id_foreign');
-            $table->foreignUuid('post_id', 'comments_rum_posts_id_foreign')
-                ->references('id')->on('rum_posts')
+            $table->foreignUuid('comment_id', 'comment_replies_comment_id_foreign')
+                ->references('id')->on('comments')
                 ->onUpdate("restrict")
                 ->onDelete("restrict");
-            $table->index(["post_id"], 'comments_rum_posts_id_foreign');
+            $table->index(["comment_id"], 'comment_replies_comment_id_foreign');
             $table->tinyText('comment');
-//            $table->json('reply')->nullable();
             $table->timestamps();
         });
     }
@@ -38,6 +37,6 @@ class CreateCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('comment_replies');
     }
-}
+};

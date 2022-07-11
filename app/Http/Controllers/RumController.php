@@ -47,11 +47,15 @@ class RumController extends Controller
 
         $rum = Rum::create(
             Arr::add(
-                Arr::except($data, 'hashtags'),
+                Arr::except($data, ['hashtags', 'url']),
                 'user_id',
                 auth()->user()->id
             )
         );
+
+        $rum->image->save([
+            'url' => $data['image']
+        ]);
 
         if(!empty($hashtags)) {
             collect($hashtags)->each(function($hashtag) use($rum) {
@@ -84,8 +88,12 @@ class RumController extends Controller
         }
 
         $rum->update(
-            Arr::except($data, 'hashtags')
+            Arr::except($data, ['hashtags', 'image'])
         );
+
+        $rum->image->save([
+            'url' => $data['image']
+        ]);
 
         $rum->hashtags()->delete();
 

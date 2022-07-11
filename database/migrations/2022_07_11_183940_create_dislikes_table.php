@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLikesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,20 @@ class CreateLikesTable extends Migration
      */
     public function up()
     {
-        Schema::create('likes', function (Blueprint $table) {
+        Schema::create('dislikes', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('user_id', 'likes_users_id_foreign')
+            $table->foreignUuid('user_id', 'dislikes_users_id_foreign')
                 ->references('id')->on('users')
                 ->onUpdate("restrict")
                 ->onDelete("restrict");
-            $table->index(["user_id"], 'likes_users_id_foreign');
-            $table->uuidMorphs('likeable');
-            $table->index(['likeable_id', 'likeable_type'], 'likeable');
-//            $table->foreignUuid('post_id', 'likes_rum_posts_id_foreign')
+            $table->index(["user_id"], 'dislikes_users_id_foreign');
+            $table->uuidMorphs('dislikeable');
+            $table->index(['dislikeable_id', 'dislikeable_type'], 'dislikeable');
+//            $table->foreignUuid('post_id', 'dislikes_rum_posts_id_foreign')
 //                ->references('id')->on('rum_posts')
 //                ->onUpdate("restrict")
 //                ->onDelete("restrict");
-//            $table->index(["post_id"], 'likes_rum_posts_id_foreign');
+//            $table->index(["post_id"], 'dislikes_rum_posts_id_foreign');
             $table->timestamps();
         });
     }
@@ -38,6 +38,6 @@ class CreateLikesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('likes');
+        Schema::dropIfExists('dislikes');
     }
-}
+};

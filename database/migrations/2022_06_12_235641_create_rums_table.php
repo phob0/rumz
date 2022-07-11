@@ -22,7 +22,7 @@ class CreateRumsTable extends Migration
             $table->index(["user_id"], 'rums_users_id_foreign');
             $table->string('title');
             $table->tinyText('description');
-            $table->string('image');
+//            $table->string('image');
             $table->enum('type', ['free', 'paid', 'private', 'confidential']);
             $table->enum('privilege', ['me', 'all', 'members']);
             $table->softDeletes();

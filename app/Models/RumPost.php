@@ -34,9 +34,14 @@ class RumPost extends Model
         'comments'
     ];
 
-    public function likes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function likes(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
-        return $this->hasMany(Like::class, 'post_id', 'id');
+        return $this->morphMany(Like::class, 'likeable');
+    }
+
+    public function dislikes(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Dislike::class, 'dislikeable');
     }
 
     public function usersLike(): \Illuminate\Database\Eloquent\Relations\HasManyThrough

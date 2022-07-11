@@ -15,15 +15,10 @@ class Comment extends Model
         'user_id',
         'post_id',
         'comment',
-        'reply'
     ];
 
     protected $with = [
         'user'
-    ];
-
-    protected $casts = [
-        'reply' => JsonCast::class
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
@@ -34,5 +29,15 @@ class Comment extends Model
     public function post(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(RumPost::class, 'post_id', 'id');
+    }
+
+    public function likes(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Like::class, 'likeable');
+    }
+
+    public function dislikes(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Dislike::class, 'dislikeable');
     }
 }
