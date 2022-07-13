@@ -25,7 +25,7 @@ class RumPostPolicy
     public function create(User $user, $rum_id)
     {
         // get rum
-        // check privilege
+        // TODO: check privilege
         // return response
         return true;
     }

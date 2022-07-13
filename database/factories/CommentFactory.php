@@ -16,13 +16,13 @@ class CommentFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::all()->random()->id,
-            'post_id' => RumPost::all()->random()->id,
-            'comment' => $this->faker->text,
-            'reply' => json_encode([
-                'user_id' => User::all()->random()->id,
-                'comment' => $this->faker->text
-            ])
+            'user_id' => function () {
+                return User::all()->random()->id;
+            },
+            'post_id' => function () {
+                return RumPost::all()->random()->id;
+            },
+            'comment' => $this->faker->text
         ];
     }
 }

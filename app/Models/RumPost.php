@@ -6,6 +6,7 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class RumPost extends Model
 {
@@ -49,16 +50,32 @@ class RumPost extends Model
         return $this->hasManyThrough(
             User::class,
             Like::class,
-            'post_id',
+            'likeable_id',
             'id',
             'id',
             'user_id'
+        )->where(
+            'likeable_type',
+            array_search(static::class, Relation::morphMap()) ?: static::class
         );
+
     }
 
     public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Comment::class, 'post_id', 'id');
+    }
+
+    public function comment_replies(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            CommentReply::class,
+            Comment::class,
+            'post_id',
+            'comment_id',
+            'id',
+            'id'
+        );
     }
 
     public function rum(): \Illuminate\Database\Eloquent\Relations\BelongsTo

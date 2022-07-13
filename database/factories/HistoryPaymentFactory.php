@@ -2,21 +2,22 @@
 
 namespace Database\Factories;
 
-use App\Models\Rum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class RumHashtagFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ */
+class HistoryPaymentFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function definition()
     {
         return [
-            'rum_id' => Rum::all()->random()->id,
-            'hashtag' => $this->faker->unique()->word,
+            //
         ];
     }
 }

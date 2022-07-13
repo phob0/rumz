@@ -28,6 +28,7 @@ class CreateRumPostsTable extends Migration
             $table->boolean('approved')->default(0);
             $table->string('title');
             $table->string('description');
+            $table->boolean('visible')->default(1);
             $table->json('metadata')->nullable();
             $table->timestamps();
         });

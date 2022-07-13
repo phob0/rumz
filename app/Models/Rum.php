@@ -36,7 +36,7 @@ class Rum extends Model
         'users'
     ];
 
-    public function image()
+    public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');
     }

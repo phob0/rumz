@@ -11,8 +11,23 @@ class Like extends Pivot
 
     protected $table = 'likes';
 
-    public function likeable()
+    public function likeable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function posts(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(RumPost::class, 'likeable');
+    }
+
+    public function comment(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(Comment::class, 'likeable');
+    }
+
+    public function comment_reply(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(CommentReply::class, 'likeable');
     }
 }

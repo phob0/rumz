@@ -2,16 +2,19 @@
 
 namespace Database\Factories;
 
-use App\Models\RumPost;
 use App\Models\User;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class LikeFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CommentReply>
+ */
+class CommentReplyFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function definition()
     {
@@ -19,8 +22,10 @@ class LikeFactory extends Factory
             'user_id' => function () {
                 return User::all()->random()->id;
             },
-            'likeable_type' => static::class,
-            'likeable_id' => '',
+            'comment_id' => function () {
+                return Comment::all()->random()->id;
+            },
+            'comment' => $this->faker->text
         ];
     }
 }

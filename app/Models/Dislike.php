@@ -15,4 +15,19 @@ class Dislike extends Pivot
     {
         return $this->morphTo();
     }
+
+    public function posts(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(RumPost::class, 'dislikeable');
+    }
+
+    public function comment(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(Comment::class, 'dislikeable');
+    }
+
+    public function comment_reply(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(CommentReply::class, 'dislikeable');
+    }
 }
