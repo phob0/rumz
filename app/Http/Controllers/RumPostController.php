@@ -6,6 +6,8 @@ use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\StoreRumPostRequest;
 use App\Http\Requests\UpdateRumPostRequest;
 use App\Models\Comment;
+use App\Models\CommentReply;
+use App\Models\Favourite;
 use App\Models\Rum;
 use App\Models\RumPost;
 use App\Notifications\CommentReport;
@@ -76,26 +78,42 @@ class RumPostController extends Controller
         return response()->noContent();
     }
 
-    public function like(Request $request, RumPost $rumPost): \Illuminate\Http\JsonResponse
+    public function likeOrDislike(Request $request, $action, $type, $id): \Illuminate\Http\JsonResponse
     {
-        $this->authorize('likeOrComment', $rumPost);
+        $action = Str::of($action)->plural()->value;
 
-        if ($rumPost->likes()->where('user_id', auth()->user()->id)->count()) {
-            $rumPost->likes()->where('user_id', auth()->user()->id)->delete();
+        $oppositeAction = $action === 'likes' ? 'dislikes' : 'likes';
+
+        $model = $type === 'post' ?
+            RumPost::find($id) :
+                ($type === 'comment' ?
+                    Comment::find($id) :
+                    CommentReply::find($id)
+                );
+
+        $this->authorize('likeOrDislike', [RumPost::class ,$model, $type]);
+
+        if ($model->{$action}()->where('user_id', auth()->user()->id)->count()) {
+            $model->{$action}()->where('user_id', auth()->user()->id)->first()->delete();
         } else {
-            $rumPost->likes()->create([
+
+            if ($model->{$oppositeAction}->where('user_id', auth()->user()->id)->count()) {
+                $model->{$oppositeAction}->where('user_id', auth()->user()->id)->first()->delete();
+            }
+
+            $model->{$action}()->create([
                 'user_id' => auth()->user()->id
             ]);
         }
 
         return response()->json([
-            'likesCount' => $rumPost->refresh()->likes()->count()
+            $action.'Count' => $model->refresh()->{$action}()->count()
         ]);
     }
 
     public function comment(Request $request, RumPost $rumPost): \Illuminate\Http\JsonResponse
     {
-        $this->authorize('likeOrComment', $rumPost);
+        $this->authorize('comment', $rumPost);
 
         $rumPost->comments()->create([
             'user_id' => auth()->user()->id,
@@ -109,7 +127,7 @@ class RumPostController extends Controller
 
     public function updateComment(Request $request, RumPost $rumPost, Comment $comment): \Illuminate\Http\Response
     {
-        $this->authorize('likeOrComment', $rumPost);
+        $this->authorize('comment', $rumPost);
 
         $this->authorize('updateOrDeleteComment', [$rumPost, $comment]);
 
@@ -147,83 +165,83 @@ class RumPostController extends Controller
 
     public function replyComment(StoreCommentRequest $request, RumPost $rumPost, Comment $comment): \Illuminate\Http\Response
     {
-        $this->authorize('likeOrComment', $rumPost);
+        $this->authorize('comment', $rumPost);
 
 
         $data = array_merge($request->validated(), [
             'id' => (string) Str::uuid(),
             'user_id' => auth()->user()->id,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
         ]);
 
-        if (is_null($comment->reply)) {
-            $comment->update([
-                'reply' => [$data]
-            ]);
-        } else {
-            $comment->update([
-                'reply' => Arr::prepend($comment->reply, $data)
-            ]);
-        }
+        $comment->replies()->create($data);
 
         return response()->noContent();
     }
 
-    public function updateReply(StoreCommentRequest $request, RumPost $rumPost, Comment $comment, $reply_id): \Illuminate\Http\Response
+    public function updateReply(StoreCommentRequest $request, RumPost $rumPost, Comment $comment, CommentReply $commentReply): \Illuminate\Http\Response
     {
-        $this->authorize('updateOrDeleteReply', [$rumPost, $comment, $reply_id]);
+        $this->authorize('updateOrDeleteReply', [$rumPost, $comment, $commentReply]);
 
-        $newComment = $request->validated()['comment'];
-
-        $key = collect($comment->reply)->where('id', $reply_id)->keys()->first();
-
-        $data = $comment->reply[$key];
-        $data['comment'] = $newComment;
-        $data['updated_at'] = Carbon::now();
-
-        $comment->update([
-            'reply' => collect($comment->reply)->replace([$key => $data])->sortBy('updated_at')->values()->all()
+        $commentReply->update([
+            'comment' => $request->validated()['comment']
         ]);
 
         return response()->noContent();
     }
 
-    public function deleteReply(Request $request, RumPost $rumPost, Comment $comment, $reply_id): \Illuminate\Http\Response
+    public function deleteReply(Request $request, RumPost $rumPost, Comment $comment, CommentReply $commentReply): \Illuminate\Http\Response
     {
-        $this->authorize('updateOrDeleteReply', [$rumPost, $comment, $reply_id]);
+        $this->authorize('updateOrDeleteReply', [$rumPost, $comment, $commentReply]);
 
-        $data = $comment->reply;
+        $commentReply->likes()->delete();
 
-        unset($data[collect($comment->reply)->where('id', $reply_id)->keys()->first()]);
+        $commentReply->dislikes()->delete();
 
-        $comment->update([
-            'reply' => $data
-        ]);
+        $commentReply->delete();
 
         return response()->noContent();
     }
     // TODO: Write test to check response
-    public function reportReply(Request $request, RumPost $rumPost, Comment $comment, $reply_id): \Illuminate\Http\Response
+    public function reportReply(Request $request, RumPost $rumPost, Comment $comment, CommentReply $commentReply): \Illuminate\Http\Response
     {
-        $this->authorize('reportReply', [$rumPost, $comment, $reply_id]);
+        $this->authorize('reportReply', [$rumPost, $comment, $commentReply]);
 
         $rumPost->rum->master()->notify(
             new CommentReport(
                 $rumPost,
                 $comment,
-                collect($comment->reply)->where('id', $reply_id)->first()),
+                $comment->replies->where('id', $commentReply->id)->first()),
                 'A comment has been reported. Please verify and submit a response.'
         );
 
         return response()->noContent();
     }
 
-    /*
-     * TODO
-     *  Common users can like, dislike and share comments
-     *  Common users can save posts on favorites, share posts.
-     */
+    public function getFavourites(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return JsonResource::collection(auth()->user()->favourites);
+    }
+
+    public function saveFavourite(Request $request, RumPost $rumPost): \Illuminate\Http\Response
+    {
+        $this->authorize('saveFavourite', $rumPost);
+
+        Favourite::create([
+            'user_id' => auth()->user()->id,
+            'post_id' => $rumPost->id
+        ]);
+
+        return response()->noContent();
+    }
+
+    public function removeFavourite(Request $request,RumPost $rumPost , Favourite $favourite): \Illuminate\Http\Response
+    {
+        $this->authorize('removeFavourite', [$rumPost, $favourite]);
+
+        $favourite->delete();
+
+        return response()->noContent();
+    }
 
     public function lookupMetadata(Request $request): \Illuminate\Http\JsonResponse
     {

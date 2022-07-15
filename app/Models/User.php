@@ -52,4 +52,25 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Rum::class, 'user_id', 'id');
     }
+
+    public function posts(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(RumPost::class, 'user_id', 'id');
+    }
+
+    public function favourites(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            RumPost::class,
+            Favourite::class,
+            'post_id',
+            'id',
+            'id'
+        );
+    }
+
+    public static function superadmins()
+    {
+        return self::where('superadmin', 1)->get();
+    }
 }

@@ -13,19 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('comment_replies', function (Blueprint $table) {
+        Schema::create('favourites', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id', 'comment_replies_users_id_foreign')
+            $table->foreignUuid('user_id', 'favourites_users_id_foreign')
                 ->references('id')->on('users')
                 ->onUpdate("restrict")
                 ->onDelete("restrict");
-            $table->index(["user_id"], 'comment_replies_users_id_foreign');
-            $table->foreignUuid('comment_id', 'comment_replies_comment_id_foreign')
-                ->references('id')->on('comments')
+            $table->index(["user_id"], 'favourites_users_id_foreign');
+            $table->foreignUuid('post_id', 'favourites_rum_posts_id_foreign')
+                ->references('id')->on('rum_posts')
                 ->onUpdate("restrict")
                 ->onDelete("restrict");
-            $table->index(["comment_id"], 'comment_replies_comment_id_foreign');
-            $table->tinyText('comment');
+            $table->index(["post_id"], 'favourites_rum_posts_id_foreign');
             $table->timestamps();
         });
     }
@@ -37,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comment_replies');
+        Schema::dropIfExists('favourites');
     }
 };

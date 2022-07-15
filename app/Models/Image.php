@@ -20,7 +20,9 @@ class Image extends Model
     protected Generator $faker;
 
     protected $fillable = [
-        'url'
+        'url',
+        'imageable_id',
+        'imageable_type'
     ];
 
     public function __construct(array $attributes = [])

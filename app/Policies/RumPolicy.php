@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Rum;
+use App\Models\RumPost;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -76,5 +77,12 @@ class RumPolicy
     {
         return $rum->user_id === $master->id
             && $rum->joined->contains(function($item) use($user) { return $item->user_id === $user->id; });
+    }
+
+    public function membersList(User $user, Rum $rum)
+    {
+        return $rum->type !== Rum::TYPE_PAID ?
+            $rum->users->contains(fn ($item) => $item->id === $user->id) :
+            $rum->subscribed->contains(fn ($item) => $item->id === $user->id);
     }
 }

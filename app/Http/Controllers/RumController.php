@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRumRequest;
 use App\Http\Requests\UpdateRumRequest;
+use App\Models\Image;
 use App\Models\Rum;
 use App\Models\RumHashtag;
 use App\Models\User;
@@ -53,8 +54,10 @@ class RumController extends Controller
             )
         );
 
-        $rum->image->save([
-            'url' => $data['image']
+        Image::create([
+            'url' => $data['image'],
+            'imageable_id' => $rum->id,
+            'imageable_type' => Rum::class,
         ]);
 
         if(!empty($hashtags)) {
@@ -91,8 +94,10 @@ class RumController extends Controller
             Arr::except($data, ['hashtags', 'image'])
         );
 
-        $rum->image->save([
-            'url' => $data['image']
+        Image::create([
+            'url' => $data['image'],
+            'imageable_id' => $rum->id,
+            'imageable_type' => Rum::class,
         ]);
 
         $rum->hashtags()->delete();
@@ -189,6 +194,27 @@ class RumController extends Controller
         return response()->noContent();
     }
 
+    public function membersList(Request $request, Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $this->authorize('membersList', $rum);
+
+        return JsonResource::collection($rum->users->concat($rum->subscribed));
+    }
+    // TODO: Write test to check response
+    public function reportRum(Request $request, Rum $rum): \Illuminate\Http\Response
+    {
+        $this->authorize('membersList', $rum);
+
+        User::superadmins()->each(function($admin) use($rum){
+            $admin->notify(
+                $rum,
+                'A user has reported this rum.'
+            );
+        });
+
+        return response()->noContent();
+    }
+
     public function image(Request $request): \Illuminate\Http\JsonResponse
     {
         $file = $request->file('image');
@@ -203,13 +229,10 @@ class RumController extends Controller
     /*
      * TODO
      *  Common users can see Rum info.
-        Common users can see Rum members list.
-        Common users can report Rum.
         add search method
         split into explore|collection:
         Explore is a tailored experience providing the user with a feed of rumz in accordance with their interest, experience and localization.
         Collection is a mix made from rumz joined by user and rumz created by user, will appear after user create or join first rum.
-
      */
 
 }

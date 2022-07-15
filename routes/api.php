@@ -38,10 +38,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('edit/{rum}', [RumController::class, 'edit'])->name('editRum');
         Route::put('update/{rum}', [RumController::class, 'update'])->name('updateRum');
         Route::delete('delete/{rum}', [RumController::class, 'delete'])->name('deleteRum');
+        Route::get('members/{rum}', [RumController::class, 'membersList'])->name('membersListRum');
         Route::get('hashtag-suggestions/{q?}', [RumController::class, 'hashtagSuggestions'])->name('hashtagSuggestions'); /* q param */
         Route::patch('join/{rum}/{type}', [RumController::class, 'join'])->name('joinRum')->whereIn('type', ['private', 'confidential', 'paid']);
         Route::patch('grant/{rum}/{user}', [RumController::class, 'grant'])->name('grantRum');
         Route::patch('reject/{rum}/{user}', [RumController::class, 'reject'])->name('rejectRum');
+        Route::patch('report/{rum}', [RumController::class, 'reportRum'])->name('reportRum');
         Route::post('image', [RumController::class, 'image'])->name('imageRum');
 
         Route::group(['prefix' => 'post', 'as' => 'posts'], function() {
@@ -49,14 +51,29 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('edit/{rum_post}', [RumPostController::class, 'edit'])->name('editRumPost');
             Route::put('update/{rum_post}', [RumPostController::class, 'update'])->name('updateRumPost');
             Route::patch('report-post/{rum_post}', [RumPostController::class, 'reportPost'])->name('reportRumPost');
-            Route::patch('like/{rum_post}', [RumPostController::class, 'like'])->name('likeRumPost');
-            Route::patch('comment/{rum_post}', [RumPostController::class, 'comment'])->name('commentRumPost');
-            Route::patch('update-comment/{rum_post}/{comment}', [RumPostController::class, 'updateComment'])->name('updateCommentRumPost');
-            Route::delete('delete-comment/{rum_post}/{comment}', [RumPostController::class, 'deleteComment'])->name('deleteCommentRumPost');
-            Route::patch('reply-comment/{rum_post}/{comment}', [RumPostController::class, 'replyComment'])->name('replyCommentRumPost');
-            Route::patch('update-reply/{rum_post}/{comment}/{reply_id}', [RumPostController::class, 'updateReply'])->name('updateReplyRumPost');
-            Route::patch('report-reply/{rum_post}/{comment}/{reply_id}', [RumPostController::class, 'reportReply'])->name('reportReplyRumPost');
-            Route::delete('delete-reply/{rum_post}/{comment}/{reply_id}', [RumPostController::class, 'deleteReply'])->name('deleteReplyRumPost');
+            Route::patch('like-dislike/{action}/{type}/{id}', [RumPostController::class, 'likeOrDislike'])
+                ->whereIn('type', ['post', 'comment', 'reply'])
+                ->whereIn('action', ['like', 'dislike'])
+                ->name('likeRumPost');
+
+            Route::group(['prefix' => 'favourite', 'as' => 'favourites'], function() {
+                Route::patch('{rum_post}', [RumPostController::class, 'saveFavourite'])->name('saveFavouriteRumPost');
+                Route::delete('remove/{rum_post}/{favourite}', [RumPostController::class, 'removeFavourite'])->name('removeFavouriteRumPost');
+                Route::get('', [RumPostController::class, 'getFavourites'])->name('getFavouritesRumPost');
+            });
+
+            Route::group(['prefix' => 'comment', 'as' => 'comments'], function() {
+                Route::patch('{rum_post}', [RumPostController::class, 'comment'])->name('commentRumPost');
+                Route::patch('update/{rum_post}/{comment}', [RumPostController::class, 'updateComment'])->name('updateCommentRumPost');
+                Route::delete('delete/{rum_post}/{comment}', [RumPostController::class, 'deleteComment'])->name('deleteCommentRumPost');
+
+                Route::group(['prefix' => 'reply', 'as' => 'replies'], function() {
+                    Route::patch('{rum_post}/{comment}', [RumPostController::class, 'replyComment'])->name('replyCommentRumPost');
+                    Route::patch('update/{rum_post}/{comment}/{comment_reply}', [RumPostController::class, 'updateReply'])->name('updateReplyRumPost');
+                    Route::patch('report/{rum_post}/{comment}/{comment_reply}', [RumPostController::class, 'reportReply'])->name('reportReplyRumPost');
+                    Route::delete('delete/{rum_post}/{comment}/{comment_reply}', [RumPostController::class, 'deleteReply'])->name('deleteReplyRumPost');
+                });
+            });
             Route::post('lookup-metadata', [RumPostController::class, 'lookupMetadata'])->name('lookupMetadata');
             Route::get('{rum}', [RumPostController::class, 'index'])->name('postPage');
         });

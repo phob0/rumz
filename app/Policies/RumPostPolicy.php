@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\Models\Comment;
+use App\Models\CommentReply;
+use App\Models\Favourite;
 use App\Models\Rum;
 use App\Models\User;
 use App\Models\RumPost;
@@ -40,18 +42,40 @@ class RumPostPolicy
         return $user->id === $rumPost->user_id;
     }
 
-    public function likeOrComment(User $user, RumPost $rumPost)
+    public function comment(User $user, RumPost $rumPost)
     {
         switch ($rumPost->rum->type) {
             case Rum::TYPE_PAID:
                 return $rumPost->rum->subscribed->contains(function ($record) use($user){
                     return $record->user_id === $user->id;
-                });
+                }) || ($rumPost->rum->user_id === $user->id || $rumPost->user_id === $user->id);
             default:
                 return $rumPost->rum->type !== Rum::TYPE_PAID ?
                     $rumPost->rum->users->contains(function ($record) use($user){
-                        return $record->user_id === $user->id;
+                        return $record->id === $user->id;
                     }) || ($rumPost->rum->user_id === $user->id || $rumPost->user_id === $user->id) : false;
+        }
+    }
+
+    public function likeOrDislike(User $user, $model, $type)
+    {
+        $rum = $type === 'post' ?
+                $model->rum :
+                ($type === 'comment' ?
+                    $model->post->rum :
+                    $model->parent->post->rum
+                );
+
+        switch ($rum->type) {
+            case Rum::TYPE_PAID:
+                return $rum->subscribed->contains(function ($record) use($user){
+                    return $record->user_id === $user->id;
+                }) || ($rum->user_id === $user->id || $model->user_id === $user->id);
+            default:
+                return $rum->type !== Rum::TYPE_PAID ?
+                    $rum->users->contains(function ($record) use($user){
+                        return $record->id === $user->id;
+                    }) || ($rum->user_id === $user->id || $model->user_id === $user->id) : false;
         }
     }
 
@@ -61,21 +85,21 @@ class RumPostPolicy
             ($comment->user_id !== $user->id && $comment->post->rum->user_id === $user->id);
     }
 
-    public function updateOrDeleteReply(User $user, RumPost $rumPost, Comment $comment, $reply_id)
+    public function updateOrDeleteReply(User $user, RumPost $rumPost, Comment $comment, CommentReply $commentReply)
     {
-        return ($comment->user_id === $user->id ||
-            ($comment->user_id !== $user->id && $comment->post->rum->user_id === $user->id))
-            && collect($comment->reply)->contains(fn ($item) => $item['id'] === $reply_id);
+        return ($commentReply->user_id === $user->id ||
+            ($commentReply->user_id !== $user->id && $comment->post->rum->user_id === $user->id))
+            && $comment->replies->contains(fn ($item) => $item->id === $commentReply->id);
     }
 
-    public function reportReply(User $user, RumPost $rumPost, Comment $comment, $reply_id)
+    public function reportReply(User $user, RumPost $rumPost, Comment $comment, CommentReply $commentReply)
     {
         return ($rumPost->rum->subscribed->contains(function ($record) use($user){
                 return $record->user_id === $user->id;
             }) ||
             $rumPost->rum->users->contains(function ($record) use($user){
-                return $record->user_id === $user->id;
-            })) && collect($comment->reply)->contains(fn ($item) => $item['id'] === $reply_id);
+                return $record->id === $user->id;
+            })) && $comment->replies->contains(fn ($item) => $item->id === $commentReply->id);
     }
 
     public function reportComment(User $user, RumPost $rumPost, Comment $comment)
@@ -84,7 +108,7 @@ class RumPostPolicy
                     return $record->user_id === $user->id;
                 }) ||
                 $rumPost->rum->users->contains(function ($record) use($user){
-                    return $record->user_id === $user->id;
+                    return $record->id === $user->id;
                 }));
     }
 
@@ -94,8 +118,30 @@ class RumPostPolicy
                 return $record->user_id === $user->id;
             }) ||
             $rumPost->rum->users->contains(function ($record) use($user){
-                return $record->user_id === $user->id;
+                return $record->id === $user->id;
             }));
+    }
+
+    public function saveFavourite(User $user, RumPost $rumPost)
+    {
+        return ($rumPost->rum->subscribed->contains(function ($record) use($user){
+                return $record->user_id === $user->id;
+            }) ||
+            $rumPost->rum->users->contains(function ($record) use($user){
+                return $record->id === $user->id;
+            }));
+    }
+
+    public function removeFavourite(User $user, RumPost $rumPost, Favourite $favourite)
+    {
+        return ($rumPost->rum->subscribed->contains(function ($record) use($user){
+                return $record->user_id === $user->id;
+            }) ||
+            $rumPost->rum->users->contains(function ($record) use($user){
+                return $record->id === $user->id;
+            })) &&
+            $favourite->user_id === $user->id &&
+            $favourite->post_id === $rumPost->id;
     }
 
 }

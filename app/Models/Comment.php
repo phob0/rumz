@@ -40,4 +40,9 @@ class Comment extends Model
     {
         return $this->morphMany(Dislike::class, 'dislikeable');
     }
+
+    public function replies()
+    {
+        return $this->hasMany(CommentReply::class);
+    }
 }

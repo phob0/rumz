@@ -33,7 +33,8 @@ class Rum extends Model
 
     protected $with = [
         'hashtags',
-        'users'
+        'users',
+        'subscribed'
     ];
 
     public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
