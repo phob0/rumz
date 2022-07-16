@@ -47,12 +47,17 @@ class Rum extends Model
         return $this->belongsToMany(
             User::class,
             UserRum::class,
-        )->withPivot('granted');
+        )->withPivot('granted')->where('granted', 1);
     }
 
     public function joined(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(UserRum::class);
+        return $this->hasMany(UserRum::class)->where('granted', 1);
+    }
+
+    public function join_requests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserRum::class)->where('granted', 0);
     }
 
     public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany

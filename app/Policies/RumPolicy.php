@@ -83,6 +83,33 @@ class RumPolicy
     {
         return $rum->type !== Rum::TYPE_PAID ?
             $rum->users->contains(fn ($item) => $item->id === $user->id) :
-            $rum->subscribed->contains(fn ($item) => $item->id === $user->id);
+            $rum->subscribed->contains(fn ($item) => $item->id === $user->id)
+            || $rum->user_id === $user->id;
+    }
+
+    public function inviteMember(User $user, Rum $rum, User $member)
+    {
+        return $rum->type === Rum::TYPE_CONFIDENTIAL &&
+            !$rum->users->contains(fn ($item) => $item->id === $member->id) &&
+            $member->id !== $rum->user_id &&
+            $user->id === $rum->user_id;
+    }
+
+    public function acceptInvite(User $user, Rum $rum)
+    {
+        return $user->id !== $rum->user_id &&
+            $rum->users->contains(fn ($item) => $item->id === $user->id && $item->granted === 0);
+    }
+
+    public function banOrUnbanMembers(User $user, Rum $rum, User $member)
+    {
+        return ($rum->type !== Rum::TYPE_PAID ?
+            $rum->users->contains(fn ($item) => $item->id === $member->id) :
+            $rum->subscribed->contains(fn ($item) => $item->id === $member->id));
+    }
+
+    public function removeMembers(User $user, Rum $rum, User $member)
+    {
+        return $rum->users->contains(fn ($item) => $item->id === $member->id);
     }
 }

@@ -17,6 +17,9 @@ class NotificationController extends Controller
         return JsonResource::collection(auth()->user()->notifications);
     }
 
+    public function deleteNotification()
+    {}
+
     /*
      * TODO
      *  add delete method

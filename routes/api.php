@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RumController;
 use App\Http\Controllers\RumPostController;
@@ -40,11 +41,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('delete/{rum}', [RumController::class, 'delete'])->name('deleteRum');
         Route::get('members/{rum}', [RumController::class, 'membersList'])->name('membersListRum');
         Route::get('hashtag-suggestions/{q?}', [RumController::class, 'hashtagSuggestions'])->name('hashtagSuggestions'); /* q param */
-        Route::patch('join/{rum}/{type}', [RumController::class, 'join'])->name('joinRum')->whereIn('type', ['private', 'confidential', 'paid']);
+        Route::patch('join/{rum}/{type}', [RumController::class, 'join'])->name('joinRum')->whereIn('type', ['private', 'confidential', 'paid', 'free']);
         Route::patch('grant/{rum}/{user}', [RumController::class, 'grant'])->name('grantRum');
         Route::patch('reject/{rum}/{user}', [RumController::class, 'reject'])->name('rejectRum');
         Route::patch('report/{rum}', [RumController::class, 'reportRum'])->name('reportRum');
+        Route::group(['prefix' => 'member', 'as' => 'members'], function() {
+            Route::patch('ban-unban/{action}/{rum}/{user}', [RumController::class, 'banUnbanMember'])->name('banUnbanMemberRum')->whereIn('action', ['ban', 'unban']);
+            Route::patch('invite/{rum}/{user}', [RumController::class, 'inviteMember'])->name('inviteMemberRum');
+            Route::patch('accept-invite/{rum}', [RumController::class, 'acceptInviteMember'])->name('acceptInviteMemberRum');
+            Route::patch('remove/{rum}/{user}', [RumController::class, 'removeMember'])->name('removeMemberRum');
+        });
         Route::post('image', [RumController::class, 'image'])->name('imageRum');
+        Route::get('search/{q?}', [RumController::class, 'search'])->name('searchRum');
 
         Route::group(['prefix' => 'post', 'as' => 'posts'], function() {
             Route::post('create', [RumPostController::class, 'store'])->name('storeRumPost');
@@ -85,24 +93,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::get('/', [RumController::class, 'index'])->name('homepage');
+
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-Route::post('/login', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
+Route::post('/login', [LoginController::class, 'login'])->name('login');
 
-    $user = User::where('email', $request->email)->first();
+Route::post('/register', [LoginController::class, 'register'])->name('register');
 
-    if (! $user || ! Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
-        ]);
-    }
+// URL for csrf cookie : http://localhost/sanctum/csrf-cookie
 
-    return $user->createToken('sanctum-token')->plainTextToken;
-});
 /*
  *
  * Test queries

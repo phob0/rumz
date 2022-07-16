@@ -8,10 +8,16 @@ use App\Models\Image;
 use App\Models\Rum;
 use App\Models\RumHashtag;
 use App\Models\User;
+use App\Notifications\AcceptInvite;
+use App\Notifications\BanMember;
+use App\Notifications\BanUnbanMember;
+use App\Notifications\InviteMember;
+use App\Notifications\RemoveMember;
 use App\Notifications\RumApprovalSubscriber;
 use App\Notifications\RumRejectionSubscriber;
 use App\Notifications\RumSubscriptionApproval;
 use App\Notifications\RumSubscriptionPaymentInfo;
+use App\Notifications\UnbanMember;
 use Carbon\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
@@ -19,6 +25,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Searchable\Search;
 use Symfony\Component\HttpFoundation\Response;
 
 class RumController extends Controller
@@ -127,7 +134,7 @@ class RumController extends Controller
         return JsonResource::collection(RumHashtag::where('hashtag', 'like', $request->q.'%')->get());
     }
 
-    public function join(Request $request, Rum $rum, $type = false): \Illuminate\Http\Response
+    public function join(Request $request, Rum $rum, $type = 'free'): \Illuminate\Http\Response
     {
         $this->authorize('join', [$rum, $type]);
 
@@ -149,10 +156,13 @@ class RumController extends Controller
             $rum->master->notify(new RumSubscriptionPaymentInfo($rum, auth()->user()->name . ' payed $'.$request->amount.' membership to join your rum.'));
         } else {
             $rum->joined()->create([
-                'user_id' => auth()->user()->id
+                'user_id' => auth()->user()->id,
+                'granted' => ($type === 'free')
             ]);
 
-            $rum->master->notify(new RumSubscriptionApproval($rum, auth()->user(),auth()->user()->name . ' is waiting your approval.'));
+            if ($type !== 'free') {
+                $rum->master->notify(new RumSubscriptionApproval($rum, auth()->user(),auth()->user()->name . ' is waiting your approval.'));
+            }
         }
 
         return response()->noContent();
@@ -198,7 +208,82 @@ class RumController extends Controller
     {
         $this->authorize('membersList', $rum);
 
-        return JsonResource::collection($rum->users->concat($rum->subscribed));
+        return JsonResource::collection($rum->users()->concat($rum->subscribed));
+    }
+    // TODO: Write test to check response
+    public function inviteMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
+    {
+        $this->authorize('inviteMember', [$rum, $user]);
+
+        $rum->joined()->create([
+            'user_id' => $user->id,
+            'granted' => 0
+        ]);
+
+        $user->notify(
+            new InviteMember($rum, auth()->user()->name . 'has invited you to join this rum. Please submit a response.')
+        );
+
+        return response()->noContent();
+    }
+    // TODO: Write test to check response
+    public function acceptInvite(Request $request, Rum $rum)
+    {
+        $this->authorize('acceptInvite', $rum);
+
+        $rum->joined()->where([
+            ['user_id', '=', auth()->user()->id],
+            ['rum_id', '=', $rum->id],
+            ['granted', '=', 0],
+        ])->first()->update([
+            'granted' => 0
+        ]);
+
+        $rum->master->notify(
+            new AcceptInvite(auth()->user()->id . 'has accepted your invite.')
+        );
+
+        return response()->noContent();
+    }
+    // TODO: Write test to check response
+    public function banUnban(Request $request, $action,Rum $rum, User $user): \Illuminate\Http\Response
+    {
+        $this->authorize('banOrUnbanMembers', [$rum, $user]);
+
+        $ban = $action === 'ban';
+
+        if ($rum->type !== Rum::TYPE_PAID) {
+            $rum->joined()->where('user_id', $user->id)->first()->update([
+                'granted' => $ban
+            ]);
+        } else {
+            $rum->subscriptions()->where('user_id', $user->id)->first()->update([
+                'granted' => $ban
+            ]);
+        }
+
+        $message = $ban ?
+            'You have been banned from this rum.' :
+            'Your ban from this rum has been removed.';
+
+        $user->notify(
+            new BanUnbanMember($rum, $message)
+        );
+
+        return response()->noContent();
+    }
+    // TODO: Write test to check response
+    public function removeMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
+    {
+        $this->authorize('removeMembers', $rum);
+
+        $rum->joined()->where('user_id', $user->id)->first()->delete();
+
+        $user->notify(
+            new RemoveMember($rum, 'You have been banned from this rum.')
+        );
+
+        return response()->noContent();
     }
     // TODO: Write test to check response
     public function reportRum(Request $request, Rum $rum): \Illuminate\Http\Response
@@ -224,6 +309,13 @@ class RumController extends Controller
             'path' => $path,
             'file_name' => $file->hashName()
         ]);
+    }
+
+    public function search(Request $request): \Spatie\Searchable\SearchResultCollection
+    {
+        return (new Search())
+            ->registerModel(Rum::class, ['title', 'description'])
+            ->search($request->q);
     }
 
     /*
