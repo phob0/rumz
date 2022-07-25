@@ -14,6 +14,7 @@ class BanUnbanMember extends Notification
 
     public Rum $rum;
     public string $message;
+    public bool $follow_up = false;
 
     /**
      * Create a new notification instance.

@@ -14,6 +14,7 @@ class RemoveMember extends Notification
 
     public Rum $rum;
     public string $message;
+    public bool $follow_up = false;
 
     /**
      * Create a new notification instance.
@@ -61,7 +62,8 @@ class RemoveMember extends Notification
     {
         return [
             'rum' => $this->rum,
-            'message' => $this->message
+            'message' => $this->message,
+            'follow_up' => $this->follow_up
         ];
     }
 }

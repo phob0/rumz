@@ -2,28 +2,23 @@
 
 namespace App\Notifications;
 
-use App\Models\Rum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class BanMember extends Notification
+class NewComment extends Notification
 {
     use Queueable;
-
-    public Rum $rum;
-    public string $message;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Rum $rum, $message)
+    public function __construct()
     {
-        $this->rum = $rum;
-        $this->message = $message;
+        //
     }
 
     /**
@@ -34,7 +29,7 @@ class BanMember extends Notification
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['mail'];
     }
 
     /**
@@ -60,8 +55,7 @@ class BanMember extends Notification
     public function toArray($notifiable)
     {
         return [
-            'rum' => $this->rum,
-            'message' => $this->message
+            //
         ];
     }
 }

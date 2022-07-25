@@ -14,6 +14,7 @@ class InviteMember extends Notification
 
     public Rum $rum;
     public string $message;
+    public bool $follow_up = true;
 
     /**
      * Create a new notification instance.
@@ -61,7 +62,8 @@ class InviteMember extends Notification
     {
         return [
             'rum' => $this->rum,
-            'message' => $this->message
+            'message' => $this->message,
+            'follow_up' => $this->follow_up
         ];
     }
 }

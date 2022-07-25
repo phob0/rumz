@@ -11,6 +11,7 @@ use App\Models\Favourite;
 use App\Models\Rum;
 use App\Models\RumPost;
 use App\Notifications\CommentReport;
+use App\Notifications\PostReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -63,12 +64,12 @@ class RumPostController extends Controller
 
         $rumPost->delete();
     }
-    // TODO: Write test to check response
+
     public function reportPost(Request $request, RumPost $rumPost): \Illuminate\Http\Response
     {
         $this->authorize('reportPost', $rumPost);
 
-        $rumPost->rum->master()->notify(
+        $rumPost->rum->master->notify(
             new PostReport(
                 $rumPost,
             'A post has been reported. Please verify and submit a response.'
@@ -86,9 +87,10 @@ class RumPostController extends Controller
 
         $model = $type === 'post' ?
             RumPost::find($id) :
-                ($type === 'comment' ?
-                    Comment::find($id) :
-                    CommentReply::find($id)
+                (
+                    $type === 'comment' ?
+                        Comment::find($id) :
+                        CommentReply::find($id)
                 );
 
         $this->authorize('likeOrDislike', [RumPost::class ,$model, $type]);

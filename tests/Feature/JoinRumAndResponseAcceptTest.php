@@ -48,11 +48,11 @@ it('has a private rum and request join an accept', function () {
 
     $rum = $rum->fresh();
 
-    expect($rum->joined)->toHaveCount(1);
+    expect($rum->join_requests)->toHaveCount(1);
 
-    $this->assertEquals($rum->joined[0]->user_id, $subscriber->id);
-    $this->assertEquals($rum->joined[0]->rum_id, $rum->id);
-    $this->assertEquals($rum->joined[0]->granted, 0);
+    $this->assertEquals($rum->join_requests[0]->user_id, $subscriber->id);
+    $this->assertEquals($rum->join_requests[0]->rum_id, $rum->id);
+    $this->assertEquals($rum->join_requests[0]->granted, 0);
 
     auth()->user()->tokens()->delete();
 

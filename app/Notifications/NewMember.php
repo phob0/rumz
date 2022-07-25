@@ -2,28 +2,25 @@
 
 namespace App\Notifications;
 
-use App\Models\Rum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RumReport extends Notification
+class NewMember extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public Rum $rum;
-    public string $message;
     public bool $follow_up = false;
+    public string $message;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($rum, $message = '')
+    public function __construct($message)
     {
-        $this->rum = $rum;
         $this->message = $message;
     }
 
@@ -61,9 +58,7 @@ class RumReport extends Notification
     public function toArray($notifiable)
     {
         return [
-            "message" => $this->message,
-            "rum" => $this->rum,
-            "user" => $notifiable,
+            'message' => $this->message,
             'follow_up' => $this->follow_up
         ];
     }

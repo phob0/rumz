@@ -76,7 +76,7 @@ class RumPolicy
     public function grant(User $master, Rum $rum, User $user)
     {
         return $rum->user_id === $master->id
-            && $rum->joined->contains(function($item) use($user) { return $item->user_id === $user->id; });
+            && $rum->join_requests->contains(function($item) use($user) { return $item->user_id === $user->id; });
     }
 
     public function membersList(User $user, Rum $rum)
@@ -98,14 +98,22 @@ class RumPolicy
     public function acceptInvite(User $user, Rum $rum)
     {
         return $user->id !== $rum->user_id &&
-            $rum->users->contains(fn ($item) => $item->id === $user->id && $item->granted === 0);
+            $rum->join_requests->contains(fn ($item) => $item->user_id === $user->id);
     }
 
-    public function banOrUnbanMembers(User $user, Rum $rum, User $member)
+    public function banOrUnbanMembers(User $user, Rum $rum, User $member, $action)
     {
-        return ($rum->type !== Rum::TYPE_PAID ?
+        $users = $action === 'ban' ?
             $rum->users->contains(fn ($item) => $item->id === $member->id) :
-            $rum->subscribed->contains(fn ($item) => $item->id === $member->id));
+            $rum->join_requests->contains(fn ($item) => $item->user_id === $member->id);
+
+        $subscribers = $action === 'ban' ?
+            $rum->subscribed->contains(fn ($item) => $item->id === $member->id) :
+            $rum->subscriptions->contains(fn ($item) => $item->user_id === $member->id);
+
+        return ($rum->type !== Rum::TYPE_PAID ?
+            $users :
+            $subscribers);
     }
 
     public function removeMembers(User $user, Rum $rum, User $member)

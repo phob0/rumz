@@ -6,11 +6,13 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class AcceptInvite extends Notification
 {
     use Queueable;
 
+    public bool $follow_up = true;
     public string $message;
 
     /**
@@ -57,7 +59,8 @@ class AcceptInvite extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => $message
+            'message' => $this->message,
+            'follow_up' => $this->follow_up
         ];
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('subscriptions', function(Blueprint $table) {
-            $table->boolean('grant')->after('is_paid')->default(1);
+            $table->boolean('granted')->after('is_paid')->default(1);
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('subscriptions', function(Blueprint $table) {
-            $table->removeColumn('grant');
+            $table->removeColumn('granted');
         });
     }
 };

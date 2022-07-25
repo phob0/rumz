@@ -75,7 +75,7 @@ class Rum extends Model
         return $this->belongsToMany(
             User::class,
             Subscription::class,
-        )->withPivot(['amount', 'is_paid', 'expire_at', 'created_at', 'updated_at']);
+        )->withPivot(['amount', 'is_paid', 'granted', 'expire_at', 'created_at', 'updated_at'])->where('granted', 1);
     }
 
     public function master(): \Illuminate\Database\Eloquent\Relations\HasOne
