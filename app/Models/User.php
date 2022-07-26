@@ -48,14 +48,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function rums(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function rums(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(Rum::class, 'user_id', 'id');
+        return $this->hasMany(Rum::class, 'user_id', 'id');
     }
 
-    public function posts(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(RumPost::class, 'user_id', 'id');
+        return $this->hasMany(RumPost::class, 'user_id', 'id');
     }
 
     public function favourites(): \Illuminate\Database\Eloquent\Relations\HasManyThrough

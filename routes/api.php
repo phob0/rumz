@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RumController;
 use App\Http\Controllers\RumPostController;
 use App\Models\Rum;
@@ -85,6 +86,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('lookup-metadata', [RumPostController::class, 'lookupMetadata'])->name('lookupMetadata');
             Route::get('{rum}', [RumPostController::class, 'index'])->name('postPage');
         });
+    });
+
+    Route::group(['prefix' => 'profile', 'as' => 'profiles'], function() {
+        Route::get('', [ProfileController::class, 'profile']);
+        Route::get('posts', [ProfileController::class, 'posts']);
     });
 
     Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {

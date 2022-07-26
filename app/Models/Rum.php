@@ -31,10 +31,14 @@ class Rum extends Model
         'privilege',
     ];
 
+    protected $appends = [
+        'members'
+    ];
+
     protected $with = [
         'hashtags',
         'users',
-        'subscribed'
+        'subscribed',
     ];
 
     public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
@@ -87,4 +91,10 @@ class Rum extends Model
     {
         return $this->hasMany(RumHashtag::class, 'rum_id', 'id');
     }
+
+    public function getMembersAttribute()
+    {
+        return $this->users->concat($this->subscribed)->count();
+    }
+
 }
