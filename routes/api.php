@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -64,6 +65,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 ->whereIn('type', ['post', 'comment', 'reply'])
                 ->whereIn('action', ['like', 'dislike'])
                 ->name('likeRumPost');
+            Route::delete('delete/{rum_post}', [RumPostController::class, 'delete'])->name('deleteRumPost');
 
             Route::group(['prefix' => 'favourite', 'as' => 'favourites'], function() {
                 Route::patch('{rum_post}', [RumPostController::class, 'saveFavourite'])->name('saveFavouriteRumPost');
@@ -74,6 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::group(['prefix' => 'comment', 'as' => 'comments'], function() {
                 Route::patch('{rum_post}', [RumPostController::class, 'comment'])->name('commentRumPost');
                 Route::patch('update/{rum_post}/{comment}', [RumPostController::class, 'updateComment'])->name('updateCommentRumPost');
+                Route::patch('report/{rum_post}/{comment}', [RumPostController::class, 'reportComment'])->name('reportCommentRumPost');
                 Route::delete('delete/{rum_post}/{comment}', [RumPostController::class, 'deleteComment'])->name('deleteCommentRumPost');
 
                 Route::group(['prefix' => 'reply', 'as' => 'replies'], function() {
@@ -100,8 +103,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/', [RumController::class, 'index'])->name('homepage');
 
+    /*
+     * TODO: go to stripe account route serve
+     * TODO: check balance stripe
+     */
+
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
+
+Route::patch('/link_account/{user}', [Controller::class, 'link_account'])->name('linkAccount');
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
@@ -114,6 +124,90 @@ Route::post('/register', [LoginController::class, 'register'])->name('register')
  * Test queries
  *
  * */
+Route::get('/reauth', function(Request $request) {
+    dd('reauth from completing the stripe connect setup account.');
+});
+Route::get('/return', function(Request $request) {
+    dd('return back from the stripe connect setup account wizzard.');
+});
+Route::get('/test_stripe', function(Request $request) {
+    $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+    \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+
+//    return \Stripe\Charge::create([
+//        'amount'   => 1000,
+//        'currency' => 'usd',
+//        'source' => 'acct_1LTbzoPLj7mSkbe9',
+//        'description' => 'For admin Rum'
+//    ]);
+
+//    return \Stripe\PaymentIntent::create([
+//        'amount' => 1000,
+//        'currency' => 'usd',
+//        'application_fee_amount' => 100,
+//        'payment_method_types' => ['customer_balance'],
+//        'payment_method' => 'pm_1LToqbAB46hIM0CMuDLz6NbE',
+//        'confirm' => true,
+//    ], ['stripe_account' => 'acct_1LTnIOPJhHLfy5Xm']);
+
+    $charge =  \Stripe\Charge::create([
+        "amount" => 1000,
+        "currency" => "usd",
+//        "source" => "tok_visa",
+        "source" => "acct_1LTnIOPJhHLfy5Xm",
+//        for simple card charge
+//        "transfer_data" => [
+//            "amount" => 877,
+//            "destination" => "acct_1LTe3uPLLPTwYFpQ",
+//        ],
+    ]);
+
+    return \Stripe\Transfer::create([
+        "amount" => 900,
+        "currency" => "usd",
+        "source_transaction" => $charge->id,
+        "destination" => "acct_1LTe3uPLLPTwYFpQ",
+    ]);
+
+//    return $stripe->refunds->create([
+//        'charge' => 'py_1LTc3zAB46hIM0CMXf9zoye6',
+//    ]);
+
+//
+//    return \Stripe\Balance::retrieve(
+//        ['stripe_account' => 'acct_1LSVh9PIFtlUyXPr']
+//    );
+
+    /*
+    return \Stripe\PaymentLink::create([
+            'line_items' => [
+                [
+                    'price' => 'price_1LTBmHAB46hIM0CMbNuIpb66',
+                    'quantity' => 1,
+                ],
+            ],
+              'on_behalf_of' => 'acct_1LT9d7PBVmwPBmxm', //sharebaan account
+              'transfer_data' => [
+                    'destination' => 'acct_1LSVh9PIFtlUyXPr', //sharebaanda account
+                ],
+    ]);
+*/
+//    return $stripe->accounts->all();
+//    return $stripe->products->all(['limit' => 3]);
+
+//    return $stripe->prices->create([
+//        'unit_amount' => 5000,
+//        'currency' => 'ron',
+//        'recurring' => ['interval' => 'month'],
+//        'product' => 'prod_MBX02wUd9bAV6Q',
+//    ]);
+//    return $stripe->prices->all(['limit' => 3]);
+//    $stripe->accounts->delete(
+//        'acct_1LSTQDPDPEw2ehn1',
+//        []
+//    );
+});
 Route::get('/queries', function(Request $request) {
 //    $userId = User::where('id', '3e370e8d-4efb-4904-b561-665251247bfc')->first()->id;
     //user that belongs to rum > for policies

@@ -140,13 +140,43 @@ class RumController extends Controller
         $this->authorize('join', [$rum, $type]);
 
         if($type === 'paid') {
-            DB::transaction(function() use($rum, $request) {
+            // add rum_id to cashier subscriptions table
+            // remove quantity column
+
+            // remove quantity from subscription_items
+            // add default value to stripe_product column
+
+            $parsedAmount = $this->parseAmount($request->amount);
+
+            $charge =  \Stripe\Charge::create([
+                "amount" => $parsedAmount,
+                "currency" => "usd",
+                //        "source" => "tok_visa",
+                "source" => "acct_1LTnIOPJhHLfy5Xm",
+                //        for simple card charge
+                //        "transfer_data" => [
+                //            "amount" => 877,
+                //            "destination" => "acct_1LTe3uPLLPTwYFpQ",
+                //        ],
+            ]);
+
+            $transfer = \Stripe\Transfer::create([
+                "amount" => $this->subtractAdminTax($parsedAmount),
+                "currency" => "usd",
+                "source_transaction" => $charge->id,
+                "destination" => "acct_1LTe3uPLLPTwYFpQ",
+            ]);
+
+            DB::transaction(function() use($rum, $request, $transfer) {
                 $subscription = $rum->subscriptions()->updateOrCreate([
                     'user_id' => auth()->user()->id,
                 ], [
                     'is_paid' => 1,
                     'expire_at' => Carbon::now()->addMonth(),
-                    'amount' => $request->amount
+                    'transfer_id' => $transfer->id,
+                    'amount' => $request->amount,
+                    'owner_amount' => $this->subtractAdminTax($request->amount),
+                    'profit' => ($request->amount - $this->subtractAdminTax($request->amount))
                 ]);
 
                 $subscription->history_payments()->create([
@@ -331,6 +361,16 @@ class RumController extends Controller
         return (new Search())
             ->registerModel(Rum::class, ['title', 'description'])
             ->search($request->q);
+    }
+
+    private function parseAmount($amount): float|int
+    {
+        return $amount * 100;
+    }
+
+    private function subtractAdminTax($amount): float
+    {
+        return $amount - ($amount * 0.1);
     }
 
     /*

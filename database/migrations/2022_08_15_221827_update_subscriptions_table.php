@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('subscriptions', function(Blueprint $table) {
-            $table->boolean('granted')->after('is_paid')->default(1);
+        Schema::table('subscriptions', function (Blueprint $table) {
+            $table->decimal('owner_amount', $precision = 8, $scale = 2)->after('amount');
+            $table->decimal('profit', $precision = 8, $scale = 2)->after('amount');
+            $table->string('transfer_id')->after('rum_id');
         });
     }
 
@@ -26,7 +28,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('subscriptions', function(Blueprint $table) {
-            $table->removeColumn('granted');
+            $table->dropColumn('owner_amount');
+            $table->dropColumn('profit');
+            $table->dropColumn('transfer_id');
         });
     }
 };

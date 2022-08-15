@@ -11,7 +11,10 @@ class Subscription extends Model
 
     protected $fillable = [
         'user_id',
+        'transfer_id',
         'amount',
+        'profit',
+        'owner_amount',
         'is_paid',
         'expire_at',
     ];

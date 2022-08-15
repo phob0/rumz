@@ -9,6 +9,12 @@ use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
 {
+    protected $stripe;
+
+    public function __construct(){
+        $this->stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+    }
+
     public function register(Request $request)
     {
         // TODO: implement 2 factor reistration
@@ -25,7 +31,7 @@ class LoginController extends Controller
             'password' => 'required'
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->email,
             'phone' => $request->phone,
             'sex' => $request->sex,
@@ -34,7 +40,24 @@ class LoginController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        return response()->noContent();
+        $stripe = $this->stripe->accounts->create([
+            'type' => 'custom',
+            'country' => 'US',
+            'email' => $user->email,
+            'capabilities' => [
+                'card_payments' => ['requested' => true],
+                'transfers' => ['requested' => true],
+            ],
+        ]);
+
+        $user->update([
+            'stripe_id' => $stripe->id,
+            'pm_type' => $stripe->type
+        ]);
+
+        return response()->json([
+            'user' => $user
+        ]);
     }
 
     public function login(Request $request)
