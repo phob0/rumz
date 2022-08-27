@@ -9,11 +9,6 @@ use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
 {
-    protected $stripe;
-
-    public function __construct(){
-        $this->stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
-    }
 
     public function register(Request $request)
     {
@@ -40,7 +35,9 @@ class LoginController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        $stripe = $this->stripe->accounts->create([
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+        $stripe->accounts->create([
             'type' => 'custom',
             'country' => 'US',
             'email' => $user->email,

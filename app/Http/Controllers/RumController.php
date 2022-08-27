@@ -37,6 +37,25 @@ class RumController extends Controller
         return JsonResource::collection(Rum::where('type', '!=', 'confidential')->get());
     }
 
+    public function explore(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return JsonResource::collection(Rum::where('type', '!=', 'confidential')->get());
+    }
+
+    public function myRums(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return JsonResource::collection(auth()->user()->rums);
+    }
+
+    public function currentRums(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return JsonResource::collection(
+            auth()->user()->joinedRums->concat(
+                auth()->user()->subscribedRums
+            )
+        );
+    }
+
     /**
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -148,7 +167,9 @@ class RumController extends Controller
 
             $parsedAmount = $this->parseAmount($request->amount);
 
-            $charge =  \Stripe\Charge::create([
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+            $charge =  $stripe->charges->create([
                 "amount" => $parsedAmount,
                 "currency" => "usd",
                 //        "source" => "tok_visa",
@@ -160,7 +181,7 @@ class RumController extends Controller
                 //        ],
             ]);
 
-            $transfer = \Stripe\Transfer::create([
+            $transfer = $stripe->transfers->create([
                 "amount" => $this->subtractAdminTax($parsedAmount),
                 "currency" => "usd",
                 "source_transaction" => $charge->id,

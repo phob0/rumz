@@ -36,6 +36,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     })->name('user');
     //rum routes
     Route::group(['prefix' => 'rum', 'as' => 'rums'], function() {
+        Route::get('my-rums', [RumController::class, 'myRums'])->name('myRums');
+        Route::get('explore', [RumController::class, 'explore'])->name('exploreRum');
+        Route::get('current-rums', [RumController::class, 'currentRums'])->name('currentRums');
         Route::post('create', [RumController::class, 'store'])->name('storeRum');
         Route::get('view/{rum}', [RumController::class, 'view'])->name('viewRum');
         Route::get('edit/{rum}', [RumController::class, 'edit'])->name('editRum');
@@ -104,14 +107,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [RumController::class, 'index'])->name('homepage');
 
     /*
-     * TODO: go to stripe account route serve
      * TODO: check balance stripe
      */
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-Route::patch('/link_account/{user}', [Controller::class, 'link_account'])->name('linkAccount');
+Route::get('/create-stripe-account/{user}', [Controller::class, 'createStripeAccount'])->name('createStripeAccount');
+
+Route::get('/link-account/{user}', [Controller::class, 'linkAccount'])->name('linkAccount');
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
