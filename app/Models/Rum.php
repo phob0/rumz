@@ -78,7 +78,7 @@ class Rum extends Model
     {
         return $this->belongsToMany(
             User::class,
-            Subscription::class,
+            Subscription::class
         )->withPivot(['amount', 'is_paid', 'granted', 'expire_at', 'created_at', 'updated_at'])->where('granted', 1);
     }
 

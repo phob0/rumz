@@ -21,8 +21,12 @@ class SubscriptionFactory extends Factory
         return [
             'user_id' => User::all()->random()->id,
             'rum_id' => Rum::all()->random()->id,
+            'owner_amount' => 10.00,
+            'profit' => 2.00,
+            'transfer_id' => '',
             'amount' => collect([1, 2, 3, 4])->random(),
             'is_paid' => 1,
+            'granted' => 1,
             'expire_at' => null
         ];
     }

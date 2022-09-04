@@ -14,9 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('subscriptions', function (Blueprint $table) {
-            $table->decimal('owner_amount', $precision = 8, $scale = 2)->after('amount');
-            $table->decimal('profit', $precision = 8, $scale = 2)->after('amount');
-            $table->string('transfer_id')->after('rum_id');
+            $table->decimal('owner_amount', $precision = 8, $scale = 2)->after('amount')->default(0);
+            $table->decimal('profit', $precision = 8, $scale = 2)->after('amount')->default(0);
+            $table->string('transfer_id')->after('rum_id')->nullable();
         });
     }
 

@@ -32,8 +32,8 @@ return new class extends Migration
             $table->dropColumn([
                 'stripe_id',
                 'pm_type',
-                'pm_last_four',
-                'trial_ends_at',
+//                'pm_last_four',
+//                'trial_ends_at',
             ]);
         });
     }

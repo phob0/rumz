@@ -27,6 +27,7 @@ class CreateSubscriptionsTable extends Migration
             $table->index(["rum_id"], 'subscriptions_rums_id_foreign');
             $table->decimal('amount', $precision = 8, $scale = 2);
             $table->boolean('is_paid')->default(0);
+            $table->boolean('granted')->default(0);
             $table->timestamp('expire_at');
             $table->timestamps();
         });
