@@ -3,17 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
 {
 
-    public function register(Request $request)
-    {
-        // TODO: implement 2 factor reistration
+    private \Vonage\Client $vonage;
 
+    public function __construct()
+    {
+        $this->vonage = new \Vonage\Client(new \Vonage\Client\Credentials\Container(
+            new \Vonage\Client\Credentials\Basic(env('VONAGE_KEY'), env('VONAGE_SECRET'))
+        ));
+    }
+    /*
+     * validate register and send 2fa
+     * validate 2fa and register
+     *
+     * same to login
+     * */
+    private function twoFactor($request)
+    {
+        $vonageRequest = new \Vonage\Verify\Request($request->phone, env("VONAGE_APP_NAME"));
+
+        $response = $this->vonage->verify()->start($vonageRequest);
+
+        return $response->getRequestId();
+    }
+
+    private function twoFactorValidate($request)
+    {
+        $result = $this->vonage->verify()->check($request->vonage_id, $request->vonage_code);
+
+        // status 16 = error
+        // status 0 = success
+
+        return $result->getResponseData();
+    }
+
+    public function preRegister(Request $request)
+    {
         $request->validate([
             'name' => 'required|string',
             'phone' => 'required|string',
@@ -25,6 +58,21 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
+
+        $vonage = $this->twoFactor($request);
+
+        return response()->json(['user' => $request->all(), 'vonage' => $vonage]);
+    }
+
+    public function register(Request $request)
+    {
+        $vonage = $this->twoFactorValidate($request);
+
+        if ($vonage->status !== 0) {
+            throw new HttpResponseException(
+                response()->json(['errors' => $vonage->error_text], Response::HTTP_UNPROCESSABLE_ENTITY)
+            );
+        }
 
         $user = User::create([
             'name' => $request->email,
@@ -57,10 +105,8 @@ class LoginController extends Controller
         ]);
     }
 
-    public function login(Request $request)
+    public function preLogin(Request $request): \Illuminate\Http\JsonResponse
     {
-        // TODO: implement 2 factor authentication
-
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
@@ -73,6 +119,17 @@ class LoginController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
+
+        $vonage = $this->twoFactor($request);
+
+        return response()->json(['user' => $user, 'vonage' => $vonage]);
+    }
+
+    public function login(Request $request)
+    {
+        $vonage = $this->twoFactorValidate($request);
+
+        $user = User::where('email', $request->email)->first();
 
         return $user->createToken('sanctum-token')->plainTextToken;
     }

@@ -117,9 +117,16 @@ Route::get('/create-stripe-account/{user}', [Controller::class, 'createStripeAcc
 
 Route::get('/link-account/{user}', [Controller::class, 'linkAccount'])->name('linkAccount');
 
+Route::post('/pre-login', [LoginController::class, 'preLogin'])->name('preLogin');
+
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
+Route::post('/pre-register', [LoginController::class, 'preRegister'])->name('preRegister');
+
 Route::post('/register', [LoginController::class, 'register'])->name('register');
+
+//Route::post('/2fa/request', [LoginController::class, 'twoFactor'])->name('twoFactor');
+//Route::post('/2fa/validate', [LoginController::class, 'twoFactorValidate'])->name('twoFactorValidate');
 
 // URL for csrf cookie : http://localhost/sanctum/csrf-cookie
 
