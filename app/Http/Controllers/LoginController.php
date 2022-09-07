@@ -75,11 +75,12 @@ class LoginController extends Controller
         }
 
         $user = User::create([
-            'name' => $request->email,
+            'name' => $request->name,
             'phone' => $request->phone,
 //            'sex' => $request->sex,
 //            'birth_date' => $request->birth_date,
-//            'email' => $request->email,
+            'email' => '',
+            'stripe_id' => '',
 //            'password' => Hash::make($request->password)
         ]);
 
@@ -111,7 +112,7 @@ class LoginController extends Controller
             'phone' => 'required|exists:user'
         ]);
 
-        $user = User::where('email', $request->phone)->first();
+        $user = User::where('phone', $request->phone)->first();
 
         if (! $user) {
             throw ValidationException::withMessages([
