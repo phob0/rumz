@@ -42,7 +42,7 @@ class LoginController extends Controller
         // status 16 = error
         // status 0 = success
 
-        return $result->getResponseData();
+        return $result->getResponseData() === 0;
     }
 
     public function preRegister(Request $request)
@@ -50,13 +50,13 @@ class LoginController extends Controller
         $request->validate([
             'name' => 'required|string',
             'phone' => 'required|string',
-            'sex' => [
-                'required',
-                Rule::in(['male', 'female'])
-            ],
-            'birth_date' => 'required|date',
-            'email' => 'required|email',
-            'password' => 'required'
+//            'sex' => [
+//                'required',
+//                Rule::in(['male', 'female'])
+//            ],
+//            'birth_date' => 'required|date',
+//            'email' => 'required|email',
+//            'password' => 'required'
         ]);
 
         $vonage = $this->twoFactor($request);
@@ -77,28 +77,28 @@ class LoginController extends Controller
         $user = User::create([
             'name' => $request->email,
             'phone' => $request->phone,
-            'sex' => $request->sex,
-            'birth_date' => $request->birth_date,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
+//            'sex' => $request->sex,
+//            'birth_date' => $request->birth_date,
+//            'email' => $request->email,
+//            'password' => Hash::make($request->password)
         ]);
 
-        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+//        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
-        $stripe->accounts->create([
-            'type' => 'custom',
-            'country' => 'US',
-            'email' => $user->email,
-            'capabilities' => [
-                'card_payments' => ['requested' => true],
-                'transfers' => ['requested' => true],
-            ],
-        ]);
+//        $stripe->accounts->create([
+//            'type' => 'custom',
+//            'country' => 'US',
+//            'email' => $user->email,
+//            'capabilities' => [
+//                'card_payments' => ['requested' => true],
+//                'transfers' => ['requested' => true],
+//            ],
+//        ]);
 
-        $user->update([
-            'stripe_id' => $stripe->id,
-            'pm_type' => $stripe->type
-        ]);
+//        $user->update([
+//            'stripe_id' => $stripe->id,
+//            'pm_type' => $stripe->type
+//        ]);
 
         return response()->json([
             'user' => $user
@@ -108,15 +108,14 @@ class LoginController extends Controller
     public function preLogin(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+            'phone' => 'required|exists:user'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->phone)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'phone' => ['The provided credentials are incorrect.'],
             ]);
         }
 
@@ -129,9 +128,13 @@ class LoginController extends Controller
     {
         $vonage = $this->twoFactorValidate($request);
 
-        $user = User::where('email', $request->email)->first();
+        if ($vonage) {
+            $user = User::where('phone', $request->phone)->first();
 
-        return $user->createToken('sanctum-token')->plainTextToken;
+            return $user->createToken('sanctum-token')->plainTextToken;
+        } else {
+            return false;
+        }
     }
 
     public function logout(): \Illuminate\Http\Response
