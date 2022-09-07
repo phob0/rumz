@@ -7,6 +7,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
@@ -42,7 +43,7 @@ class LoginController extends Controller
         // status 16 = error
         // status 0 = success
 
-        return $result->getResponseData() === 0;
+        return $result->getResponseData();
     }
 
     public function preRegister(Request $request)
@@ -68,7 +69,7 @@ class LoginController extends Controller
     {
         $vonage = $this->twoFactorValidate($request);
 
-        if ($vonage->status !== 0) {
+        if ($vonage['status'] !== 0) {
             throw new HttpResponseException(
                 response()->json(['errors' => $vonage->error_text], Response::HTTP_UNPROCESSABLE_ENTITY)
             );
@@ -109,7 +110,7 @@ class LoginController extends Controller
     public function preLogin(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
-            'phone' => 'required|exists:user'
+            'phone' => 'required|exists:users'
         ]);
 
         $user = User::where('phone', $request->phone)->first();
@@ -129,12 +130,14 @@ class LoginController extends Controller
     {
         $vonage = $this->twoFactorValidate($request);
 
-        if ($vonage) {
+        if ($vonage['status'] == 0) {
             $user = User::where('phone', $request->phone)->first();
 
             return $user->createToken('sanctum-token')->plainTextToken;
         } else {
-            return false;
+            throw ValidationException::withMessages([
+                'login' => ['The provided credentials are incorrect.'],
+            ]);
         }
     }
 
