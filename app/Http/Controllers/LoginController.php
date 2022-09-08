@@ -71,7 +71,7 @@ class LoginController extends Controller
 
         if ($vonage['status'] !== 0) {
             throw new HttpResponseException(
-                response()->json(['errors' => $vonage->error_text], Response::HTTP_UNPROCESSABLE_ENTITY)
+                response()->json(['errors' => $vonage], Response::HTTP_UNPROCESSABLE_ENTITY)
             );
         }
 
