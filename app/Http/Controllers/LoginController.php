@@ -40,9 +40,6 @@ class LoginController extends Controller
     {
         $result = $this->vonage->verify()->check($request->vonage_id, $request->vonage_code);
 
-        // status 16 = error
-        // status 0 = success
-
         return $result->getResponseData();
     }
 
@@ -69,7 +66,7 @@ class LoginController extends Controller
     {
         $vonage = $this->twoFactorValidate($request);
 
-        if ($vonage['status'] !== 0) {
+        if ((int)$vonage['status'] !== 0) {
             throw new HttpResponseException(
                 response()->json(['errors' => $vonage], Response::HTTP_UNPROCESSABLE_ENTITY)
             );
@@ -78,11 +75,11 @@ class LoginController extends Controller
         $user = User::create([
             'name' => $request->name,
             'phone' => $request->phone,
-//            'sex' => $request->sex,
-//            'birth_date' => $request->birth_date,
+            'sex' => '',
+            'birth_date' => \Carbon\Carbon::now(),
             'email' => '',
             'stripe_id' => '',
-//            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->phone)
         ]);
 
 //        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
@@ -130,7 +127,7 @@ class LoginController extends Controller
     {
         $vonage = $this->twoFactorValidate($request);
 
-        if ($vonage['status'] == 0) {
+        if ((int)$vonage['status'] == 0) {
             $user = User::where('phone', $request->phone)->first();
 
             return $user->createToken('sanctum-token')->plainTextToken;
