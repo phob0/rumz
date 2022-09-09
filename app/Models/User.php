@@ -11,6 +11,7 @@ use App\Traits\HasUuid;
 
 class User extends Authenticatable
 {
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasApiTokens, HasFactory, Notifiable, HasUuid;
 
     /**

@@ -9,6 +9,7 @@ use App\Traits\HasUuid;
 
 class Comment extends Model
 {
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory, HasUuid;
 
     protected $fillable = [

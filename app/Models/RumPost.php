@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class RumPost extends Model
 {
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory, HasUuid;
 
     protected $fillable = [

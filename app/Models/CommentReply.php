@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CommentReply extends Model
 {
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory, HasUuid;
 
     protected $fillable = [
