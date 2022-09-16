@@ -20,6 +20,7 @@ class RumPost extends Model
         'title',
         'description',
         'metadata',
+        'image',
     ];
 
     protected $casts = [

@@ -20,6 +20,9 @@ use Illuminate\Support\Str;
 
 class RumPostController extends Controller
 {
+    /* TODO:remove title field, image, upload image
+     * remove title field
+     */
     public function index(Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         // TODO: authorize view posts

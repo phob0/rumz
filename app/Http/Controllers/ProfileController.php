@@ -11,6 +11,8 @@ class ProfileController extends Controller
     /*
      * TODO
      *  total friends
+     *  upload avatar
+     *  retrieve ith avatar
      */
 
     public function profile(Request $request): JsonResource

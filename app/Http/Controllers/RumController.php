@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RumController extends Controller
 {
+
     // TODO: uprade returns with specific resources
     public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
@@ -57,6 +58,7 @@ class RumController extends Controller
     }
 
     /**
+     * @deprecated
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function view(Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -80,6 +82,8 @@ class RumController extends Controller
                 auth()->user()->id
             )
         );
+
+        // TODO: relate hashtags
 
         Image::create([
             'url' => $data['image'],

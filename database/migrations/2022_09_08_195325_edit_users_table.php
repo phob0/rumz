@@ -14,8 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropUnique('email');
-            $table->unique('phone');
+            if (\DB::connection()->getDriverName() !== "sqlite") {
+                $table->dropUnique('email');
+                $table->unique('phone');
+            }
         });
     }
 
@@ -27,8 +29,10 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropUnique('phone');
-            $table->unique('email');
+            if (\DB::connection()->getDriverName() !== "sqlite") {
+                $table->dropUnique('phone');
+                $table->unique('email');
+            }
         });
     }
 };

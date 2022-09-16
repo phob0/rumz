@@ -41,6 +41,7 @@ class Rum extends Model
         'hashtags',
         'users',
         'subscribed',
+        'image'
     ];
 
     public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne

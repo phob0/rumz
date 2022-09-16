@@ -34,6 +34,7 @@ class RumFactory extends Factory
             'user_id' => User::first()->id,
             'title' => $faker->text,
             'description' => $faker->text,
+            'website' => $faker->text,
 //            'image' => $faker->imageUrl('300', '300', null, false, env('APP_NAME')),
             'type' => $type->random(),
             'privilege' => $privilege->random(),
