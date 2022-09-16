@@ -220,6 +220,12 @@ Route::get('/test_stripe', function(Request $request) {
 //    );
 });
 Route::get('/queries', function(Request $request) {
+//    dd(config('services.mailchimp.key'));
+    $mailchimp = new MailchimpTransactional\ApiClient();
+    $mailchimp->setApiKey(env('MAILCHIMP_MANDRILL_KEY'));
+    $response = $mailchimp->senders->list();
+
+    dd($response);
 //    $userId = User::where('id', '3e370e8d-4efb-4904-b561-665251247bfc')->first()->id;
     //user that belongs to rum > for policies
 //    $userRum = Rum::whereHas('users', function (Builder $query) use($userId) {
@@ -230,9 +236,9 @@ Route::get('/queries', function(Request $request) {
 //    $posts = $userRum->posts;
 
     //check valid address
-    $crawler = Goutte::request('GET', 'https://9gag.com/gag/ay9rmpV');
-    $r = $crawler->filterXpath("//meta[@property='og:title']")->extract(['content']);
-    var_dump($r);
+//    $crawler = Goutte::request('GET', 'https://9gag.com/gag/ay9rmpV');
+//    $r = $crawler->filterXpath("//meta[@property='og:title']")->extract(['content']);
+//    var_dump($r);
     //    $description = $crawler->filterXpath('//meta[@property="og:description"]')->attr('content');
 //    $image = $crawler->filterXpath('//meta[@property="og:description"]')->extract('content');
 //    var_dump($image);

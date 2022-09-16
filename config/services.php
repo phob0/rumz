@@ -30,4 +30,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'mailchimp' => [
+        'mandrill' => [
+            'key' => env('MAILCHIMP_MANDRILL_KEY')
+        ]
+    ]
+
 ];

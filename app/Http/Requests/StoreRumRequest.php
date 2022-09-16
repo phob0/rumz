@@ -31,6 +31,7 @@ class StoreRumRequest extends FormRequest
         return [
             'title' => 'required|max:255|string|unique:rums',
             'description' => 'string',
+            'website' => 'string',
             'type' => [
                 'required',
                 Rule::in([

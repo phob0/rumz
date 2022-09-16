@@ -28,6 +28,7 @@ class Rum extends Model
         'user_id',
         'title',
         'description',
+        'website',
         'type',
         'privilege',
     ];
