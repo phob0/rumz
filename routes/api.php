@@ -56,7 +56,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::patch('accept-invite/{rum}', [RumController::class, 'acceptInviteMember'])->name('acceptInviteMemberRum');
             Route::patch('remove/{rum}/{user}', [RumController::class, 'removeMember'])->name('removeMemberRum');
         });
-        Route::post('image', [RumController::class, 'image'])->name('imageRum');
         Route::get('search/{q?}', [RumController::class, 'search'])->name('searchRum');
 
         Route::group(['prefix' => 'post', 'as' => 'posts'], function() {
@@ -93,6 +92,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('{rum}', [RumPostController::class, 'index'])->name('postPage');
         });
     });
+
+    Route::post('image', [Controller::class, 'image'])->name('imageRum');
 
     Route::group(['prefix' => 'profile', 'as' => 'profiles'], function() {
         Route::get('', [ProfileController::class, 'profile']);

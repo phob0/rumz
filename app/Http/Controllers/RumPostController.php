@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRumPostRequest;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Favourite;
+use App\Models\Image;
 use App\Models\Rum;
 use App\Models\RumPost;
 use App\Notifications\CommentReport;
@@ -16,13 +17,12 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class RumPostController extends Controller
 {
-    /* TODO:remove title field, image, upload image
-     * remove title field
-     */
+
     public function index(Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         // TODO: authorize view posts
@@ -31,14 +31,23 @@ class RumPostController extends Controller
 
     public function store(StoreRumPostRequest $request): JsonResource
     {
+        $path = !is_null($request->file('image')) ? $request->file('image')->store('public/images/posts') : null;
         $data = $request->validated();
-//        $this->authorize('create', $data['rum_id']);
-        // TODO: notificate all rum members and create privileged users table
-        return JsonResource::make(
-            RumPost::create(
-                Arr::add($data, 'user_id', auth()->user()->id)
-            )
+
+        $data['image'] = $path;
+
+        $rumPost = RumPost::create(
+            Arr::add($data, 'user_id', auth()->user()->id)
         );
+
+        Image::create([
+            'url' => $data['image'],
+            'imageable_id' => $rumPost->id,
+            'imageable_type' => RumPost::class,
+        ]);
+
+        // TODO: notificate all rum members and create privileged users table
+        return JsonResource::make($rumPost);
     }
 
     public function edit(RumPost $rumPost): JsonResource
@@ -54,9 +63,22 @@ class RumPostController extends Controller
 
         $data = $request->validated();
 
+        if (Storage::disk('local')->exists('public/images/temp/'.$request->image)) {
+            Storage::disk('local')->move('public/images/temp/'.$request->image, 'public/images/posts/'.$request->image);
+        }
+
         $rumPost->update(
-            Arr::add($data, 'user_id', auth()->user()->id)
+            Arr::except(
+                Arr::add($data, 'user_id', auth()->user()->id),
+                ['image'])
+
         );
+
+        Image::create([
+            'url' => $data['image'],
+            'imageable_id' => $rumPost->id,
+            'imageable_type' => RumPost::class,
+        ]);
 
         return response()->noContent();
     }

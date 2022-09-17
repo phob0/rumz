@@ -370,17 +370,6 @@ class RumController extends Controller
         return response()->noContent();
     }
 
-    public function image(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $file = $request->file('image');
-        $path = $file->store('public/images/temp');
-
-        return response()->json([
-            'path' => $path,
-            'file_name' => $file->hashName()
-        ]);
-    }
-
     public function search(Request $request): \Spatie\Searchable\SearchResultCollection
     {
         return (new Search())

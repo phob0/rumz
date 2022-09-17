@@ -55,4 +55,15 @@ class Controller extends BaseController
             'stripe_onboarding' => $account
         ]);
     }
+
+    public function image(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $file = $request->file('image');
+        $path = $file->store('public/images/temp');
+
+        return response()->json([
+            'path' => $path,
+            'file_name' => $file->hashName()
+        ]);
+    }
 }

@@ -17,7 +17,6 @@ class RumPost extends Model
         'rum_id',
         'user_id',
         'approved',
-        'title',
         'description',
         'metadata',
         'image',
