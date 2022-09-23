@@ -99,7 +99,7 @@ class RumController extends Controller
             });
         }
 
-        return JsonResource::make($rum);
+        return JsonResource::make($rum->refresh());
     }
 
     public function edit(Rum $rum): JsonResource
