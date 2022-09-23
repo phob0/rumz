@@ -73,7 +73,8 @@ class RumController extends Controller
         $path = !is_null($request->file('image')) ? $request->file('image')->store('public/images/rums') : null;
 
         $data = $request->validated();
-        $data['image'] = $path;
+
+        $data['image'] = link_image_path($path);
 
         $rum = Rum::create(
             Arr::add(
