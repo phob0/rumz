@@ -40,14 +40,17 @@ class RumPostController extends Controller
             Arr::add($data, 'user_id', auth()->user()->id)
         );
 
-        Image::create([
+        $rumPost->image()->create([
             'url' => $data['image'],
             'imageable_id' => $rumPost->id,
             'imageable_type' => RumPost::class,
         ]);
 
         // TODO: notificate all rum members and create privileged users table
-        return JsonResource::make($rumPost);
+        return JsonResource::make($rumPost->load([
+            'usersLike',
+            'comments'
+        ]));
     }
 
     public function edit(RumPost $rumPost): JsonResource

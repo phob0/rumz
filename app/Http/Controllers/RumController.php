@@ -85,7 +85,7 @@ class RumController extends Controller
 
         // TODO: relate hashtags
 
-        Image::create([
+        $rum->image()->create([
             'url' => $data['image'],
             'imageable_id' => $rum->id,
             'imageable_type' => Rum::class,
@@ -99,7 +99,12 @@ class RumController extends Controller
             });
         }
 
-        return JsonResource::make($rum->refresh());
+        return JsonResource::make($rum->load([
+            'hashtags',
+            'users',
+            'subscribed',
+            'image'
+        ]));
     }
 
     public function edit(Rum $rum): JsonResource
