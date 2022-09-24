@@ -84,8 +84,6 @@ class RumController extends Controller
             )
         );
 
-        // TODO: relate hashtags
-
         $rum->image()->create([
             'url' => $data['image'],
             'imageable_id' => $rum->id,
@@ -131,8 +129,8 @@ class RumController extends Controller
             Arr::except($data, ['hashtags', 'image'])
         );
 
-        Image::create([
-            'url' => $data['image'],
+        $rum->image()->update([
+            'url' => 'storage/images/rums/' . $data['image'],
             'imageable_id' => $rum->id,
             'imageable_type' => Rum::class,
         ]);
@@ -161,7 +159,7 @@ class RumController extends Controller
 
     public function hashtagSuggestions(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return JsonResource::collection(RumHashtag::where('hashtag', 'like', $request->q.'%')->get());
+        return JsonResource::collection(RumHashtag::where('hashtag', 'like', $request->q.'%')->get('hashtag'));
     }
 
     public function join(Request $request, Rum $rum, $type = 'free'): \Illuminate\Http\Response

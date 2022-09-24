@@ -77,8 +77,8 @@ class RumPostController extends Controller
 
         );
 
-        Image::create([
-            'url' => $data['image'],
+        $rumPost->image()->update([
+            'url' => 'storage/images/rums/' . $data['image'],
             'imageable_id' => $rumPost->id,
             'imageable_type' => RumPost::class,
         ]);

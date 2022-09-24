@@ -28,6 +28,9 @@ class ProfileController extends Controller
         return JsonResource::make(auth()->user()->posts);
     }
 
+    public function update()
+    {}
+
     public function addBalance(Request $request)
     {}
 
