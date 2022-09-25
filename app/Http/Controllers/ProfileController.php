@@ -66,7 +66,7 @@ class ProfileController extends Controller
         }
 
         if(is_null($profile->stripe_id)) {
-            if ($profile->email !== '') {
+            if ($profile->email == "") {
                 return response()->json(['warning' => 'To create your stripe account please provide an email address.']);
             }
 
