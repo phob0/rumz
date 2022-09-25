@@ -99,9 +99,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::group(['prefix' => 'profile', 'as' => 'profiles'], function() {
-        Route::get('', [ProfileController::class, 'profile']);
-        Route::get('posts', [ProfileController::class, 'posts']);
-        Route::post('update', [ProfileController::class, 'update']);
+        Route::get('', [ProfileController::class, 'profile'])->name('profile');
+        Route::get('posts', [ProfileController::class, 'posts'])->name('profilePosts');
+        Route::post('update', [ProfileController::class, 'update'])->name('profileUpdate');
+        Route::get('stripe-onboarding', [ProfileController::class, 'onboardingStripe'])->name('profileOnboarding');
+
+        Route::get('/return-onboarding', [ProfileController::class, 'returnOnboarding'])->name('profileReturnOnboarding');
+
+        Route::get('/reauth-onboarding', function(Request $request) {
+            return response()->json(['warning' => 'Your stripe onboarding link has expired, please try again']);
+        });
     });
 
     Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {
@@ -140,12 +147,7 @@ Route::post('/register', [LoginController::class, 'register'])->name('register')
  * Test queries
  *
  * */
-Route::get('/reauth', function(Request $request) {
-    dd('reauth from completing the stripe connect setup account.');
-});
-Route::get('/return', function(Request $request) {
-    dd('return back from the stripe connect setup account wizzard.');
-});
+
 Route::get('/test_stripe', function(Request $request) {
     $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 

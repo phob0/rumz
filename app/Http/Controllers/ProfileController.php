@@ -87,6 +87,33 @@ class ProfileController extends Controller
         return response()->noContent();
     }
 
+    public function onboardingStripe(Request $request): \Illuminate\Http\JsonResponse
+    {
+        if (is_null(auth()->user()->stripe_id) || auth()->user()->stripe_id == "") {
+            return response()->json(['error' => 'Please update your profile for your stripe account to be created.']);
+        }
+
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+        return response()->json([
+            'stripe_onboarding_response' => $stripe->accountLinks->create([
+                'account' => auth()->user()->stripe_id,
+                'refresh_url' => env('APP_URL') . '/profile/reauth-onboarding',
+                'return_url' => env('APP_URL') . '/profile/return-onboarding',
+                'type' => 'account_onboarding',
+            ])
+        ]);
+    }
+
+    public function returnOnboarding(Request $request): \Illuminate\Http\JsonResponse
+    {
+        auth()->user()->update([
+            'stripe_onboarding' => true
+        ]);
+
+        return response()->json(['info' => 'Your stripe onboarding is now complete.']);
+    }
+
     public function addBalance(Request $request)
     {}
 
