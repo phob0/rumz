@@ -66,6 +66,10 @@ class ProfileController extends Controller
         }
 
         if(is_null($profile->stripe_id)) {
+            if ($profile->email !== '') {
+                return response()->json(['warning' => 'To create your sripe account please provide an email address.']);
+            }
+
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
             $account = $stripe->accounts->create([
