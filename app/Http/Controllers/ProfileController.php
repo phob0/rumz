@@ -115,6 +115,8 @@ class ProfileController extends Controller
     }
 
     public function addBalance(Request $request)
-    {}
+    {
+        // TODO: get payment card connected link
+    }
 
 }

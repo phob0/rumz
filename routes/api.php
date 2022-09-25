@@ -109,6 +109,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/reauth-onboarding', function(Request $request) {
             return response()->json(['warning' => 'Your stripe onboarding link has expired, please try again']);
         });
+
+        /*
+         * TODO: check balance stripe
+         */
     });
 
     Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {
@@ -117,10 +121,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::get('/', [RumController::class, 'index'])->name('homepage');
-
-    /*
-     * TODO: check balance stripe
-     */
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
