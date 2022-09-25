@@ -34,10 +34,8 @@ class ProfileController extends Controller
     public function update(UpdateProfileRequest $request): \Illuminate\Http\Response
     {
         $data = $request->validated();
-        dd($data, auth()->user()->image);
-        $path = !is_null($request->file('image')) ? $request->file('image')->store('public/images/profiles') : null;
 
-        $data = $request->validated();
+        $path = !is_null($request->file('image')) ? $request->file('image')->store('public/images/profiles') : null;
 
         $data['image'] = link_image_path($path);
 
@@ -57,6 +55,7 @@ class ProfileController extends Controller
             (!is_null(auth()->user()->image) && !is_null($data['image'])) &&
             get_image_name(auth()->user()->image->url) !== get_image_name($data['image']))
         {
+
             $this->removeImage(public_image_path(auth()->user()->image->url));
 
             $profile->image()->update([
@@ -66,10 +65,10 @@ class ProfileController extends Controller
             ]);
         }
 
-        if(is_null(auth()->user()->stripe_id)) {
+        if(is_null($profile->stripe_id)) {
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
-            $stripe->accounts->create([
+            $account = $stripe->accounts->create([
                 'type' => 'custom',
                 'country' => 'US',
                 'email' => $profile->email,
@@ -79,9 +78,9 @@ class ProfileController extends Controller
                 ],
             ]);
 
-            auth()->user()->update([
-                'stripe_id' => $stripe->id,
-                'pm_type' => $stripe->type
+            $profile->update([
+                'stripe_id' => $account->id,
+                'pm_type' => $account->type
             ]);
         }
 
