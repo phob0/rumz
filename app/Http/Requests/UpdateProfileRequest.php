@@ -37,7 +37,7 @@ class UpdateProfileRequest extends FormRequest
             ],
             'sex' => 'max:50|string',
             'birth_date' => 'date',
-            'email' => 'email',
+            'email' => 'required|email',
             'image' => 'image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'settings' => [],
         ];
