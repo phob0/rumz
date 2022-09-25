@@ -93,11 +93,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
     });
 
-    Route::post('image', [Controller::class, 'image'])->name('imageRum');
+    Route::group(['prefix' => 'image', 'as' => 'images'], function() {
+        Route::post('', [Controller::class, 'image'])->name('image');
+        Route::delete('{image}', [Controller::class, 'deleteImage'])->name('deleteImage');
+    });
 
     Route::group(['prefix' => 'profile', 'as' => 'profiles'], function() {
         Route::get('', [ProfileController::class, 'profile']);
         Route::get('posts', [ProfileController::class, 'posts']);
+        Route::post('update', [ProfileController::class, 'update']);
     });
 
     Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {

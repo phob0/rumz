@@ -82,23 +82,6 @@ class LoginController extends Controller
             'password' => Hash::make($request->phone)
         ]);
 
-//        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
-
-//        $stripe->accounts->create([
-//            'type' => 'custom',
-//            'country' => 'US',
-//            'email' => $user->email,
-//            'capabilities' => [
-//                'card_payments' => ['requested' => true],
-//                'transfers' => ['requested' => true],
-//            ],
-//        ]);
-
-//        $user->update([
-//            'stripe_id' => $stripe->id,
-//            'pm_type' => $stripe->type
-//        ]);
-
         return response()->json([
             'user' => $user
         ]);

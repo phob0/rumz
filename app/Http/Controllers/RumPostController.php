@@ -40,11 +40,13 @@ class RumPostController extends Controller
             Arr::add($data, 'user_id', auth()->user()->id)
         );
 
-        $rumPost->image()->create([
-            'url' => $data['image'],
-            'imageable_id' => $rumPost->id,
-            'imageable_type' => RumPost::class,
-        ]);
+        if (is_null($rumPost->image) && !is_null($data['image'])) {
+            $rumPost->image()->create([
+                'url' => $data['image'],
+                'imageable_id' => $rumPost->id,
+                'imageable_type' => RumPost::class,
+            ]);
+        }
 
         // TODO: notificate all rum members and create privileged users table
         return JsonResource::make($rumPost->load([
@@ -66,10 +68,6 @@ class RumPostController extends Controller
 
         $data = $request->validated();
 
-        if (Storage::disk('local')->exists('public/images/temp/'.$request->image)) {
-            Storage::disk('local')->move('public/images/temp/'.$request->image, 'public/images/posts/'.$request->image);
-        }
-
         $rumPost->update(
             Arr::except(
                 Arr::add($data, 'user_id', auth()->user()->id),
@@ -77,11 +75,22 @@ class RumPostController extends Controller
 
         );
 
-        $rumPost->image()->update([
-            'url' => 'storage/images/rums/' . $data['image'],
-            'imageable_id' => $rumPost->id,
-            'imageable_type' => RumPost::class,
-        ]);
+        if (
+            (!is_null($rumPost->image) && !is_null($data['image'])) &&
+            get_image_name($rumPost->image->url) !== $data['image'])
+        {
+            if (Storage::disk('local')->exists('public/images/temp/'.$request->image)) {
+                Storage::disk('local')->move('public/images/temp/'.$request->image, 'public/images/posts/'.$request->image);
+            }
+
+            $this->removeImage(public_image_path($rumPost->image->url));
+
+            $rumPost->image()->update([
+                'url' => 'storage/images/posts/' . $data['image'],
+                'imageable_id' => $rumPost->id,
+                'imageable_type' => Rum::class,
+            ]);
+        }
 
         return response()->noContent();
     }

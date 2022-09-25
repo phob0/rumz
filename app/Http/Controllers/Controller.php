@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Storage;
 
 class Controller extends BaseController
 {
@@ -65,5 +67,23 @@ class Controller extends BaseController
             'path' => $path,
             'file_name' => $file->hashName()
         ]);
+    }
+
+    public function deleteImage(Request $request, Image $image): \Illuminate\Http\Response
+    {
+        if (Storage::disk('local')->exists(public_image_path($request->image))) {
+            Storage::disk('local')->delete(public_image_path($request->image));
+        }
+
+        $image->delete();
+
+        return response()->noContent();
+    }
+
+    protected function removeImage($path)
+    {
+        if (Storage::disk('local')->exists($path)) {
+            Storage::disk('local')->delete($path);
+        }
     }
 }

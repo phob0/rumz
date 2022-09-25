@@ -84,11 +84,13 @@ class RumController extends Controller
             )
         );
 
-        $rum->image()->create([
-            'url' => $data['image'],
-            'imageable_id' => $rum->id,
-            'imageable_type' => Rum::class,
-        ]);
+        if (is_null($rum->image) && !is_null($data['image'])) {
+            $rum->image()->create([
+                'url' => $data['image'],
+                'imageable_id' => $rum->id,
+                'imageable_type' => Rum::class,
+            ]);
+        }
 
         if(!empty($hashtags)) {
             collect($hashtags)->each(function($hashtag) use($rum) {
@@ -121,19 +123,26 @@ class RumController extends Controller
 
         $data = $request->validated();
 
-        if (Storage::disk('local')->exists('public/images/temp/'.$request->image)) {
-            Storage::disk('local')->move('public/images/temp/'.$request->image, 'public/images/rums/'.$request->image);
-        }
-
         $rum->update(
             Arr::except($data, ['hashtags', 'image'])
         );
 
-        $rum->image()->update([
-            'url' => 'storage/images/rums/' . $data['image'],
-            'imageable_id' => $rum->id,
-            'imageable_type' => Rum::class,
-        ]);
+        if (
+            (!is_null($rum->image) && !is_null($data['image'])) &&
+            get_image_name($rum->image->url) !== $data['image'])
+        {
+            if (Storage::disk('local')->exists('public/images/temp/'.$request->image)) {
+                Storage::disk('local')->move('public/images/temp/'.$request->image, 'public/images/rums/'.$request->image);
+            }
+
+            $this->removeImage(public_image_path($rum->image->url));
+
+            $rum->image()->update([
+                'url' => 'storage/images/rums/' . $data['image'],
+                'imageable_id' => $rum->id,
+                'imageable_type' => Rum::class,
+            ]);
+        }
 
         $rum->hashtags()->delete();
 

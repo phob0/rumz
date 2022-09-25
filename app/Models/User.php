@@ -31,7 +31,11 @@ class User extends Authenticatable
         'stripe_id',
         'pm_type',
         'pm_last_four',
-        'trial_ends_at'
+        'stripe_onboarding'
+    ];
+
+    protected $with = [
+        'image'
     ];
 
     /**
@@ -52,6 +56,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
 
     public function rums(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
