@@ -72,7 +72,7 @@ class User extends Authenticatable
         return $this->hasMany(RumPost::class, 'user_id', 'id');
     }
 
-    public function joinedRums()
+    public function joinedRums(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
             Rum::class,
@@ -80,12 +80,22 @@ class User extends Authenticatable
         )->withPivot('granted')->where('granted', 1);
     }
 
-    public function subscribedRums()
+    public function subscribedRums(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
             Rum::class,
             Subscription::class,
         )->withPivot(['amount', 'is_paid', 'granted', 'expire_at', 'created_at', 'updated_at'])->where('granted', 1);
+    }
+
+    public function friends(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            Friend::class,
+            'user_id',
+            'friend_id'
+        )->where('friends', 1);
     }
 
     public function favourites(): \Illuminate\Database\Eloquent\Relations\HasManyThrough

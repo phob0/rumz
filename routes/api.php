@@ -105,7 +105,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('stripe-onboarding', [ProfileController::class, 'onboardingStripe'])->name('profileOnboarding');
 
         Route::get('/return-onboarding', [ProfileController::class, 'returnOnboarding'])->name('profileReturnOnboarding');
-
         Route::get('/reauth-onboarding', function(Request $request) {
             return response()->json(['warning' => 'Your stripe onboarding link has expired, please try again']);
         });
@@ -133,10 +132,16 @@ Route::post('/pre-login', [LoginController::class, 'preLogin'])->name('preLogin'
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
+
 Route::post('/pre-register', [LoginController::class, 'preRegister'])->name('preRegister');
 
 Route::post('/register', [LoginController::class, 'register'])->name('register');
 
+Route::post('/dev-login', function(Request $request) {
+    $user = User::where('phone', $request->phone)->first();
+
+    return $user->createToken('sanctum-token')->plainTextToken;
+});
 //Route::post('/2fa/request', [LoginController::class, 'twoFactor'])->name('twoFactor');
 //Route::post('/2fa/validate', [LoginController::class, 'twoFactorValidate'])->name('twoFactorValidate');
 

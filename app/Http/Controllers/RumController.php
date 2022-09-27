@@ -402,6 +402,7 @@ class RumController extends Controller
 
     /*
      * TODO
+     *  multiple admins on rum, invitation and notification feature
      *  Common users can see Rum info.
         add search method
         split into explore|collection:

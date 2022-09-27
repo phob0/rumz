@@ -49,6 +49,14 @@ class Rum extends Model
         return $this->morphOne(Image::class, 'imageable');
     }
 
+    public function admins()
+    {
+        return $this->belongsToMany(
+            User::class,
+            RumAdmin::class,
+        )->withPivot('granted')->where('granted', 1);
+    }
+
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
