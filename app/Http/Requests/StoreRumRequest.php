@@ -50,7 +50,6 @@ class StoreRumRequest extends FormRequest
                 ]),
             ],
             'image' => 'image|mimes:jpg,png,jpeg,gif,svg',
-//            'image' => 'string',
             'hashtags' => [
                 'array'
             ]

@@ -69,6 +69,7 @@ class RumController extends Controller
 
     public function store(StoreRumRequest $request): JsonResource
     {
+
         $hashtags = array_filter($request->validated()['hashtags'], 'strlen');
         $path = !is_null($request->file('image')) ? $request->file('image')->store('public/images/rums') : null;
 
@@ -296,6 +297,22 @@ class RumController extends Controller
         return response()->noContent();
     }
 
+    public function inviteAdminMember(Request $request, Rum $rum, User $user)
+    {
+        $this->authorize('inviteAdminMember', [$rum, $user]);
+
+        $rum->joined_admins()->create([
+            'user_id' => $user->id,
+            'granted' => 0
+        ]);
+
+        $user->notify(
+            new InviteAdminMember($rum, auth()->user()->name . 'has invited you to be an admin of this rum. Please submit a response.')
+        );
+
+        return response()->noContent();
+    }
+
     public function acceptInviteMember(Request $request, Rum $rum): \Illuminate\Http\Response
     {
         $this->authorize('acceptInvite', $rum);
@@ -322,6 +339,13 @@ class RumController extends Controller
         });
 
         return response()->noContent();
+    }
+
+    public function acceptAdminInviteMember(Request $request, Rum $rum)
+    {
+        $this->authorize('acceptAdminInvite', $rum);
+
+        dd(true);
     }
 
     public function banUnbanMember(Request $request, $action,Rum $rum, User $user): \Illuminate\Http\Response

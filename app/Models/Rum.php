@@ -40,6 +40,8 @@ class Rum extends Model
     protected $with = [
         'hashtags',
         'users',
+        'admins',
+        'master',
         'subscribed',
         'image'
     ];
@@ -49,7 +51,7 @@ class Rum extends Model
         return $this->morphOne(Image::class, 'imageable');
     }
 
-    public function admins()
+    public function admins(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
             User::class,
@@ -70,9 +72,19 @@ class Rum extends Model
         return $this->hasMany(UserRum::class)->where('granted', 1);
     }
 
+    public function joined_admins(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RumAdmin::class)->where('granted', 1);
+    }
+
     public function join_requests(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(UserRum::class)->where('granted', 0);
+    }
+
+    public function join_admin_requests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RumAdmin::class)->where('granted', 0);
     }
 
     public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -95,7 +107,7 @@ class Rum extends Model
 
     public function master(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->hasOne(User::class, 'id', 'user_id')->select('id', 'name');
     }
 
     public function hashtags(): \Illuminate\Database\Eloquent\Relations\HasMany

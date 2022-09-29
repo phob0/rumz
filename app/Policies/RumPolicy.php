@@ -28,18 +28,28 @@ class RumPolicy
             case Rum::TYPE_FREE:
                 return true;
             case Rum::TYPE_PRIVATE || Rum::TYPE_CONFIDENTIAL;
-                return $rum->users->contains(function ($member) use($user) {
-                    return $member->id === $user->id && $member->pivot->granted;
-                });
+                return (
+                    $rum->users->contains(function ($member) use($user) {
+                        return $member->id === $user->id && $member->pivot->granted;
+                    }) ||
+                    $rum->admins->contains(function ($admin) use($user) {
+                        return $admin->id === $user->id && $admin->pivot->granted;
+                    })
+                );
             case Rum::TYPE_PAID;
                 // TODO: make date difference to a minimum of 1 month
-                return $rum->subscribed->contains(function ($member) use($user) {
-                    return $member->id === $user->id
-                        && $member->pivot->is_paid
-                        && $member->pivot->updated_at->diffInDays(
-                            $member->pivot->expire_at
-                        ) !== 0;
-                });
+                return (
+                    $rum->subscribed->contains(function ($member) use($user) {
+                        return $member->id === $user->id
+                            && $member->pivot->is_paid
+                            && $member->pivot->updated_at->diffInDays(
+                                $member->pivot->expire_at
+                            ) !== 0;
+                    }) ||
+                    $rum->admins->contains(function ($admin) use($user) {
+                        return $admin->id === $user->id && $admin->pivot->granted;
+                    })
+                );
             default;
                 return false;
         }
@@ -47,17 +57,26 @@ class RumPolicy
 
     public function edit(User $user, Rum $rum)
     {
-        return $user->id === $rum->user_id;
+        return $user->id === $rum->user_id ||
+            $rum->admins->contains(function ($admin) use($user) {
+                return $admin->id === $user->id && $admin->pivot->granted;
+            });
     }
 
     public function update(User $user, Rum $rum)
     {
-        return $user->id === $rum->user_id;
+        return $user->id === $rum->user_id ||
+            $rum->admins->contains(function ($admin) use($user) {
+                return $admin->id === $user->id && $admin->pivot->granted;
+            });;
     }
 
     public function delete(User $user, Rum $rum)
     {
-        return $user->id === $rum->user_id;
+        return $user->id === $rum->user_id ||
+            $rum->admins->contains(function ($admin) use($user) {
+                return $admin->id === $user->id && $admin->pivot->granted;
+            });;
     }
 
     public function join(User $user, Rum $rum, $type)
@@ -95,10 +114,23 @@ class RumPolicy
             $user->id === $rum->user_id;
     }
 
+    public function inviteAdminMember(User $user, Rum $rum, User $member)
+    {
+        return !$rum->admins->contains(fn ($item) => $item->id === $member->id) &&
+            $member->id !== $rum->user_id &&
+            $user->id === $rum->user_id;
+    }
+
     public function acceptInvite(User $user, Rum $rum)
     {
         return $user->id !== $rum->user_id &&
             $rum->join_requests->contains(fn ($item) => $item->user_id === $user->id);
+    }
+
+    public function acceptAdminInvite(User $user, Rum $rum)
+    {
+        return $user->id !== $rum->user_id &&
+            $rum->join_admin_requests->contains(fn ($item) => $item->user_id === $user->id);
     }
 
     public function banOrUnbanMembers(User $user, Rum $rum, User $member, $action)
