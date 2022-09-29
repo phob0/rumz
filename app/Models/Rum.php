@@ -46,6 +46,12 @@ class Rum extends Model
         'image'
     ];
 
+    protected $withCount = [
+        'users',
+        'admins',
+        'subscribed',
+    ];
+
     public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');

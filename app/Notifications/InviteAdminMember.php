@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Rum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,14 +12,19 @@ class InviteAdminMember extends Notification
 {
     use Queueable;
 
+    public Rum $rum;
+    public string $message;
+    public bool $follow_up = true;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Rum $rum, $message)
     {
-        //
+        $this->rum = $rum;
+        $this->message = $message;
     }
 
     /**
@@ -29,7 +35,7 @@ class InviteAdminMember extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -55,7 +61,9 @@ class InviteAdminMember extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'rum' => $this->rum,
+            'message' => $this->message,
+            'follow_up' => $this->follow_up
         ];
     }
 }
