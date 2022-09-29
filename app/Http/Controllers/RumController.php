@@ -143,6 +143,9 @@ class RumController extends Controller
                 'imageable_id' => $rum->id,
                 'imageable_type' => Rum::class,
             ]);
+        } else if (is_null($data['image']) || $data['image'] == "")
+        {
+            $rum->image()->delete();
         }
 
         $rum->hashtags()->delete();

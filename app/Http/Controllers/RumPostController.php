@@ -90,6 +90,9 @@ class RumPostController extends Controller
                 'imageable_id' => $rumPost->id,
                 'imageable_type' => Rum::class,
             ]);
+        } else if (is_null($data['image']) || $data['image'] == "")
+        {
+            $rumPost->image()->delete();
         }
 
         return response()->noContent();
