@@ -142,4 +142,6 @@ class RumPostPolicy
             $favourite->post_id === $rumPost->id;
     }
 
+    // TODO: add check for multiple admins
+
 }
