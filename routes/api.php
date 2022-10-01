@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\DomCrawler\Crawler;
@@ -239,7 +240,8 @@ Route::get('/test_stripe', function(Request $request) {
 });
 //http://80.240.26.248/test/support-webhook
 Route::post('/test/support-webhook', function(Request $request) {
-    return true;
+    Log::debug('Mandrill webhook test.', $request->all());
+    return response()->status();
 });
 Route::get('/queries', function(Request $request) {
 //    dd(config('services.mailchimp.key'));
