@@ -239,7 +239,7 @@ Route::get('/test_stripe', function(Request $request) {
 });
 //http://80.240.26.248/test/support-webhook
 Route::post('/test/support-webhook', function(Request $request) {
-    dd($request);
+    return true;
 });
 Route::get('/queries', function(Request $request) {
 //    dd(config('services.mailchimp.key'));
