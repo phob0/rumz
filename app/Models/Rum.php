@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Rum extends Model
 {
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
-    use HasFactory,  HasUuid, SoftDeletes;
+    use HasFactory, HasUuid, SoftDeletes;
 
     const TYPE_FREE = 'free';
     const TYPE_PAID = 'paid';

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class SuportEmail extends Model
+class SupportEmail extends Model
 {
-    use CrudTrait;
+    use CrudTrait, HasUuid;
 
     /*
     |--------------------------------------------------------------------------
@@ -15,7 +16,7 @@ class SuportEmail extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'suport_emails';
+    protected $table = 'support_emails';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];

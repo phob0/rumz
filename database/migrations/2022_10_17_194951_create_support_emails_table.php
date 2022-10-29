@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('support_emails', function (Blueprint $table) {
-            $table->uuid();
+            $table->uuid('id')->primary();
             $table->string('from_email');
             $table->string('from_name');
             $table->string('subject');

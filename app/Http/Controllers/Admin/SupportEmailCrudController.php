@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\SuportemailRequest;
+use App\Http\Requests\SupportEmailRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class SuportEmailCrudController
+ * Class SupportEmailCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class SuportEmailCrudController extends CrudController
+class SupportEmailCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,8 +26,8 @@ class SuportEmailCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\SuportEmail::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/suport-email');
+        CRUD::setModel(\App\Models\SupportEmail::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/support-email');
         CRUD::setEntityNameStrings('suport email', 'suport emails');
     }
 

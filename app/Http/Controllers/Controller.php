@@ -7,9 +7,11 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class Controller extends BaseController
 {
@@ -61,6 +63,13 @@ class Controller extends BaseController
     public function image(Request $request): \Illuminate\Http\JsonResponse
     {
         $file = $request->file('image');
+
+        if(is_null($file)) {
+            throw new HttpResponseException(
+                response()->json(['error' => 'Please upload a legit image file.'], Response::HTTP_UNPROCESSABLE_ENTITY)
+            );
+        }
+
         $path = $file->store('public/images/temp');
 
         return response()->json([
