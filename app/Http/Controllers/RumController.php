@@ -118,6 +118,9 @@ class RumController extends Controller
 
     public function update(UpdateRumRequest $request, Rum $rum): \Illuminate\Http\Response
     {
+        /*
+         * TODO add invite admins
+         * */
         $this->authorize('update', $rum);
 
         $hashtags = array_filter($request->validated()['hashtags'], 'strlen'); null;
@@ -300,7 +303,7 @@ class RumController extends Controller
         return response()->noContent();
     }
 
-    public function inviteAdminMember(Request $request, Rum $rum, User $user)
+    public function inviteAdminMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
     {
         $this->authorize('inviteAdminMember', [$rum, $user]);
 

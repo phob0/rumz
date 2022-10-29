@@ -29,7 +29,7 @@ class UpdateRumRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|max:255|string|unique:rums',
+            'title' => 'required|max:255|string',
             'description' => 'string',
             'website' => 'string',
             'type' => [
