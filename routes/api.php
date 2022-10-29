@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -119,6 +120,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         /*
          * TODO: check balance stripe
          */
+    });
+
+    Route::group(['prefix' => 'friend', 'as' => 'friends'], function() {
+        Route::get('lookup-friends', [FriendController::class, 'lookupFriends'])->name('lookupFriends');
     });
 
     Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {
