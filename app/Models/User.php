@@ -30,7 +30,6 @@ class User extends Authenticatable
         'password',
         'stripe_id',
         'pm_type',
-        'pm_last_four',
         'stripe_onboarding'
     ];
 

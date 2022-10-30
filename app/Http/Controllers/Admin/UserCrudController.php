@@ -21,7 +21,7 @@ class UserCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -33,7 +33,7 @@ class UserCrudController extends CrudController
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
@@ -49,19 +49,18 @@ class UserCrudController extends CrudController
         CRUD::column('password');
         CRUD::column('stripe_id');
         CRUD::column('pm_type');
-        CRUD::column('pm_last_four');
-        CRUD::column('trial_ends_at');
+        CRUD::column('stripe_onboarding');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
+         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']);
          */
     }
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
@@ -73,25 +72,24 @@ class UserCrudController extends CrudController
         CRUD::field('phone');
         CRUD::field('sex');
         CRUD::field('birth_date');
-        CRUD::field('settings');
+//        CRUD::field('settings');
         CRUD::field('superadmin');
         CRUD::field('email');
         CRUD::field('password');
-        CRUD::field('stripe_id');
-        CRUD::field('pm_type');
-        CRUD::field('pm_last_four');
-        CRUD::field('trial_ends_at');
+//        CRUD::field('stripe_id');
+//        CRUD::field('pm_type');
+//        CRUD::column('stripe_onboarding');
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
+         * - CRUD::addField(['name' => 'price', 'type' => 'number']));
          */
     }
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
