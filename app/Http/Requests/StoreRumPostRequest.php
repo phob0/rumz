@@ -32,9 +32,10 @@ class StoreRumPostRequest extends FormRequest
     {
         return [
             'rum_id' => 'required|exists:App\Models\Rum,id',
-            'title' => 'required|string|max:255',
+            'title' => 'string|max:255',
             'description' => 'string',
             'metadata' => 'array',
+            'image' => 'image|mimes:jpg,png,jpeg,gif,svg',
         ];
     }
 
