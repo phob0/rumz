@@ -30,9 +30,8 @@ class StoreRumPostRequest extends FormRequest
      */
     public function rules()
     {
-        //|exists:App\Models\Rum,id
         return [
-            'rum_id' => 'required',
+            'rum_id' => 'required|exists:App\Models\Rum,id',
             'title' => 'string|max:255',
             'description' => 'string',
             'metadata' => 'array',
@@ -72,9 +71,13 @@ class StoreRumPostRequest extends FormRequest
     {
         switch ($rum->type) {
             case Rum::TYPE_PAID;
-                return $rum->subscribed->contains(function($item) use($user) { return $item->id === $user->id; });
+                return $rum->subscribed->contains(function($item) use($user) { return $item->id === $user->id; }) ||
+                    $rum->admins->contains(function($item) use($user) { return $item->id === $user->id; }) ||
+                    $rum->user_id === $user->id;
             default;
-                return $rum->users->contains(function($item) use($user) { return $item->id === $user->id; });
+                return $rum->users->contains(function($item) use($user) { return $item->id === $user->id; }) ||
+                    $rum->admins->contains(function($item) use($user) { return $item->id === $user->id; }) ||
+                    $rum->user_id === $user->id;
         }
     }
 

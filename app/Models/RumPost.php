@@ -89,4 +89,9 @@ class RumPost extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
+    public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
 }

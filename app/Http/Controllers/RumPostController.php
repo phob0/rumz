@@ -37,7 +37,7 @@ class RumPostController extends Controller
         $data['image'] = link_image_path($path);
 
         $rumPost = RumPost::create(
-            Arr::add($data, 'user_id', auth()->user()->id)
+            Arr::add(Arr::except($data, ['image']), 'user_id', auth()->user()->id)
         );
 
         if (is_null($rumPost->image) && !is_null($data['image'])) {
