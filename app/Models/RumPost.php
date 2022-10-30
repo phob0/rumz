@@ -33,7 +33,8 @@ class RumPost extends Model
 
     protected $with = [
         'usersLike',
-        'comments'
+        'comments',
+        'image',
     ];
 
     public function likes(): \Illuminate\Database\Eloquent\Relations\MorphMany
