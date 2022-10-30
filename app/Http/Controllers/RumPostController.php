@@ -31,27 +31,41 @@ class RumPostController extends Controller
 
     public function store(StoreRumPostRequest $request): JsonResource
     {
-        $path = !is_null($request->file('image')) ? $request->file('image')->store('public/images/posts') : null;
+        $paths = [];
+
+        if (!empty($request->image)) {
+            foreach ($request->image as $image) {
+                array_push($paths, $image->store('public/images/posts'));
+            }
+        }
+
         $data = $request->validated();
 
-        $data['image'] = link_image_path($path);
+        if (!empty($paths)) {
+            foreach ($paths as $index => $path) {
+                $data['images'][$index] = link_image_path($path);
+            }
+        }
 
         $rumPost = RumPost::create(
-            Arr::add(Arr::except($data, ['image']), 'user_id', auth()->user()->id)
+            Arr::add(Arr::except($data, ['images']), 'user_id', auth()->user()->id)
         );
 
-        if (is_null($rumPost->image) && !is_null($data['image'])) {
-            $rumPost->image()->create([
-                'url' => $data['image'],
-                'imageable_id' => $rumPost->id,
-                'imageable_type' => RumPost::class,
-            ]);
+        if (is_null($rumPost->image) && !empty($data['images'])) {
+            foreach ($data['images'] as $image) {
+                Image::create([
+                    'url' => $image,
+                    'imageable_id' => $rumPost->id,
+                    'imageable_type' => RumPost::class,
+                ]);
+            }
         }
 
         // TODO: notificate all rum members and create privileged users table
         return JsonResource::make($rumPost->load([
             'usersLike',
-            'comments'
+            'comments',
+            'images'
         ]));
     }
 

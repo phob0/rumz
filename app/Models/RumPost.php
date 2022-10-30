@@ -19,7 +19,7 @@ class RumPost extends Model
         'approved',
         'description',
         'metadata',
-        'image',
+        'images',
     ];
 
     protected $casts = [
@@ -34,7 +34,7 @@ class RumPost extends Model
     protected $with = [
         'usersLike',
         'comments',
-        'image',
+        'images',
     ];
 
     public function likes(): \Illuminate\Database\Eloquent\Relations\MorphMany
@@ -90,7 +90,12 @@ class RumPost extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    public function images(): \Illuminate\Database\Eloquent\Relations\morphMany
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function image(): \Illuminate\Database\Eloquent\Relations\morphOne
     {
         return $this->morphOne(Image::class, 'imageable');
     }
