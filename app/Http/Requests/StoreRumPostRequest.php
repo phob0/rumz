@@ -30,8 +30,9 @@ class StoreRumPostRequest extends FormRequest
      */
     public function rules()
     {
+        //|exists:App\Models\Rum,id
         return [
-            'rum_id' => 'required|exists:App\Models\Rum,id',
+            'rum_id' => 'required',
             'title' => 'string|max:255',
             'description' => 'string',
             'metadata' => 'array',
