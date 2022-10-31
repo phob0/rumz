@@ -37,6 +37,7 @@ class RumPost extends Model
         'usersDislike',
         'comments',
         'images',
+        'master',
     ];
 
     public function likes(): \Illuminate\Database\Eloquent\Relations\MorphMany

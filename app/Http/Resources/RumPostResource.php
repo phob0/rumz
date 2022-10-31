@@ -19,6 +19,7 @@ class RumPostResource extends JsonResource
             "id" => $this->id,
             "rum_id" => $this->rum_id,
             "user_id" => $this->user_id,
+            "master" => $this->master,
             "approved" => $this->approved,
             "description" => $this->description,
             "visible" => $this->visible,
