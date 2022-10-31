@@ -24,6 +24,7 @@ class User extends Authenticatable
         'phone',
         'sex',
         'birth_date',
+        'description',
         'settings',
         'superadmin',
         'email',

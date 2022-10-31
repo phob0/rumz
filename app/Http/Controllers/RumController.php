@@ -51,6 +51,7 @@ class RumController extends Controller
 
     public function currentRums(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
+        // TODO: adaug alea din my-rums
         return JsonResource::collection(
             auth()->user()->joinedRums()->with('posts')->get()->concat(
                 auth()->user()->subscribedRums()->with('posts')->get()

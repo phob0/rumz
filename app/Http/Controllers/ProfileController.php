@@ -18,7 +18,7 @@ class ProfileController extends Controller
 
     public function profile(Request $request): JsonResource
     {
-        $user =  User::withCount('rums')->find(auth()->user()->id);
+        $user = User::withCount('rums')->find(auth()->user()->id);
         $user->total_members = $user->rums->sum('members');
 
         return JsonResource::make($user);
