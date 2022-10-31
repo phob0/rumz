@@ -88,10 +88,11 @@ class RumPostController extends Controller
                 ['images'])
         );
 
-        $rumPost->images()->delete();
-
         if ((!empty($rumPost->images) && !empty($data['images'])) &&
             !empty(compare_images_exist($rumPost->images, $data['images']))) {
+
+            $rumPost->images()->delete();
+
             foreach (compare_images_exist($rumPost->images, $data['images']) as $exist) {
                 Image::create([
                     'url' => 'storage/images/posts/' . $exist,
