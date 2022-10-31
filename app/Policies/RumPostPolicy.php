@@ -37,7 +37,16 @@ class RumPostPolicy
 
     public function update(User $user, RumPost $rumPost)
     {
-        return $user->id === $rumPost->user_id;
+        return $rumPost->rum->admins->contains(function ($record) use($user){
+                return $record->user_id === $user->id;
+            }) || ($user->id === $rumPost->user_id);
+    }
+
+    public function delete(User $user, RumPost $rumPost)
+    {
+        return $rumPost->rum->admins->contains(function ($record) use($user){
+                return $record->user_id === $user->id;
+            }) || ($user->id === $rumPost->user_id);
     }
 
     public function comment(User $user, RumPost $rumPost)
