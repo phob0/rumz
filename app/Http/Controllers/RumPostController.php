@@ -89,18 +89,6 @@ class RumPostController extends Controller
         );
 
         if ((!empty($rumPost->images) && !empty($data['images'])) &&
-            !empty(compare_images_exist($rumPost->images, $data['images']))) {
-
-            $rumPost->images()->delete();
-
-            foreach (compare_images_exist($rumPost->images, $data['images']) as $exist) {
-                Image::create([
-                    'url' => 'storage/images/posts/' . $exist,
-                    'imageable_id' => $rumPost->id,
-                    'imageable_type' => RumPost::class,
-                ]);
-            }
-        } elseif ((!empty($rumPost->images) && !empty($data['images'])) &&
             empty(compare_images_exist($rumPost->images, $data['images'])))
         {
             foreach ($data['images'] as $image) {
@@ -110,6 +98,24 @@ class RumPostController extends Controller
 
                 Image::create([
                     'url' => 'storage/images/posts/' . $image,
+                    'imageable_id' => $rumPost->id,
+                    'imageable_type' => RumPost::class,
+                ]);
+            }
+        } else if ((!empty($rumPost->images) && !empty($data['images'])) &&
+            !empty(compare_images_exist($rumPost->images, $data['images']))) {
+
+            $existed = compare_images_exist($rumPost->images, $data['images']);
+
+            $rumPost->images()->where(function($query) use($existed){
+                foreach($existed as $item) {
+                    $query->where('url', '!=', 'storage/images/posts/' . $item);
+                }
+            })->get();
+
+            foreach (compare_images_exist($rumPost->images, $data['images']) as $exist) {
+                Image::create([
+                    'url' => 'storage/images/posts/' . $exist,
                     'imageable_id' => $rumPost->id,
                     'imageable_type' => RumPost::class,
                 ]);
