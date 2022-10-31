@@ -93,13 +93,19 @@ class RumPostController extends Controller
             empty(compare_images_exist($rumPost->images, $data['images'])))
         {
             foreach ($data['images'] as $image) {
+                if (in_array($image, compare_images_exist($rumPost->images, $data['images']))) {
+                    continue;
+                }
+
                 if (Storage::disk('local')->exists('public/images/temp/'.$image)) {
                     Storage::disk('local')->move('public/images/temp/'.$image, 'public/images/posts/'.$image);
                 }
+//                $this->removeImage(public_image_path($image));
 
-                $this->removeImage(public_image_path($image));
-
-                $rumPost->image()->update([
+                Image::updateOrCreate([
+                    'url' => 'storage/images/posts/' . $image,
+                    'imageable_id' => $rumPost->id,
+                ], [
                     'url' => 'storage/images/posts/' . $image,
                     'imageable_id' => $rumPost->id,
                     'imageable_type' => RumPost::class,
