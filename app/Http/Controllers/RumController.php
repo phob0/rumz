@@ -40,19 +40,19 @@ class RumController extends Controller
 
     public function explore(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return JsonResource::collection(Rum::where('type', '!=', 'confidential')->get());
+        return JsonResource::collection(Rum::with('posts')->where('type', '!=', 'confidential')->get());
     }
 
     public function myRums(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return JsonResource::collection(auth()->user()->rums);
+        return JsonResource::collection(auth()->user()->rums()->with('posts')->get());
     }
 
     public function currentRums(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         return JsonResource::collection(
-            auth()->user()->joinedRums->concat(
-                auth()->user()->subscribedRums
+            auth()->user()->joinedRums()->with('posts')->get()->concat(
+                auth()->user()->subscribedRums()->with('posts')->get()
             )
         );
     }
