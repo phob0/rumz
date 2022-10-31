@@ -29,12 +29,6 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'name' => 'max:255|string',
-            'phone' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('users', 'phone')->ignore(auth()->user()->id)
-            ],
             'sex' => 'max:50|string',
             'birth_date' => 'date',
             'email' => 'required|email',
