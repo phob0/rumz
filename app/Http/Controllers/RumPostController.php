@@ -33,8 +33,8 @@ class RumPostController extends Controller
     {
         $paths = [];
 
-        if (!empty($request->image)) {
-            foreach ($request->image as $image) {
+        if (!empty($request->images)) {
+            foreach ($request->images as $image) {
                 array_push($paths, $image->store('public/images/posts'));
             }
         }
@@ -51,7 +51,7 @@ class RumPostController extends Controller
             Arr::add(Arr::except($data, ['images']), 'user_id', auth()->user()->id)
         );
 
-        if (is_null($rumPost->image) && !empty($data['images'])) {
+        if ($rumPost->images->isEmpty() && !empty($paths)) {
             foreach ($data['images'] as $image) {
                 Image::create([
                     'url' => $image,
@@ -85,28 +85,29 @@ class RumPostController extends Controller
         $rumPost->update(
             Arr::except(
                 Arr::add($data, 'user_id', auth()->user()->id),
-                ['image'])
-
+                ['images'])
         );
 
         if (
-            (!is_null($rumPost->image) && !is_null($data['image'])) &&
-            get_image_name($rumPost->image->url) !== $data['image'])
+            (!empty($rumPost->images) && !empty($data['images'])) &&
+            empty(compare_images_exist($rumPost->images, $data['images'])))
         {
-            if (Storage::disk('local')->exists('public/images/temp/'.$request->image)) {
-                Storage::disk('local')->move('public/images/temp/'.$request->image, 'public/images/posts/'.$request->image);
+            foreach ($data['images'] as $image) {
+                if (Storage::disk('local')->exists('public/images/temp/'.$image)) {
+                    Storage::disk('local')->move('public/images/temp/'.$image, 'public/images/posts/'.$image);
+                }
+
+                $this->removeImage(public_image_path($image));
+
+                $rumPost->image()->update([
+                    'url' => 'storage/images/posts/' . $image,
+                    'imageable_id' => $rumPost->id,
+                    'imageable_type' => RumPost::class,
+                ]);
             }
-
-            $this->removeImage(public_image_path($rumPost->image->url));
-
-            $rumPost->image()->update([
-                'url' => 'storage/images/posts/' . $data['image'],
-                'imageable_id' => $rumPost->id,
-                'imageable_type' => Rum::class,
-            ]);
-        } else if (is_null($data['image']) || $data['image'] == "")
+        } else if (is_null($data['images']) || empty($data['image']))
         {
-            $rumPost->image()->delete();
+            $rumPost->images()->delete();
         }
 
         return response()->noContent();

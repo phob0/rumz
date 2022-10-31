@@ -31,6 +31,7 @@ class UpdateRumPostRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'string',
             'metadata' => 'array',
+            'images' => 'array',
         ];
     }
 

@@ -32,3 +32,16 @@ if (! function_exists('get_image_name')) {
         return !is_null($path) ? $folders[(count($folders) - 1)] : null;
     }
 }
+
+if (! function_exists('compare_images_exist')) {
+    function compare_images_exist($postImages, $payloadImages)
+    {
+        $currentImages = [];
+
+        foreach ($postImages as $index => $image) {
+            $currentImages[$index] = explode('/', $image->url)[3];
+        }
+
+        return array_diff($currentImages, $payloadImages);
+    }
+}

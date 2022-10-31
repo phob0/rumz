@@ -35,7 +35,7 @@ class StoreRumPostRequest extends FormRequest
             'title' => 'string|max:255',
             'description' => 'string',
             'metadata' => 'array',
-            'image.*' => 'image|mimes:jpg,png,jpeg,gif,svg',
+            'images.*' => 'image|mimes:jpg,png,jpeg,gif,svg',
         ];
     }
 
