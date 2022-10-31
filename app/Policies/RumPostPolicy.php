@@ -39,14 +39,14 @@ class RumPostPolicy
     {
         return $rumPost->rum->admins->contains(function ($record) use($user){
                 return $record->user_id === $user->id;
-            }) || ($user->id === $rumPost->user_id);
+            }) || ($user->id === $rumPost->rum->user_id) || ($user->id === $rumPost->user_id);
     }
 
     public function delete(User $user, RumPost $rumPost)
     {
         return $rumPost->rum->admins->contains(function ($record) use($user){
                 return $record->user_id === $user->id;
-            }) || ($user->id === $rumPost->user_id);
+            }) || ($user->id === $rumPost->rum->user_id) || ($user->id === $rumPost->user_id);
     }
 
     public function comment(User $user, RumPost $rumPost)
