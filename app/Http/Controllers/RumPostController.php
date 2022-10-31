@@ -88,32 +88,31 @@ class RumPostController extends Controller
                 ['images'])
         );
 
-        if (
-            (!empty($rumPost->images) && !empty($data['images'])) &&
+        $rumPost->images()->delete();
+
+        if ((!empty($rumPost->images) && !empty($data['images'])) &&
+            !empty(compare_images_exist($rumPost->images, $data['images']))) {
+            foreach (compare_images_exist($rumPost->images, $data['images']) as $exist) {
+                Image::create([
+                    'url' => 'storage/images/posts/' . $exist,
+                    'imageable_id' => $rumPost->id,
+                    'imageable_type' => RumPost::class,
+                ]);
+            }
+        } elseif ((!empty($rumPost->images) && !empty($data['images'])) &&
             empty(compare_images_exist($rumPost->images, $data['images'])))
         {
             foreach ($data['images'] as $image) {
-                if (in_array($image, compare_images_exist($rumPost->images, $data['images']))) {
-                    continue;
-                }
-
                 if (Storage::disk('local')->exists('public/images/temp/'.$image)) {
                     Storage::disk('local')->move('public/images/temp/'.$image, 'public/images/posts/'.$image);
                 }
-//                $this->removeImage(public_image_path($image));
 
-                Image::updateOrCreate([
-                    'url' => 'storage/images/posts/' . $image,
-                    'imageable_id' => $rumPost->id,
-                ], [
+                Image::create([
                     'url' => 'storage/images/posts/' . $image,
                     'imageable_id' => $rumPost->id,
                     'imageable_type' => RumPost::class,
                 ]);
             }
-        } else if (is_null($data['images']) || empty($data['image']))
-        {
-            $rumPost->images()->delete();
         }
 
         return response()->noContent();
