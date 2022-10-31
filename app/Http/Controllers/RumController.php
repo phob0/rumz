@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRumRequest;
 use App\Http\Requests\UpdateRumRequest;
+use App\Http\Resources\RumPostResource;
 use App\Models\Image;
 use App\Models\Rum;
 use App\Models\RumHashtag;
@@ -64,7 +65,8 @@ class RumController extends Controller
     public function view(Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $this->authorize('view', $rum);
-        return JsonResource::collection($rum->posts);
+
+        return RumPostResource::collection($rum->posts);
     }
 
     public function store(StoreRumRequest $request): JsonResource

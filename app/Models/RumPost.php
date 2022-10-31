@@ -28,11 +28,13 @@ class RumPost extends Model
 
     protected $withCount = [
         'likes',
+        'dislikes',
         'comments'
     ];
 
     protected $with = [
         'usersLike',
+        'usersDislike',
         'comments',
         'images',
     ];
@@ -60,7 +62,21 @@ class RumPost extends Model
             'likeable_type',
             array_search(static::class, Relation::morphMap()) ?: static::class
         );
+    }
 
+    public function usersDislike(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            User::class,
+            Dislike::class,
+            'dislikeable_id',
+            'id',
+            'id',
+            'user_id'
+        )->where(
+            'dislikeable_type',
+            array_search(static::class, Relation::morphMap()) ?: static::class
+        );
     }
 
     public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
