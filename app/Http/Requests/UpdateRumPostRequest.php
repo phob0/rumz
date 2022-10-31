@@ -28,7 +28,6 @@ class UpdateRumPostRequest extends FormRequest
     {
         return [
             'rum_id' => 'required|exists:App\Models\Rum,id',
-            'title' => 'required|string|max:255',
             'description' => 'string',
             'metadata' => 'array',
             'images' => 'array',
