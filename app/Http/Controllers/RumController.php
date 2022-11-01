@@ -151,6 +151,8 @@ class RumController extends Controller
             ]);
         } else if (is_null($data['image']) || $data['image'] == "")
         {
+            $this->removeImage($rum->image->url);
+
             $rum->image()->delete();
         }
 
@@ -170,6 +172,8 @@ class RumController extends Controller
     public function delete(Rum $rum): \Illuminate\Http\Response
     {
         $this->authorize('delete', $rum);
+
+        $this->removeImage($rum->image->url);
 
         $rum->delete();
 
