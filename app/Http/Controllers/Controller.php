@@ -80,6 +80,7 @@ class Controller extends BaseController
 
     public function deleteImage(Request $request, Image $image): \Illuminate\Http\Response
     {
+        // TODO: add gate conditions
         if (Storage::disk('local')->exists(public_image_path($request->image))) {
             Storage::disk('local')->delete(public_image_path($request->image));
         }

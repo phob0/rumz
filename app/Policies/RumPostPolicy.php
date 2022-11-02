@@ -77,12 +77,15 @@ class RumPostPolicy
             case Rum::TYPE_PAID:
                 return $rum->subscribed->contains(function ($record) use($user){
                     return $record->user_id === $user->id;
-                }) || ($rum->user_id === $user->id || $model->user_id === $user->id);
+                }) || $rum->admins->contains(function ($record) use($user){
+                        return $record->user_id === $user->id;
+                    }) || ($rum->user_id === $user->id || $model->user_id === $user->id);
             default:
-                return $rum->type !== Rum::TYPE_PAID ?
-                    $rum->users->contains(function ($record) use($user){
+                return $rum->users->contains(function ($record) use($user){
                         return $record->id === $user->id;
-                    }) || ($rum->user_id === $user->id || $model->user_id === $user->id) : false;
+                    }) || $rum->admins->contains(function ($record) use($user){
+                        return $record->user_id === $user->id;
+                    }) || ($rum->user_id === $user->id || $model->user_id === $user->id);
         }
     }
 
