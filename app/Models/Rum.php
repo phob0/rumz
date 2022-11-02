@@ -45,6 +45,7 @@ class Rum extends Model
         'subscribed',
         'image',
         'has_requested',
+        'has_joined',
     ];
 
     protected $withCount = [
@@ -77,6 +78,11 @@ class Rum extends Model
     public function joined(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(UserRum::class)->where('granted', 1);
+    }
+
+    public function has_joined()
+    {
+        return $this->hasOne(UserRum::class)->where('granted', 1)->where('user_id', auth()->user()->id);
     }
 
     public function joined_admins(): \Illuminate\Database\Eloquent\Relations\HasMany
