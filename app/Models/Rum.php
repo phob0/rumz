@@ -44,8 +44,7 @@ class Rum extends Model
         'master',
         'subscribed',
         'image',
-        'has_requested',
-        'has_joined',
+        'is_granted',
     ];
 
     protected $withCount = [
@@ -80,9 +79,9 @@ class Rum extends Model
         return $this->hasMany(UserRum::class)->where('granted', 1);
     }
 
-    public function has_joined()
+    public function is_granted()
     {
-        return $this->hasOne(UserRum::class)->where('granted', 1)->where('user_id', auth()->user()->id);
+        return $this->hasOne(UserRum::class)->where('user_id', auth()->user()->id);
     }
 
     public function joined_admins(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -93,11 +92,6 @@ class Rum extends Model
     public function join_requests(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(UserRum::class)->where('granted', 0);
-    }
-
-    public function has_requested(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->hasOne(UserRum::class)->where('granted', 0)->where('user_id', auth()->user()->id);
     }
 
     public function join_admin_requests(): \Illuminate\Database\Eloquent\Relations\HasMany
