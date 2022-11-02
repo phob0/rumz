@@ -43,7 +43,9 @@ class Rum extends Model
         'admins',
         'master',
         'subscribed',
-        'image'
+        'image',
+        'join_requests',
+        'joined',
     ];
 
     protected $withCount = [
