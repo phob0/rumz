@@ -253,12 +253,6 @@ class RumController extends Controller
 
     public function grant(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
     {
-        if(!isset($request->granted)) {
-            throw new HttpResponseException(
-                response()->json(['error' => 'Granted value is missing.'], Response::HTTP_UNPROCESSABLE_ENTITY)
-            );
-        }
-
         $this->authorize('grant', [$rum, $user]);
 
         $rum->join_requests()->where('user_id', $user->id)->first()->update([

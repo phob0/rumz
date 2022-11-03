@@ -62,7 +62,7 @@ class PostReport extends Notification
     {
         return [
             "message" => $this->message,
-            "rumPost" => $this->rumPost,
+            "rum_post" => $this->rumPost,
             'follow_up' => $this->follow_up
         ];
     }

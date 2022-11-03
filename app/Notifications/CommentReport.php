@@ -67,7 +67,7 @@ class CommentReport extends Notification
     {
         return [
             "message" => $this->message,
-            "rumPost" => $this->rumPost,
+            "rum_post" => $this->rumPost,
             "comment" => $this->comment,
             "reply" => $this->reply,
             "follow_up" => $this->follow_up,
