@@ -14,6 +14,7 @@ class PostReport extends Notification
 
     public RumPost $rumPost;
     public string $message;
+    public bool $follow_up = false;
 
     /**
      * Create a new notification instance.
@@ -62,6 +63,7 @@ class PostReport extends Notification
         return [
             "message" => $this->message,
             "rumPost" => $this->rumPost,
+            'follow_up' => $this->follow_up
         ];
     }
 }

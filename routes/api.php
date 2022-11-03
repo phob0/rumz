@@ -129,6 +129,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(['prefix' => 'notification', 'as' => 'notifications'], function() {
         Route::get('lookup', [NotificationController::class, 'lookup'])->name('lookupNotification');
         Route::get('all', [NotificationController::class, 'allNotifications'])->name('allNotification');
+        Route::get('mark-as-read', [NotificationController::class, 'markAsReadNotification'])->name('markAsReadNotification');
     });
 
     Route::get('/', [RumController::class, 'index'])->name('homepage');

@@ -17,6 +17,13 @@ class NotificationController extends Controller
         return JsonResource::collection(auth()->user()->notifications);
     }
 
+    public function markAsReadNotification(Request $request): \Illuminate\Http\Response
+    {
+        auth()->user()->notifications->where('data.follow_up', false)->markAsRead();
+
+        return response()->noContent();
+    }
+
     public function deleteNotification()
     {}
 

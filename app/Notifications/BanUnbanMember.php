@@ -62,7 +62,8 @@ class BanUnbanMember extends Notification
     {
         return [
             'rum' => $this->rum,
-            'message' => $this->message
+            'message' => $this->message,
+            "follow_up" => $this->follow_up,
         ];
     }
 }

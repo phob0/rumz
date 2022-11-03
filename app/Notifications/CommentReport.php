@@ -17,6 +17,7 @@ class CommentReport extends Notification
     public Comment $comment;
     public array $reply = [];
     public string $message;
+    public bool $follow_up = false;
 
     /**
      * Create a new notification instance.
@@ -69,6 +70,7 @@ class CommentReport extends Notification
             "rumPost" => $this->rumPost,
             "comment" => $this->comment,
             "reply" => $this->reply,
+            "follow_up" => $this->follow_up,
         ];
     }
 }
