@@ -6,6 +6,7 @@ use App\Http\Requests\StoreRumRequest;
 use App\Http\Requests\UpdateRumRequest;
 use App\Http\Resources\RumPostResource;
 use App\Models\Image;
+use App\Models\Notification;
 use App\Models\Rum;
 use App\Models\RumHashtag;
 use App\Models\User;
@@ -259,9 +260,13 @@ class RumController extends Controller
             'granted' => true
         ]);
 
-        auth()->user()->notifications->filter(function($item) use($rum) {
+        $notification = auth()->user()->notifications->filter(function($item) use($rum) {
             return $item->data['rum']['id'] === $rum->id;
-        })->markAsRead();
+        });
+
+        $notification->markAsRead();
+
+        Notification::find($notification->id)->delete();
 
         $user->notify(new RumApprovalSubscriber($rum, 'Your request to join has been approved'));
 
