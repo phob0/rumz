@@ -45,6 +45,7 @@ class Rum extends Model
         'subscribed',
         'image',
         'is_granted',
+        'is_admin',
     ];
 
     protected $withCount = [
@@ -64,6 +65,14 @@ class Rum extends Model
             User::class,
             RumAdmin::class,
         )->withPivot('granted')->where('granted', 1);
+    }
+
+    public function is_admin(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(
+            User::class,
+            RumAdmin::class,
+        )->where('user_id', auth()->user()->id);
     }
 
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
