@@ -256,7 +256,7 @@ class RumController extends Controller
         $this->authorize('grant', [$rum, $user]);
 
         $rum->join_requests()->where('user_id', $user->id)->first()->update([
-            'granted' => $request->granted
+            'granted' => true
         ]);
 
         auth()->user()->notifications->filter(function($item) use($rum) {
