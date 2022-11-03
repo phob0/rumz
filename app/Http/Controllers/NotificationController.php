@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Symfony\Component\HttpFoundation\Response;
 
 class NotificationController extends Controller
 {
@@ -24,8 +27,29 @@ class NotificationController extends Controller
         return response()->noContent();
     }
 
+    public function markAsOldNotification(Request $request, Notification $notification): \Illuminate\Http\Response
+    {
+        if ($notification->notifiable->id !== auth()->user()->id) {
+            throw new HttpResponseException(
+                response()->json(['error' => 'This notification doesn`t match current users'], Response::HTTP_FORBIDDEN)
+            );
+        }
+
+        if (is_null($notification->read_at) || is_null($notification)) {
+            throw new HttpResponseException(
+                response()->json(['error' => 'Your notification is not read yet or doesn`t exist.'], Response::HTTP_NOT_ACCEPTABLE)
+            );
+        }
+
+        $notification->delete();
+
+        return response()->noContent();
+    }
+
     public function deleteNotification()
-    {}
+    {
+        //force delete
+    }
 
     /*
      * TODO
