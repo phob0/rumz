@@ -70,7 +70,6 @@ class Rum extends Model
     public function is_admin(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(RumAdmin::class)
-            ->where('granted', 1)
             ->where('user_id', auth()->user()->id);
     }
 
