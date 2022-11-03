@@ -15,6 +15,7 @@ class RumApprovalSubscriber extends Notification
 
     public Rum $rum;
     public string $message;
+    public bool $follow_up = false;
 
     /**
      * Create a new notification instance.
@@ -64,6 +65,7 @@ class RumApprovalSubscriber extends Notification
             "message" => $this->message,
             "subscriber" => $notifiable,
             "rum" => $this->rum,
+            "follow_up" => $this->follow_up,
         ];
     }
 }

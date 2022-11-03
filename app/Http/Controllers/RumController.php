@@ -276,7 +276,10 @@ class RumController extends Controller
 
     public function reject(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
     {
-        $rum->join_requests()->where('user_id', $user->id)->first()->delete();
+        $rum->join_requests()
+            ->where('user_id', $user->id)
+            ->where('rum_id', $rum->id)
+            ->first()->delete();
         // TODO: add follow-up to interactive notifications
         auth()->user()->unreadNotifications->filter(function($item) use($rum) {
             return $item->data['rum']['id'] === $rum->id;
