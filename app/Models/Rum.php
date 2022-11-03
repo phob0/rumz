@@ -71,7 +71,7 @@ class Rum extends Model
     {
         return $this->hasOne(RumAdmin::class)
             ->where('granted', 1)
-            ->where('id', auth()->user()->id);
+            ->where('user_id', auth()->user()->id);
     }
 
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
