@@ -29,6 +29,7 @@ class RumPolicy
                 return true;
             case Rum::TYPE_PRIVATE || Rum::TYPE_CONFIDENTIAL;
                 return (
+                    $rum->user_id === $user->id ||
                     $rum->users->contains(function ($member) use($user) {
                         return $member->id === $user->id && $member->pivot->granted;
                     }) ||

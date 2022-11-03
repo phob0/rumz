@@ -79,7 +79,7 @@ class Rum extends Model
         return $this->hasMany(UserRum::class)->where('granted', 1);
     }
 
-    public function is_granted()
+    public function is_granted(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(UserRum::class)->where('user_id', auth()->user()->id);
     }
