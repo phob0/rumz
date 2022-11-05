@@ -110,10 +110,16 @@ class RumPolicy
 
     public function membersList(User $user, Rum $rum)
     {
+        /*
         return $rum->type !== Rum::TYPE_PAID ?
             $rum->users->contains(fn ($item) => $item->id === $user->id) :
             $rum->subscribed->contains(fn ($item) => $item->id === $user->id)
             || $rum->user_id === $user->id;
+        */
+        return $user->id === $rum->user_id ||
+            $rum->admins->contains(function ($admin) use($user) {
+                return $admin->id === $user->id && $admin->pivot->granted;
+            });
     }
 
     public function inviteMember(User $user, Rum $rum, User $member)
