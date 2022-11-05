@@ -256,7 +256,10 @@ class RumController extends Controller
     {
         $this->authorize('grant', [$rum, $user]);
 
-        $rum->join_requests()->where('user_id', $user->id)->first()->update([
+        $rum->join_requests()
+            ->where('rum_id', $rum->id)
+            ->where('user_id', $user->id)
+            ->first()->update([
             'granted' => true
         ]);
 
