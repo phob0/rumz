@@ -35,7 +35,7 @@ it('has report rum', function () {
         ['*']
     );
 
-    $this->patch('api/rum/member/accept-invite/' . $rum->id);
+    $this->patch('api/rum/member/invite/accept/' . $rum->id);
 
     $reportRumResponse = $this->patch('api/rum/report/' . $rum->id);
 

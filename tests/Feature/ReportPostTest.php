@@ -37,7 +37,7 @@ it('has report post', function () {
         ['*']
     );
 
-    $this->patch('api/rum/member/accept-invite/' . $rum->id);
+    $this->patch('api/rum/member/invite/accept/' . $rum->id);
 
     $payload = [
         'rum_id' => $rum->id,
@@ -67,7 +67,7 @@ it('has report post', function () {
         ['*']
     );
 
-    $this->patch('api/rum/member/accept-invite/' . $rum->id);
+    $this->patch('api/rum/member/invite/accept/' . $rum->id);
 
     $reportRumPostResponse = $this->patch('api/rum/post/report/' . $post->id);
 

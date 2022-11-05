@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'phone' => $faker->phoneNumber,
             'sex' => $faker->randomElement(['male', 'female']),
             'birth_date' => $faker->date,
+            'description' => $faker->text,
             'superadmin' => 0,
             'email' => $faker->unique()->safeEmail,
             'email_verified_at' => now(),

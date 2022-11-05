@@ -34,7 +34,7 @@ it('has accept invite rum follow-up', function () {
         ['*']
     );
 
-    $acceptInviteResponse = $this->patch('api/rum/member/accept-invite/' . $rum->id);
+    $acceptInviteResponse = $this->patch('api/rum/member/invite/accept/' . $rum->id);
 
     $acceptInviteResponse->assertStatus(204);
 

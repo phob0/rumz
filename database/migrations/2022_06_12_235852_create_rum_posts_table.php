@@ -26,7 +26,6 @@ class CreateRumPostsTable extends Migration
                 ->onDelete("restrict");
             $table->index(["user_id"], 'rum_posts_users_id_foreign');
             $table->boolean('approved')->default(0);
-            $table->string('title');
             $table->string('description');
             $table->boolean('visible')->default(1);
             $table->json('metadata')->nullable();

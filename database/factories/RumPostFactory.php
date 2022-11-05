@@ -19,7 +19,6 @@ class RumPostFactory extends Factory
             'rum_id' => Rum::all()->random()->id,
             'user_id' => User::all()->random()->id,
             'approved' => collect([0, 1])->random(),
-            'title' => $this->faker->text,
             'description' => $this->faker->text,
             'metadata' => null
         ];

@@ -58,8 +58,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::group(['prefix' => 'invite', 'as' => 'invites'], function() {
                 Route::patch('{rum}/{user}', [RumController::class, 'inviteMember'])->name('inviteMemberRum');
                 Route::patch('admin/{rum}/{user}', [RumController::class, 'inviteAdminMember'])->name('inviteAdminMemberRum');
-                Route::patch('accept-invite/admin/{rum}', [RumController::class, 'acceptInviteMember'])->name('acceptInviteMemberRum');
-                Route::patch('accept-invite/{rum}', [RumController::class, 'acceptAdminInviteMember'])->name('acceptAdminInviteMemberRum');
+                Route::patch('accept/admin/{rum}', [RumController::class, 'acceptInviteMember'])->name('acceptInviteMemberRum');
+                Route::patch('accept/{rum}', [RumController::class, 'acceptAdminInviteMember'])->name('acceptAdminInviteMemberRum');
             });
 
             Route::patch('remove/{rum}/{user}', [RumController::class, 'removeMember'])->name('removeMemberRum');

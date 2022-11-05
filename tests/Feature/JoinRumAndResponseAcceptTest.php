@@ -65,10 +65,8 @@ it('has a private rum and request join an accept', function () {
 
     $this->assertEquals($creator->notifications[0]->data['subscriber']['id'], $subscriber->id);
     $this->assertEquals($creator->notifications[0]->data['rum']['id'], $rum->id);
-
-    $rejectSubscriberResponse = $this->patch('api/rum/grant/'.$rum->id.'/'.$subscriber->id, [
-        'granted' => 1
-    ]);
+//    dd($rum->id, $subscriber->id);
+    $rejectSubscriberResponse = $this->patch('api/rum/grant/'.$rum->id.'/'.$subscriber->id);
 
     $rejectSubscriberResponse->assertStatus(204);
 

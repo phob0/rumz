@@ -260,12 +260,12 @@ class RumController extends Controller
             ->where('rum_id', $rum->id)
             ->where('user_id', $user->id)
             ->first()->update([
-            'granted' => true
-        ]);
+                'granted' => true
+            ]);
 
         $notification = auth()->user()->notifications->filter(function($item) use($rum) {
-            return $item->data['rum']['id'] === $rum->id;
-        });
+            return ($item->data['rum']['id'] === $rum->id && is_null($item->read_at));
+        })->first();
 
         $notification->markAsRead();
 

@@ -35,7 +35,7 @@ it('has remove member', function () {
         ['*']
     );
 
-    $this->patch('api/rum/member/accept-invite/' . $rum->id);
+    $this->patch('api/rum/member/invite/accept/' . $rum->id);
 
     auth()->user()->tokens()->delete();
 
