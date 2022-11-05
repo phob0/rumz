@@ -353,7 +353,7 @@ class RumController extends Controller
         $existingUsers = collect([]);
 
         collect($request->members)
-            ->each(fn($number) => !in_array($number, $currentUsers) ? $this->sendSMS($number, $inviteMessage) : $existingUsers->push($number));
+            ->each(fn($number) => !in_array($number, $currentUsers->toArray()) ? $this->sendSMS($number, $inviteMessage) : $existingUsers->push($number));
 
 
         $existingUsers->each(function($member) use($rum){
