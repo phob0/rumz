@@ -95,8 +95,9 @@ class RumPolicy
 
     public function grant(User $master, Rum $rum, User $user)
     {
-        return $rum->user_id === $master->id
-            || $rum->join_requests->contains(function($item) use($user) { return $item->user_id === $user->id; });
+        return ($rum->user_id === $master->id
+            || $rum->join_requests->contains(function($item) use($user) { return $item->user_id === $user->id; })) &&
+            !$rum->join_requests->where('rum_id', $rum->id)->where('user_id', $user->id)->first()->granted;
     }
 
     public function membersList(User $user, Rum $rum)
