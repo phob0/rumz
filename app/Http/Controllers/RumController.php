@@ -269,7 +269,7 @@ class RumController extends Controller
 
         Notification::find($notification->id)->forceDelete();
 
-        $user->notify(new RumApprovalSubscriber($rum, 'Your request to join has been approved'));
+        $user->notify(new RumApprovalSubscriber($rum->fresh(), 'Your request to join has been approved'));
 
         return response()->noContent();
     }
@@ -289,7 +289,7 @@ class RumController extends Controller
 
         Notification::find($notification->id)->forceDelete();
 
-        $user->notify(new RumRejectionSubscriber($rum, 'Your request to join has been rejected'));
+        $user->notify(new RumRejectionSubscriber($rum->fresh(), 'Your request to join has been rejected'));
 
         return response()->noContent();
     }
