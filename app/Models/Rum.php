@@ -126,7 +126,7 @@ class Rum extends Model
 
     public function master(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(User::class, 'id', 'user_id')->select('id', 'name');
+        return $this->hasOne(User::class, 'id', 'user_id')->select('id', 'name', 'phone');
     }
 
     public function hashtags(): \Illuminate\Database\Eloquent\Relations\HasMany
