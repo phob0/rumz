@@ -130,10 +130,10 @@ class RumPolicy
             $user->id === $rum->user_id;
     }
 
-    public function inviteAdminMember(User $user, Rum $rum, User $member)
+    public function inviteAdminMembers(User $user, Rum $rum, $members)
     {
-        return !$rum->admins->contains(fn ($item) => $item->id === $member->id) &&
-            $member->id !== $rum->user_id &&
+        return !$rum->admins->contains(fn ($item) => in_array($item->phone, $members)) &&
+            !in_array($rum->master->phone, $members) &&
             $user->id === $rum->user_id;
     }
 

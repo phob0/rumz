@@ -96,4 +96,25 @@ class Controller extends BaseController
             Storage::disk('local')->delete($path);
         }
     }
+
+    protected function sendSMS($number, $message)
+    {
+        $basic  = new \Vonage\Client\Credentials\Basic(env('VONAGE_KEY'), env('VONAGE_SECRET'));
+        $client = new \Vonage\Client($basic);
+
+        $response = $client->sms()->send(
+        new \Vonage\SMS\Message\SMS($number, env('app_name'), $message)
+        );
+
+        $message = $response->current();
+
+        if ($message->getStatus() !== 0) {
+            throw new HttpResponseException(
+                response()->json(['error' => [
+                    'message' => 'This error is from our SMS service.',
+                    'error' => $message->getStatus()
+                ]], Response::HTTP_EXPECTATION_FAILED)
+            );
+        }
+    }
 }

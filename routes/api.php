@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             // add group for admin invite
             Route::group(['prefix' => 'invite', 'as' => 'invites'], function() {
                 Route::patch('{rum}/{user}', [RumController::class, 'inviteMember'])->name('inviteMemberRum');
-                Route::patch('admin/{rum}/{user}', [RumController::class, 'inviteAdminMember'])->name('inviteAdminMemberRum');
+                Route::patch('admin/{rum}', [RumController::class, 'inviteAdminMembers'])->name('inviteAdminMembersRum');
                 Route::patch('accept/admin/{rum}', [RumController::class, 'acceptInviteMember'])->name('acceptInviteMemberRum');
                 Route::patch('accept/{rum}', [RumController::class, 'acceptAdminInviteMember'])->name('acceptAdminInviteMemberRum');
             });

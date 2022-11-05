@@ -341,18 +341,33 @@ class RumController extends Controller
         return response()->noContent();
     }
 
-    public function inviteAdminMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
+    public function inviteAdminMembers(Request $request, Rum $rum): \Illuminate\Http\Response
     {
-        $this->authorize('inviteAdminMember', [$rum, $user]);
+        $this->authorize('inviteAdminMembers', [$rum, $request->members]);
 
-        $rum->joined_admins()->create([
-            'user_id' => $user->id,
-            'granted' => 0
-        ]);
+        $inviteMessage = auth()->user()->name . 'has invited you to become an admin member to a rum. Login in to your account or sign up to ' . env('app_name') . 'to accept the invitation.';
 
-        $user->notify(
-            new InviteAdminMember($rum, auth()->user()->name . 'has invited you to be an admin of this rum. Please submit a response.')
-        );
+        $currentUsers = collect(User::without(['image'])->get('phone')->toArray())
+            ->flatten();
+
+        $existingUsers = collect([]);
+
+        collect($request->members)
+            ->each(fn($number) => !in_array($number, $currentUsers) ? $this->sendSMS($number, $inviteMessage) : $existingUsers->push($number));
+
+
+        $existingUsers->each(function($member) use($rum){
+            $user = User::where('phone', $member)->first();
+
+            $rum->joined_admins()->create([
+                'user_id' => $user->id,
+                'granted' => 0
+            ]);
+
+            $user->notify(
+                new InviteAdminMember($rum, auth()->user()->name . 'has invited you to be an admin of this rum. Please submit a response.')
+            );
+        });
 
         return response()->noContent();
     }
