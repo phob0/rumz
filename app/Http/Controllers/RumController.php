@@ -319,7 +319,7 @@ class RumController extends Controller
         $this->authorize('membersList', $rum);
 
         return JsonResource::collection(
-            $rum->users()
+            $rum->users
                 ->concat($rum->subscribed)
                 ->concat(auth()->user()->friends)
             );
