@@ -100,6 +100,14 @@ class RumPolicy
             !$rum->join_requests->where('rum_id', $rum->id)->where('user_id', $user->id)->first()->granted;
     }
 
+    public function adminsList(User $user, Rum $rum)
+    {
+        return $user->id === $rum->user_id ||
+            $rum->admins->contains(function ($admin) use($user) {
+                return $admin->id === $user->id && $admin->pivot->granted;
+            });
+    }
+
     public function membersList(User $user, Rum $rum)
     {
         return $rum->type !== Rum::TYPE_PAID ?

@@ -307,11 +307,22 @@ class RumController extends Controller
         return response()->noContent();
     }
 
+    public function adminsList(Request $request, Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $this->authorize('adminsList', $rum);
+
+        return JsonResource::collection($rum->admins);
+    }
+
     public function membersList(Request $request, Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $this->authorize('membersList', $rum);
 
-        return JsonResource::collection($rum->users()->concat($rum->subscribed));
+        return JsonResource::collection(
+            $rum->users()
+                ->concat($rum->subscribed)
+                ->concat(auth()->user()->friends)
+            );
     }
 
     public function inviteMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response

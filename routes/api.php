@@ -46,6 +46,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('edit/{rum}', [RumController::class, 'edit'])->name('editRum');
         Route::put('update/{rum}', [RumController::class, 'update'])->name('updateRum');
         Route::delete('delete/{rum}', [RumController::class, 'delete'])->name('deleteRum');
+        Route::get('admins/{rum}', [RumController::class, 'adminsList'])->name('adminsListRum');
         Route::get('members/{rum}', [RumController::class, 'membersList'])->name('membersListRum');
         Route::get('hashtag-suggestions/{q?}', [RumController::class, 'hashtagSuggestions'])->name('hashtagSuggestions'); /* q param */
         Route::patch('join/{rum}/{type}', [RumController::class, 'join'])->name('joinRum')->whereIn('type', ['private', 'confidential', 'paid', 'free']);
