@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Rum;
-use App\Models\User;
+use App\Models\UserRum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,6 +14,7 @@ class RumApprovalSubscriber extends Notification
     use Queueable;
 
     public Rum $rum;
+    public UserRum $userRum;
     public string $message;
     public bool $follow_up = false;
 
@@ -22,9 +23,10 @@ class RumApprovalSubscriber extends Notification
      *
      * @return void
      */
-    public function __construct($rum, $message = '')
+    public function __construct($rum, $userRum, $message = '')
     {
         $this->rum = $rum;
+        $this->userRum = $userRum;
         $this->message = $message;
     }
 
@@ -65,6 +67,7 @@ class RumApprovalSubscriber extends Notification
             "message" => $this->message,
             "subscriber" => $notifiable,
             "rum" => $this->rum,
+            "user_rum" => $this->userRum,
             "follow_up" => $this->follow_up,
         ];
     }

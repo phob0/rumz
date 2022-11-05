@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Rum;
+use App\Models\UserRum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
