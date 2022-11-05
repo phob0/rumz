@@ -57,10 +57,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::patch('ban-unban/{action}/{rum}/{user}', [RumController::class, 'banUnbanMember'])->name('banUnbanMemberRum')->whereIn('action', ['ban', 'unban']);
             // add group for admin invite
             Route::group(['prefix' => 'invite', 'as' => 'invites'], function() {
+                Route::group(['prefix' => 'admin', 'as' => 'admins'], function() {
+                    Route::patch('{rum}', [RumController::class, 'inviteAdminMembers'])->name('inviteAdminMembersRum');
+                    Route::patch('accept/{rum}', [RumController::class, 'acceptAdminInviteMember'])->name('acceptAdminInviteMemberRum');
+                });
+
                 Route::patch('{rum}/{user}', [RumController::class, 'inviteMember'])->name('inviteMemberRum');
-                Route::patch('admin/{rum}', [RumController::class, 'inviteAdminMembers'])->name('inviteAdminMembersRum');
-                Route::patch('accept/admin/{rum}', [RumController::class, 'acceptInviteMember'])->name('acceptInviteMemberRum');
-                Route::patch('accept/{rum}', [RumController::class, 'acceptAdminInviteMember'])->name('acceptAdminInviteMemberRum');
+                Route::patch('accept/{rum}', [RumController::class, 'acceptInviteMember'])->name('acceptInviteMemberRum');
             });
 
             Route::patch('remove/{rum}/{user}', [RumController::class, 'removeMember'])->name('removeMemberRum');
