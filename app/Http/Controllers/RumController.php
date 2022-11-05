@@ -263,13 +263,11 @@ class RumController extends Controller
                 'granted' => true
             ]);
 
-        $notification = auth()->user()->notifications->filter(function($item) use($rum) {
-            return ($item->data['rum']['id'] === $rum->id && is_null($item->read_at));
+        $notification = auth()->user()->unreadNotifications->filter(function($item) use($rum) {
+            return $item->data['rum']['id'] === $rum->id;
         })->first();
 
-        $notification->markAsRead();
-
-        Notification::find($notification->id)->delete();
+        Notification::find($notification->id)->forceDelete();
 
         $user->notify(new RumApprovalSubscriber($rum, 'Your request to join has been approved'));
 
@@ -282,10 +280,14 @@ class RumController extends Controller
             ->where('user_id', $user->id)
             ->where('rum_id', $rum->id)
             ->first()->delete();
+
         // TODO: add follow-up to interactive notifications
-        auth()->user()->unreadNotifications->filter(function($item) use($rum) {
+
+        $notification = auth()->user()->unreadNotifications->filter(function($item) use($rum) {
             return $item->data['rum']['id'] === $rum->id;
-        })->markAsRead();
+        })->first();
+
+        Notification::find($notification->id)->forceDelete();
 
         $user->notify(new RumRejectionSubscriber($rum, 'Your request to join has been rejected'));
 
