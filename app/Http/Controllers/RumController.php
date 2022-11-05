@@ -404,9 +404,9 @@ class RumController extends Controller
         return response()->noContent();
     }
 
-    public function acceptAdminInviteMember(Request $request, Rum $rum)
+    public function acceptAdminInviteMember(Request $request, Rum $rum, User $user)
     {
-        $this->authorize('acceptAdminInvite', $rum);
+        $this->authorize('acceptAdminInvite', [$rum, $user]);
 
         dd(true);
     }

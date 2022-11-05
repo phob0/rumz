@@ -2,13 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Interfaces\NotificationTypes;
 use App\Models\Rum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InviteAdminMember extends Notification
+class InviteAdminMember extends Notification implements NotificationTypes
 {
     use Queueable;
 
@@ -63,7 +64,8 @@ class InviteAdminMember extends Notification
         return [
             'rum' => $this->rum,
             'message' => $this->message,
-            'follow_up' => $this->follow_up
+            'follow_up' => $this->follow_up,
+            'notification_type' => self::ADMIN_ROOM_INVITATION
         ];
     }
 }
