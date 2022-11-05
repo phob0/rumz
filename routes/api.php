@@ -131,6 +131,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('all', [NotificationController::class, 'allNotifications'])->name('allNotification');
         Route::get('mark-as-read', [NotificationController::class, 'markAsReadNotification'])->name('markAsReadNotification');
         Route::patch('mark-as-old/{notification}', [NotificationController::class, 'markAsOldNotification'])->name('markAsOldNotification');
+        Route::delete('clear-all', [NotificationController::class, 'clearAll'])->name('clearAllNotification');
     });
 
     Route::get('/', [RumController::class, 'index'])->name('homepage');

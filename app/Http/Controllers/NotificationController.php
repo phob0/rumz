@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notification;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -42,6 +41,17 @@ class NotificationController extends Controller
         }
 
         $notification->delete();
+
+        return response()->noContent();
+    }
+
+    public function clearAll(Request $request): \Illuminate\Http\Response
+    {
+        auth()->user()
+            ->notifications->where('read_at', '!==', null)
+            ->each(
+                fn($item) => \DB::table('notifications')->where('id', $item->id)->delete()
+            );
 
         return response()->noContent();
     }
