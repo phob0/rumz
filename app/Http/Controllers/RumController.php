@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserRum;
 use App\Notifications\AcceptInvite;
 use App\Notifications\BanUnbanMember;
+use App\Notifications\InviteAdminMember;
 use App\Notifications\InviteMember;
 use App\Notifications\NewMember;
 use App\Notifications\RemoveMember;
@@ -359,14 +360,17 @@ class RumController extends Controller
         $existingUsers->each(function($member) use($rum){
             $user = User::where('phone', $member)->first();
 
-            $rum->joined_admins()->create([
-                'user_id' => $user->id,
-                'granted' => 0
-            ]);
+            if (!is_null($user)) {
+                $rum->joined_admins()->create([
+                    'user_id' => $user->id,
+                    'granted' => 0
+                ]);
 
-            $user->notify(
-                new InviteAdminMember($rum, auth()->user()->name . 'has invited you to be an admin of this rum. Please submit a response.')
-            );
+                $user->notify(
+                    new InviteAdminMember($rum, auth()->user()->name . 'has invited you to be an admin of this rum. Please submit a response.')
+                );
+            }
+
         });
 
         return response()->noContent();
