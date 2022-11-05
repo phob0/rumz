@@ -345,7 +345,7 @@ class RumController extends Controller
     {
         $this->authorize('inviteAdminMembers', [$rum, $request->members]);
 
-        $inviteMessage = auth()->user()->name . 'has invited you to become an admin member to a rum. Login in to your account or sign up to ' . env('app_name') . 'to accept the invitation.';
+        $inviteMessage = auth()->user()->name . 'has invited you to become an admin member to a rum. Login in to your account or sign up to ' . env('APP_NAME') . 'to accept the invitation.';
 
         $currentUsers = collect(User::without(['image'])->get('phone')->toArray())
             ->flatten();

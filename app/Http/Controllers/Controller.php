@@ -103,7 +103,7 @@ class Controller extends BaseController
         $client = new \Vonage\Client($basic);
 
         $response = $client->sms()->send(
-        new \Vonage\SMS\Message\SMS($number, env('app_name'), $message)
+        new \Vonage\SMS\Message\SMS($number, env('APP_NAME'), $message)
         );
 
         $message = $response->current();
