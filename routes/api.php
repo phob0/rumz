@@ -60,6 +60,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 Route::group(['prefix' => 'admin', 'as' => 'admins'], function() {
                     Route::patch('{rum}', [RumController::class, 'inviteAdminMembers'])->name('inviteAdminMembersRum');
                     Route::patch('accept/{rum}', [RumController::class, 'acceptAdminInviteMember'])->name('acceptAdminInviteMemberRum');
+                    Route::patch('reject/{rum}', [RumController::class, 'rejectAdminInviteMember'])->name('rejectAdminInviteMemberRum');
                 });
 
                 Route::patch('{rum}/{user}', [RumController::class, 'inviteMember'])->name('inviteMemberRum');

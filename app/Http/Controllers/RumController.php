@@ -290,8 +290,6 @@ class RumController extends Controller
             ->where('rum_id', $rum->id)
             ->first()->delete();
 
-        // TODO: add follow-up to interactive notifications
-
         $notification = auth()->user()->unreadNotifications->filter(function($item) use($rum) {
             return $item->data['rum']['id'] === $rum->id;
         })->first();
@@ -406,10 +404,10 @@ class RumController extends Controller
 
     public function acceptAdminInviteMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
     {
-        $this->authorize('acceptAdminInvite', [$rum, $user]);
+        $this->authorize('acceptAdminInvite', $rum);
 
-        $rum->join_admin_requests()->where('user_id', $user->id)->update([
-            'user_id' => $user->id,
+        $rum->join_admin_requests()->where('user_id', auth()->user()->id)->update([
+            'user_id' => auth()->user()->id,
             'granted' => 1
         ]);
 
@@ -418,6 +416,11 @@ class RumController extends Controller
         );
 
         return response()->noContent();
+    }
+
+    public function rejectAdminInviteMember(Request $request, Rum $rum, User $user)
+    {
+
     }
 
     public function banUnbanMember(Request $request, $action,Rum $rum, User $user): \Illuminate\Http\Response
