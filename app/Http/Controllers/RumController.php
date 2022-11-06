@@ -361,7 +361,7 @@ class RumController extends Controller
             $user = User::where('phone', $member)->first();
 
             if (!is_null($user)) {
-                $rum->joined_admins()->create([
+                $rum->join_admin_requests()->create([
                     'user_id' => $user->id,
                     'granted' => 0
                 ]);
@@ -390,7 +390,7 @@ class RumController extends Controller
         ]);
 
         $rum->master->notify(
-            new AcceptInvite(auth()->user()->id . 'has accepted your invite.')
+            new AcceptInvite($rum, auth()->user()->id . 'has accepted your invite.')
         );
 
         $rum->users->concat($rum->subscribed)->each(function($user) {
@@ -404,11 +404,20 @@ class RumController extends Controller
         return response()->noContent();
     }
 
-    public function acceptAdminInviteMember(Request $request, Rum $rum, User $user)
+    public function acceptAdminInviteMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
     {
         $this->authorize('acceptAdminInvite', [$rum, $user]);
 
-        dd(true);
+        $rum->join_admin_requests()->where('user_id', $user->id)->update([
+            'user_id' => $user->id,
+            'granted' => 1
+        ]);
+
+        $rum->master->notify(
+            new AcceptAdminInvite(auth()->user()->id . 'has accepted your invite.')
+        );
+
+        return response()->noContent();
     }
 
     public function banUnbanMember(Request $request, $action,Rum $rum, User $user): \Illuminate\Http\Response

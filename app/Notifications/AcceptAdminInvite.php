@@ -8,15 +8,15 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use phpDocumentor\Reflection\Types\Boolean;
 
-class AcceptInvite extends Notification implements NotificationTypes
+class AcceptAdminInvite extends Notification  implements NotificationTypes
 {
     use Queueable;
 
     public Rum $rum;
     public string $message;
     public bool $follow_up = false;
+
 
     /**
      * Create a new notification instance.
@@ -66,7 +66,7 @@ class AcceptInvite extends Notification implements NotificationTypes
             'rum' => $this->rum,
             'message' => $this->message,
             'follow_up' => $this->follow_up,
-            'notification_type' => self::ROOM_ACCEPTANCE
+            'notification_type' => self::ADMIN_ROOM_ACCEPTANCE
         ];
     }
 }
