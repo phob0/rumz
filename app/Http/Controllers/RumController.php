@@ -11,6 +11,7 @@ use App\Models\Rum;
 use App\Models\RumHashtag;
 use App\Models\User;
 use App\Models\UserRum;
+use App\Notifications\AcceptAdminInvite;
 use App\Notifications\AcceptInvite;
 use App\Notifications\BanUnbanMember;
 use App\Notifications\InviteAdminMember;
@@ -412,7 +413,7 @@ class RumController extends Controller
         ]);
 
         $rum->master->notify(
-            new AcceptAdminInvite(auth()->user()->id . 'has accepted your invite.')
+            new AcceptAdminInvite($rum, auth()->user()->name . 'has accepted your invite.')
         );
 
         return response()->noContent();
