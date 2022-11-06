@@ -414,7 +414,7 @@ class RumController extends Controller implements NotificationTypes
         ]);
 
         $notification = auth()->user()->unreadNotifications->filter(function($item) use($rum) {
-            return $item->data['rum']['id'] === $rum->id && $item->notification_type === self::ADMIN_ROOM_INVITATION;
+            return $item->data['rum']['id'] === $rum->id && $item->data['notification_type'] === self::ADMIN_ROOM_INVITATION;
         })->first();
 
         Notification::find($notification->id)->forceDelete();
