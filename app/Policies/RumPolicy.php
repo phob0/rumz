@@ -149,6 +149,12 @@ class RumPolicy
             $rum->join_admin_requests->contains(fn ($item) => $item->user_id === $user->id);
     }
 
+    public function rejectAdminInvite(User $user, Rum $rum)
+    {
+        return $user->id !== $rum->user_id &&
+            $rum->join_admin_requests->contains(fn ($item) => $item->user_id === $user->id);
+    }
+
     public function banOrUnbanMembers(User $user, Rum $rum, User $member, $action)
     {
         $users = $action === 'ban' ?
