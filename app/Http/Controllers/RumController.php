@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRumRequest;
 use App\Http\Requests\UpdateRumRequest;
 use App\Http\Resources\RumPostResource;
+use App\Interfaces\NotificationTypes;
 use App\Models\Image;
 use App\Models\Notification;
 use App\Models\Rum;
@@ -33,7 +34,7 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\Searchable\Search;
 use Symfony\Component\HttpFoundation\Response;
 
-class RumController extends Controller
+class RumController extends Controller implements NotificationTypes
 {
 
     // TODO: uprade returns with specific resources
@@ -403,7 +404,7 @@ class RumController extends Controller
         return response()->noContent();
     }
 
-    public function acceptAdminInviteMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
+    public function acceptAdminInviteMember(Request $request, Rum $rum): \Illuminate\Http\Response
     {
         $this->authorize('acceptAdminInvite', $rum);
 
@@ -412,8 +413,17 @@ class RumController extends Controller
             'granted' => 1
         ]);
 
+        $notification = auth()->user()->unreadNotifications->filter(function($item) use($rum) {
+            return $item->data['rum']['id'] === $rum->id && $item->notification_type === self::ADMIN_ROOM_INVITATION;
+        })->first();
+
+        Notification::find($notification->id)->forceDelete();
+
         $rum->master->notify(
-            new AcceptAdminInvite($rum, auth()->user()->name . 'has accepted your invite.')
+            new AcceptAdminInvite(
+                $rum,
+                auth()->user()->name . 'has accepted your invite.'
+            )
         );
 
         return response()->noContent();
