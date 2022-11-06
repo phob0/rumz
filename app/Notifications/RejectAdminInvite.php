@@ -9,14 +9,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AcceptAdminInvite extends Notification implements NotificationTypes
+class RejectAdminInvite extends Notification implements NotificationTypes
 {
     use Queueable;
 
     public Rum $rum;
     public string $message;
     public bool $follow_up = false;
-
 
     /**
      * Create a new notification instance.

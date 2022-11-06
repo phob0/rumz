@@ -18,6 +18,7 @@ use App\Notifications\BanUnbanMember;
 use App\Notifications\InviteAdminMember;
 use App\Notifications\InviteMember;
 use App\Notifications\NewMember;
+use App\Notifications\RejectAdminInvite;
 use App\Notifications\RemoveMember;
 use App\Notifications\RumApprovalSubscriber;
 use App\Notifications\RumRejectionSubscriber;
@@ -422,16 +423,35 @@ class RumController extends Controller implements NotificationTypes
         $rum->master->notify(
             new AcceptAdminInvite(
                 $rum,
-                auth()->user()->name . 'has accepted your invite.'
+                auth()->user()->name . ' has accepted your invite.'
             )
         );
 
         return response()->noContent();
     }
 
-    public function rejectAdminInviteMember(Request $request, Rum $rum, User $user)
+    public function rejectAdminInviteMember(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
     {
+        $this->authorize('rejectAdminInvite', $rum);
 
+        $rum->join_admin_requests()
+            ->where('user_id', auth()->user()->id)
+            ->delete();
+
+        $notification = auth()->user()->notifications->filter(function($item) use($rum) {
+            return $item->data['rum']['id'] === $rum->id && $item->data['notification_type'] === self::ADMIN_ROOM_INVITATION;
+        })->first();
+
+        Notification::find($notification->id)->forceDelete();
+
+        $rum->master->notify(
+            new RejectAdminInvite(
+                $rum,
+                auth()->user()->name . ' has rejected your invite.'
+            )
+        );
+
+        return response()->noContent();
     }
 
     public function banUnbanMember(Request $request, $action,Rum $rum, User $user): \Illuminate\Http\Response
