@@ -336,7 +336,7 @@ class RumController extends Controller implements NotificationTypes
         ]);
 
         $user->notify(
-            new InviteMember($rum, auth()->user()->name . 'has invited you to join this rum. Please submit a response.')
+            new InviteMember($rum, auth()->user()->name . ' has invited you to join this rum. Please submit a response.')
         );
 
         return response()->noContent();
@@ -346,7 +346,7 @@ class RumController extends Controller implements NotificationTypes
     {
         $this->authorize('inviteAdminMembers', [$rum, $request->members]);
 
-        $inviteMessage = auth()->user()->name . 'has invited you to become an admin member to a rum. Login in to your account or sign up to ' . env('APP_NAME') . 'to accept the invitation.';
+        $inviteMessage = auth()->user()->name . ' has invited you to become an admin member to a rum. Login in to your account or sign up to ' . env('APP_NAME') . 'to accept the invitation.';
 
         $currentUsers = collect(User::without(['image'])->get('phone')->toArray())
             ->flatten();
@@ -367,7 +367,7 @@ class RumController extends Controller implements NotificationTypes
                 ]);
 
                 $user->notify(
-                    new InviteAdminMember($rum, auth()->user()->name . 'has invited you to be an admin of this rum. Please submit a response.')
+                    new InviteAdminMember($rum, auth()->user()->name . ' has invited you to be an admin of this rum. Please submit a response.')
                 );
             }
 
@@ -380,7 +380,7 @@ class RumController extends Controller implements NotificationTypes
     {
         $this->authorize('acceptInvite', $rum);
 
-        auth()->user()->unreadNotifications->where('type', InviteMember::class)->markAsRead();
+        auth()->user()->notifications->where('type', InviteMember::class)->markAsRead();
 
         $rum->join_requests()->where([
             ['user_id', '=', auth()->user()->id],
@@ -390,13 +390,13 @@ class RumController extends Controller implements NotificationTypes
         ]);
 
         $rum->master->notify(
-            new AcceptInvite($rum, auth()->user()->id . 'has accepted your invite.')
+            new AcceptInvite($rum, auth()->user()->id . ' has accepted your invite.')
         );
 
         $rum->users->concat($rum->subscribed)->each(function($user) {
             if ($user->id !== auth()->user()->id) {
                 $user->notify(
-                    new NewMember(auth()->user()->name . 'has joined the rum.')
+                    new NewMember(auth()->user()->name . ' has joined the rum.')
                 );
             }
         });
@@ -413,7 +413,7 @@ class RumController extends Controller implements NotificationTypes
             'granted' => 1
         ]);
 
-        $notification = auth()->user()->unreadNotifications->filter(function($item) use($rum) {
+        $notification = auth()->user()->notifications->filter(function($item) use($rum) {
             return $item->data['rum']['id'] === $rum->id && $item->data['notification_type'] === self::ADMIN_ROOM_INVITATION;
         })->first();
 
