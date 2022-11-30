@@ -189,7 +189,7 @@ class RumPostController extends Controller
         $this->authorize('comment', $rumPost);
 
         return JsonResource::collection(
-            $rumPost->comments()->orderBy('created_at', 'DESC')
+            $rumPost->comments()->orderBy('created_at', 'DESC')->get()
         );
     }
 
