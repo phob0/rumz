@@ -26,8 +26,8 @@ class CommentResource extends JsonResource
             'dislikes_count' => $this->dislikes_count,
             "liked" => $this->likes->isNotEmpty() ? $this->likes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
             "disliked" => $this->dislikes->isNotEmpty() ? $this->dislikes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
-            'created_at' => $this->id,
-            'updated_at' => $this->id,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
