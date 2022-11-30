@@ -22,6 +22,8 @@ class CommentResource extends JsonResource
             'replies' => CommentReplyResource::collection($this->replies),
             'likes' => $this->likes,
             'dislikes' => $this->dislikes,
+            'likes_count' => $this->likes_count,
+            'dislikes_count' => $this->dislikes_count,
             "liked" => $this->likes->isNotEmpty() ? $this->likes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
             "disliked" => $this->dislikes->isNotEmpty() ? $this->dislikes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
             'created_at' => $this->id,
