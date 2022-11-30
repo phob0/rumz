@@ -26,6 +26,7 @@ class Comment extends Model
 
     protected $with = [
         'user',
+        'post',
         'likes',
         'dislikes',
         'replies'

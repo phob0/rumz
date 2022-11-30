@@ -17,6 +17,7 @@ class CommentResource extends JsonResource
         return [
             'id' => $this->id,
             'user' => $this->user,
+            'post' => $this->post,
             'comment' => $this->comment,
             'replies' => CommentReplyResource::collection($this->replies),
             'likes' => $this->likes,
