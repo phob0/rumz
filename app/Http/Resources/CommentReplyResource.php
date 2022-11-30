@@ -14,17 +14,13 @@ class CommentReplyResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'user' => $this->user,
-            'comment' => $this->comment,
-            'parent' => $this->parent,
-            'likes_count' => $this->likes_count,
-            'dislikes_count' => $this->dislikes_count,
-            "liked" => $this->likes->isNotEmpty() ? $this->likes->contains(fn($item) => $item->id === auth()->user()->id) : false,
-            "disliked" => $this->dislikes->isNotEmpty() ? $this->dislikes->contains(fn($item) => $item->id === auth()->user()->id) : false,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+        $response = parent::toArray($request);
+
+        $response[] = [
+            "liked" => $this->likes->isNotEmpty() ? $this->likes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
+            "disliked" => $this->dislikes->isNotEmpty() ? $this->dislikes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
         ];
+
+        return $response;
     }
 }
