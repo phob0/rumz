@@ -19,8 +19,6 @@ class CommentReplyResource extends JsonResource
             'user' => $this->user,
             'comment' => $this->comment,
             'parent' => $this->parent,
-            'likes' => $this->likes,
-            'dislikes' => $this->dislikes,
             'likes_count' => $this->likes_count,
             'dislikes_count' => $this->dislikes_count,
             "liked" => $this->likes->isNotEmpty() ? $this->likes->contains(fn($item) => $item->id === auth()->user()->id) : false,

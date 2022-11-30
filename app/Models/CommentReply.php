@@ -24,8 +24,6 @@ class CommentReply extends Model
 
     protected $with = [
         'user',
-        'likes',
-        'dislikes',
         'parent',
     ];
 

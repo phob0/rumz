@@ -72,9 +72,8 @@ class RumController extends Controller implements NotificationTypes
     public function view(Rum $rum): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $this->authorize('view', $rum);
-//        dd(RumPostResource::collection($rum->posts));
+
         return RumPostResource::collection($rum->posts);
-//        return JsonResource::collection($rum->posts);
     }
 
     public function store(StoreRumRequest $request): JsonResource
