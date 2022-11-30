@@ -185,6 +185,11 @@ class RumPostController extends Controller
         ]);
     }
 
+    public function comments()
+    {
+
+    }
+
     public function updateComment(Request $request, RumPost $rumPost, Comment $comment): \Illuminate\Http\Response
     {
         $this->authorize('comment', $rumPost);

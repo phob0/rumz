@@ -10,6 +10,7 @@ use App\Models\Image;
 use App\Models\Notification;
 use App\Models\Rum;
 use App\Models\RumHashtag;
+use App\Models\RumPost;
 use App\Models\User;
 use App\Models\UserRum;
 use App\Notifications\AcceptAdminInvite;
