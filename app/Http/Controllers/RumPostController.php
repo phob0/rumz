@@ -236,7 +236,6 @@ class RumPostController extends Controller
     {
         $this->authorize('comment', $rumPost);
 
-
         $data = array_merge($request->validated(), [
             'id' => (string) Str::uuid(),
             'user_id' => auth()->user()->id,
