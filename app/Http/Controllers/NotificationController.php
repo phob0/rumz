@@ -35,7 +35,7 @@ class NotificationController extends Controller
             );
         }
 
-        if (is_null($notification->read_at) || is_null($notification)) {
+        if ((!json_decode($notification->data)->follow_up) || is_null($notification->read_at) || is_null($notification)) {
             throw new HttpResponseException(
                 response()->json(['error' => 'Your notification is not read yet or doesn`t exist.'], Response::HTTP_NOT_ACCEPTABLE)
             );
