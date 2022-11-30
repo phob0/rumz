@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\StoreRumPostRequest;
 use App\Http\Requests\UpdateRumPostRequest;
+use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Favourite;
@@ -188,7 +189,7 @@ class RumPostController extends Controller
     {
         $this->authorize('comment', $rumPost);
 
-        return JsonResource::collection(
+        return CommentResource::collection(
             $rumPost->comments()->orderBy('created_at', 'DESC')->get()
         );
     }

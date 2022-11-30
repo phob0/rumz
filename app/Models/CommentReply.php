@@ -26,6 +26,7 @@ class CommentReply extends Model
         'user',
         'likes',
         'dislikes',
+        'parent',
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
