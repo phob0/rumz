@@ -181,9 +181,7 @@ class RumPostController extends Controller
             'comment' => $request->comment
         ]);
 
-        return response()->json([
-            'commentsCount' => $rumPost->refresh()->comments()->count()
-        ]);
+        return response()->noContent();
     }
 
     public function allComments(Request $request, RumPost $rumPost): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -191,7 +189,7 @@ class RumPostController extends Controller
         $this->authorize('comment', $rumPost);
 
         return JsonResource::collection(
-            $rumPost->comments
+            $rumPost->comments()->orderBy('created_at', 'DESC')
         );
     }
 
