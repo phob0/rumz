@@ -16,6 +16,7 @@ use App\Notifications\PostReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -185,9 +186,13 @@ class RumPostController extends Controller
         ]);
     }
 
-    public function comments()
+    public function allComments(Request $request, RumPost $rumPost): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
+        $this->authorize('comments', $rumPost);
 
+        return JsonResource::collection(
+            $rumPost->comments
+        );
     }
 
     public function updateComment(Request $request, RumPost $rumPost, Comment $comment): \Illuminate\Http\Response

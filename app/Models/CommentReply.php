@@ -14,8 +14,24 @@ class CommentReply extends Model
     protected $fillable = [
         'user_id',
         'comment_id',
-        'comment'
+        'comment',
     ];
+
+    protected $withCount = [
+        'likes',
+        'dislikes',
+    ];
+
+    protected $with = [
+        'user',
+        'likes',
+        'dislikes',
+    ];
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 
     public function likes(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {

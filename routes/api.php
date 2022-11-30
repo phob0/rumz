@@ -90,7 +90,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
             Route::group(['prefix' => 'comment', 'as' => 'comments'], function() {
                 Route::patch('{rum_post}', [RumPostController::class, 'comment'])->name('commentRumPost');
-                Route::get('all/{rum_post}', [RumPostController::class, 'comments'])->name('commentsRumPost');
+                Route::get('all/{rum_post}', [RumPostController::class, 'allComments'])->name('allCommentsRumPost');
                 Route::patch('update/{rum_post}/{comment}', [RumPostController::class, 'updateComment'])->name('updateCommentRumPost');
                 Route::patch('report/{rum_post}/{comment}', [RumPostController::class, 'reportComment'])->name('reportCommentRumPost');
                 Route::delete('delete/{rum_post}/{comment}', [RumPostController::class, 'deleteComment'])->name('deleteCommentRumPost');

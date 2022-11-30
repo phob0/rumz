@@ -18,8 +18,17 @@ class Comment extends Model
         'comment',
     ];
 
+    protected $withCount = [
+        'likes',
+        'dislikes',
+        'replies'
+    ];
+
     protected $with = [
-        'user'
+        'user',
+        'likes',
+        'dislikes',
+        'replies'
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
@@ -42,7 +51,7 @@ class Comment extends Model
         return $this->morphMany(Dislike::class, 'dislikeable');
     }
 
-    public function replies()
+    public function replies(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CommentReply::class);
     }
