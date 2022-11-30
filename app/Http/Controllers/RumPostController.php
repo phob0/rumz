@@ -188,7 +188,7 @@ class RumPostController extends Controller
 
     public function allComments(Request $request, RumPost $rumPost): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $this->authorize('comments', $rumPost);
+        $this->authorize('comment', $rumPost);
 
         return JsonResource::collection(
             $rumPost->comments
