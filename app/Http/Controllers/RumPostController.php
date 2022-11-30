@@ -172,7 +172,7 @@ class RumPostController extends Controller
         ]);
     }
 
-    public function comment(Request $request, RumPost $rumPost): \Illuminate\Http\JsonResponse
+    public function comment(Request $request, RumPost $rumPost): \Illuminate\Http\Response
     {
         $this->authorize('comment', $rumPost);
 
