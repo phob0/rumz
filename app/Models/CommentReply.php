@@ -23,8 +23,7 @@ class CommentReply extends Model
     ];
 
     protected $with = [
-        'user',
-        'parent',
+        'user'
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
