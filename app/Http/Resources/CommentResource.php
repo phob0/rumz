@@ -16,12 +16,14 @@ class CommentResource extends JsonResource
     {
         $response = parent::toArray($request);
 
-        $response[] = [
+        $response["replies"] = CommentReplyResource::collection($this->replies);
+
+        $appended = [
             "is_reply" => false,
             "liked" => $this->likes->isNotEmpty() ? $this->likes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
             "disliked" => $this->dislikes->isNotEmpty() ? $this->dislikes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
         ];
 
-        return $response;
+        return array_merge($response, $appended);
     }
 }
