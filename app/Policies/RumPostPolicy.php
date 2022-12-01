@@ -96,13 +96,19 @@ class RumPostPolicy
     public function updateOrDeleteComment(User $user, RumPost $rumPost, Comment $comment)
     {
         return $comment->user_id === $user->id ||
-            ($comment->user_id !== $user->id && $comment->post->rum->user_id === $user->id);
+            ($comment->user_id !== $user->id && $comment->post->rum->user_id === $user->id
+                || $rumPost->rum->admins->contains(function ($record) use($user){
+                    return $record->user_id === $user->id;
+                }));
     }
 
     public function updateOrDeleteReply(User $user, RumPost $rumPost, Comment $comment, CommentReply $commentReply)
     {
         return ($commentReply->user_id === $user->id ||
-            ($commentReply->user_id !== $user->id && $comment->post->rum->user_id === $user->id))
+            ($commentReply->user_id !== $user->id && $comment->post->rum->user_id === $user->id)
+                || $rumPost->rum->admins->contains(function ($record) use($user){
+                    return $record->user_id === $user->id;
+                }))
             && $comment->replies->contains(fn ($item) => $item->id === $commentReply->id);
     }
 
