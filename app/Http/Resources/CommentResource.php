@@ -17,6 +17,7 @@ class CommentResource extends JsonResource
         $response = parent::toArray($request);
 
         $response[] = [
+            "is_reply" => false,
             "liked" => $this->likes->isNotEmpty() ? $this->likes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
             "disliked" => $this->dislikes->isNotEmpty() ? $this->dislikes->contains(fn($item) => $item->user_id === auth()->user()->id) : false,
         ];
