@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,37 +11,34 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ServerCreated implements ShouldBroadcast
+class MessageSent implements ShouldBroadcast
 {
-//    use Dispatchable, InteractsWithSockets, SerializesModels;
-    use SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * The user that created the server.
-     *
-     * @var \App\Models\User
-     */
-    public $user;
+    public User $user;
+
+    public string $message;
 
     /**
      * Create a new event instance.
      *
-     * @param  \App\Models\User  $user
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct($user, $message)
     {
         $this->user = $user;
+
+        $this->message = $message;
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return Channel|array
+     * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('user.'.$this->user->id);
+        return new PrivateChannel('chat');
     }
 
     /* The event's broadcast name.
@@ -49,6 +47,6 @@ class ServerCreated implements ShouldBroadcast
      */
     public function broadcastAs()
     {
-        return 'server.created';
+        return 'messages';
     }
 }
