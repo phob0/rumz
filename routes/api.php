@@ -163,8 +163,10 @@ Route::post('/dev-login', function(Request $request) {
 
     return $user->createToken('sanctum-token')->plainTextToken;
 });
-//Route::post('/2fa/request', [LoginController::class, 'twoFactor'])->name('twoFactor');
-//Route::post('/2fa/validate', [LoginController::class, 'twoFactorValidate'])->name('twoFactorValidate');
+
+Route::get('test-pusher', function(Request $request) {
+    broadcast(new \App\Events\MessageSent(\App\Models\User::first(),'din local'));
+});
 
 // URL for csrf cookie : http://localhost/sanctum/csrf-cookie
 
