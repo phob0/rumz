@@ -7,6 +7,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RumController;
 use App\Http\Controllers\RumPostController;
+use App\Http\Controllers\MessageController;
 use App\Models\Rum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
