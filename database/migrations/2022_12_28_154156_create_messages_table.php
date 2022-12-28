@@ -20,7 +20,7 @@ return new class extends Migration
                 ->onUpdate("restrict")
                 ->onDelete("restrict");
             $table->index(["user_id"], 'messages_users_id_foreign');
-            $table->uuid('channel_id');
+            $table->string('channel');
             $table->tinyText('message');
             $table->timestamp('read_at')->nullable();
             $table->softDeletes();

@@ -134,7 +134,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::group(['prefix' => 'chat', 'as' => 'chats'], function() {
         Route::group(['prefix' => 'message', 'as' => 'messages'], function() {
-            Route::patch('send/{channel_id}', [MessageController::class, 'send'])->name('sendMessages');
+            Route::patch('send/{channel}', [MessageController::class, 'send'])->name('sendMessages');
         });
     });
 
