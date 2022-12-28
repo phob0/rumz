@@ -172,7 +172,7 @@ Route::post('/dev-login', function(Request $request) {
 });
 
 Route::get('test-pusher', function(Request $request) {
-    broadcast(new \App\Events\MessageSent(\App\Models\User::first(),'din local'));
+    broadcast(new \App\Events\MessageSent('asd', \App\Models\User::first(),'din local'));
 });
 
 // URL for csrf cookie : http://localhost/sanctum/csrf-cookie

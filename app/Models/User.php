@@ -88,7 +88,7 @@ class User extends Authenticatable
         )->withPivot(['amount', 'is_paid', 'granted', 'expire_at', 'created_at', 'updated_at'])->where('granted', 1);
     }
 
-    public function friends(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function hasFriends(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
             User::class,
@@ -96,6 +96,25 @@ class User extends Authenticatable
             'user_id',
             'friend_id'
         )->where('friends', 1);
+    }
+
+    public function isFriends(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            Friend::class,
+            'friend_id',
+            'user_id'
+        )->where('friends', 1);
+    }
+
+    public function getFriendsAttribute($value)
+    {
+        $hasFriends = $this->hasFriends;
+
+        $isFriends = $this->isFriends;
+
+        return $hasFriends->merge($isFriends)->unique();
     }
 
     public function favourites(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
