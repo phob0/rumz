@@ -8,7 +8,7 @@ use App\Models\Message;
 class MessageController extends Controller
 {
 
-    public function send(Request $request, $channel): \Illuminate\Http\Response
+    public function send(Request $request, $channel)
     {
         Message::create([
             'user_id' => auth()->user()->id,
@@ -17,7 +17,5 @@ class MessageController extends Controller
         ]);
 
         broadcast(new \App\Events\MessageSent($channel, auth()->user(), $request->message));
-
-        return response()->noContent();
     }
 }
