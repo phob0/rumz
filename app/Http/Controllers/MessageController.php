@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Message;
 
 class MessageController extends Controller
 {
@@ -15,7 +16,7 @@ class MessageController extends Controller
             'message' => $request->message
         ]);
 
-        broadcast(new \App\Events\MessageSent($channel, auth()->user(), 'prin api'));
+        broadcast(new \App\Events\MessageSent($channel, auth()->user(), $request->message));
 
         return response()->noContent();
     }
