@@ -27,11 +27,14 @@ class MessageController extends Controller
         return JsonResource::collection(Message::where('channel', $channel)->paginate(5));
     }
 
-    // TODO: create bulk seen
-
     public function seen(Request $request, Message $message): \Illuminate\Http\Response
     {
-        $message->update([
+        Message::where(
+            [
+                ['user_id', '=', $message->user_id],
+                ['read_at', '=', null],
+            ]
+        )->update([
             'read_at' => Carbon\Carbon::now()
         ]);
 
