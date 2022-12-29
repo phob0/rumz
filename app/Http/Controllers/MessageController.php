@@ -11,20 +11,22 @@ class MessageController extends Controller
 
     public function send(Request $request, $channel): \Illuminate\Http\Response
     {
-        Message::create([
+        $message = Message::create([
             'user_id' => auth()->user()->id,
             'channel' => $channel,
             'message' => $request->message
         ]);
 
-        broadcast(new \App\Events\MessageSent($channel, auth()->user(), $request->message));
+        broadcast(new \App\Events\MessageSent($channel, auth()->user(), $message));
 
         return response()->noContent();
     }
 
     public function history(Request $request, $channel): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return JsonResource::collection(Message::where('channel', $channel)->orderBy('created_at', 'DESC')->paginate(5));
+        return JsonResource::collection(
+            Message::where('channel', $channel)->orderBy('created_at', 'DESC')->paginate(5)
+        );
     }
 
     public function seen(Request $request, Message $message): \Illuminate\Http\Response
