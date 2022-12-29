@@ -37,7 +37,7 @@ class MessageController extends Controller
                 ['read_at', '=', null],
             ]
         )->update([
-            'read_at' => Carbon\Carbon::now()->toDateTimeString()
+            'read_at' => \Carbon\Carbon::now()->toDateTimeString()
         ]);
 
         return response()->noContent();
