@@ -17,7 +17,7 @@ class MessageController extends Controller
             'message' => $request->message
         ]);
 
-        broadcast(new \App\Events\MessageSent($channel, auth()->user(), $message));
+        broadcast(new \App\Events\MessageSent($channel, auth()->user(), $message->refresh()));
 
         return response()->noContent();
     }
