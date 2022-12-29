@@ -24,7 +24,7 @@ class MessageController extends Controller
 
     public function history(Request $request, $channel): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return JsonResource::collection(Message::where('channel', $channel)->paginate(5));
+        return JsonResource::collection(Message::where('channel', $channel)->orderBy('created_at', 'DESC')->paginate(5));
     }
 
     public function seen(Request $request, Message $message): \Illuminate\Http\Response
