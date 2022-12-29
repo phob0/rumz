@@ -88,6 +88,8 @@ class User extends Authenticatable
         )->withPivot(['amount', 'is_paid', 'granted', 'expire_at', 'created_at', 'updated_at'])->where('granted', 1);
     }
 
+    // TODO: has and is friends unify and create 2 records instead of 2 relations
+
     public function hasFriends(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(

@@ -135,7 +135,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::group(['prefix' => 'chat', 'as' => 'chats'], function() {
         Route::group(['prefix' => 'message', 'as' => 'messages'], function() {
+            Route::get('history/{channel}', [MessageController::class, 'history'])->name('historyMessages');
             Route::patch('send/{channel}', [MessageController::class, 'send'])->name('sendMessages');
+            Route::patch('seen/{channel}', [MessageController::class, 'seen'])->name('seenMessages');
         });
     });
 
@@ -169,10 +171,6 @@ Route::post('/dev-login', function(Request $request) {
     $user = User::where('phone', $request->phone)->first();
 
     return $user->createToken('sanctum-token')->plainTextToken;
-});
-
-Route::get('test-pusher', function(Request $request) {
-    broadcast(new \App\Events\MessageSent('asd', \App\Models\User::first(),'din local'));
 });
 
 // URL for csrf cookie : http://localhost/sanctum/csrf-cookie
