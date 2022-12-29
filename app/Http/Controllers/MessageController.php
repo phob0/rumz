@@ -9,6 +9,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class MessageController extends Controller
 {
 
+    // TODO: write policies
+
     public function send(Request $request, $channel): \Illuminate\Http\Response
     {
         $message = Message::create([
@@ -31,13 +33,8 @@ class MessageController extends Controller
 
     public function seen(Request $request, Message $message): \Illuminate\Http\Response
     {
-        Message::where(
-            [
-                ['user_id', '=', $message->user_id],
-                ['read_at', '=', null],
-            ]
-        )->update([
-            'read_at' => \Carbon\Carbon::now()->toDateTimeString()
+        $message->update([
+            'read_at' => \Carbon\Carbon::now()
         ]);
 
         return response()->noContent();

@@ -137,7 +137,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::group(['prefix' => 'message', 'as' => 'messages'], function() {
             Route::get('history/{channel}', [MessageController::class, 'history'])->name('historyMessages');
             Route::patch('send/{channel}', [MessageController::class, 'send'])->name('sendMessages');
-            Route::patch('seen/{channel}', [MessageController::class, 'seen'])->name('seenMessages');
+            Route::patch('seen/{message}', [MessageController::class, 'seen'])->name('seenMessages');
         });
     });
 
