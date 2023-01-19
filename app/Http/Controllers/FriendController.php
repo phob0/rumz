@@ -90,7 +90,9 @@ class FriendController extends Controller
             ['user_id', '=', auth()->user()->id],
             ['friend_id', '=', $user->id],
             ['friends', '=', 1]
-        )->delete()
+        )->delete();
+
+        return response()->noContent();
     }
 
 }
