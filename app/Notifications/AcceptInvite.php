@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Interfaces\NotificationTypes;
 use App\Models\Rum;
+use App\Interfaces\NotificationTypes;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

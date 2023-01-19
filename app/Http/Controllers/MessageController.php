@@ -13,6 +13,8 @@ class MessageController extends Controller
 
     public function send(Request $request, $channel): \Illuminate\Http\Response
     {
+        $this->authorize('send', $channel);
+
         $message = Message::create([
             'user_id' => auth()->user()->id,
             'channel' => $channel,
@@ -26,6 +28,8 @@ class MessageController extends Controller
 
     public function history(Request $request, $channel): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
+        // $this->authorize('history', $channel);
+
         return JsonResource::collection(
             Message::where('channel', $channel)->orderBy('created_at', 'DESC')->paginate(5)
         );

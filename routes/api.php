@@ -130,7 +130,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::group(['prefix' => 'friend', 'as' => 'friends'], function() {
-        Route::get('lookup-friends', [FriendController::class, 'lookupFriends'])->name('lookupFriends');
+        Route::get('lookup', [FriendController::class, 'lookup'])->name('lookupFriends');
+        Route::patch('invite/{user}', [FriendController::class, 'invite'])->name('inviteFriends');
+        
+        Route::patch('accept/{user}', [FriendController::class, 'accept'])->name('acceptFriends');
+        Route::patch('reject/{user}', [FriendController::class, 'reject'])->name('rejectFriends');
+        
+        Route::patch('remove/{user}', [FriendController::class, 'remove'])->name('removeFriends');
     });
 
     Route::group(['prefix' => 'chat', 'as' => 'chats'], function() {

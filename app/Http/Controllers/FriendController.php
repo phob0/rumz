@@ -2,14 +2,95 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Friend;
 use Illuminate\Http\Request;
+use App\Notifications\InviteFriend;
+use App\Notifications\AcceptFriendInvite;
+use App\Notifications\RejectFriendInvite;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FriendController extends Controller
 {
 
-    public function lookupFriends(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    // TODO: write policies
+
+    public function lookup(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         return JsonResource::collection(auth()->user()->friends);
     }
+
+    public function invite(Request $request, User $user) 
+    {
+
+        // $this->authorize('inviteFriend', $user);
+
+        Friend::create([
+            'user_id' => auth()->user()->id,
+            'friend_id' => $user->id,
+            'friends' => true
+        ]);
+
+        $user->notify(
+            new InviteFriend($user, auth()->user()->name . ' has sent you a friend request.')
+        );
+
+        return response()->noContent();
+
+    }
+
+    public function accept(Request $request, User $user) 
+    {
+        // $this->authorize('acceptFriend', $user);
+        
+        auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
+
+        Friend::where([
+            ['user_id', '=', $user->id],
+            ['friend_id', '=', auth()->user()->id],
+        ])->first()->update([
+            'friends' => 1
+        ]);
+
+        $user->notify(
+            new AcceptFriendInvite($user, auth()->user()->name . ' has accepted your friend request.')
+        );
+
+        return response()->noContent();
+    }
+
+    public function reject(Request $request, User $user) 
+    {
+        // $this->authorize('rejectFriend', $user);
+        
+        auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
+
+        Friend::where([
+            ['user_id', '=', $user->id],
+            ['friend_id', '=', auth()->user()->id],
+            ['friends', '=', 0]
+        ])->delete();
+
+        $user->notify(
+            new RejectFriendInvite($user, auth()->user()->name . ' has rejected your friend request.')
+        );
+
+        return response()->noContent();
+    }
+
+    public function remove(Request $request, User $user) {
+
+        // $this->authorize('removeFriend', $user);
+         
+        Friend::where([
+            ['user_id', '=', $user->id],
+            ['friend_id', '=', auth()->user()->id],
+            ['friends', '=', 1]
+        ])->orWhere(
+            ['user_id', '=', auth()->user()->id],
+            ['friend_id', '=', $user->id],
+            ['friends', '=', 1]
+        )->delete()
+    }
+
 }
