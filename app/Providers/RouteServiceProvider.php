@@ -53,6 +53,10 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind('friend', function ($value) {
             return \App\Models\Friend::where('friend_id', $value)->first();
         });
+
+        Route::bind('user_friend', function ($value) {
+            return \App\Models\Friend::where('user_id', $value)->first();
+        });
     }
 
     /**

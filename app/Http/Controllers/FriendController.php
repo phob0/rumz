@@ -39,7 +39,7 @@ class FriendController extends Controller
         ]);
 
         $user->notify(
-            new InviteFriend($user, auth()->user()->name . ' has sent you a friend request.')
+            new InviteFriend($user, auth()->user(), auth()->user()->name . ' has sent you a friend request.')
         );
 
         return response()->noContent();
@@ -48,7 +48,7 @@ class FriendController extends Controller
 
     public function accept(Request $request, Friend $friend): \Illuminate\Http\Response
     {
-        $this->authorize('acceptFriend', $friend);
+        $this->authorize('acceptFriend', Friend::class);
         
         auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
 
@@ -57,7 +57,7 @@ class FriendController extends Controller
         ]);
 
         $friend->user->notify(
-            new AcceptFriendInvite($friend->user, auth()->user()->name . ' has accepted your friend request.')
+            new AcceptFriendInvite($friend->user, auth()->user(), auth()->user()->name . ' has accepted your friend request.')
         );
 
         return response()->noContent();

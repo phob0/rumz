@@ -14,6 +14,7 @@ class InviteFriend extends Notification implements NotificationTypes
     use Queueable;
 
     public User $user;
+    public User $from;
     public string $message;
     public bool $follow_up = true;
 
@@ -22,9 +23,10 @@ class InviteFriend extends Notification implements NotificationTypes
      *
      * @return void
      */
-    public function __construct(User $user, $message)
+    public function __construct(User $user, User $from, $message)
     {
         $this->user = $user;
+        $this->from = $from;
         $this->message = $message;
     }
 
@@ -63,6 +65,7 @@ class InviteFriend extends Notification implements NotificationTypes
     {
         return [
             'user' => $this->user,
+            'from' => $this->from,
             'message' => $this->message,
             'follow_up' => $this->follow_up,
             'notification_type' => self::FRIEND_INVITATION
