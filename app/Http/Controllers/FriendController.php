@@ -13,17 +13,26 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class FriendController extends Controller
 {
 
-    // TODO: write policies
-
     public function lookup(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         return JsonResource::collection(auth()->user()->friends);
     }
 
-    public function invite(Request $request, User $user) 
+    public function invite(Request $request, User $user): \Illuminate\Http\Response
     {
-
-        // $this->authorize('inviteFriend', $user);
+        if (
+            Friend::where([
+                ['user_id', '=', $user->id],
+                ['friend_id', '=', auth()->user()->id],
+                ['friends', '=', 1]
+            ])->orWhere([
+                ['user_id', '=', auth()->user()->id],
+                ['friend_id', '=', $user->id],
+                ['friends', '=', 1]
+            ])->exists()
+        ) {
+            abort(403);
+        }
 
         Friend::create([
             'user_id' => auth()->user()->id,
@@ -39,9 +48,9 @@ class FriendController extends Controller
 
     }
 
-    public function accept(Request $request, User $user) 
+    public function accept(Request $request, Friend $friend): \Illuminate\Http\Response
     {
-        // $this->authorize('acceptFriend', $user);
+        $this->authorize('acceptFriend', $user);
         
         auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
 
@@ -59,9 +68,9 @@ class FriendController extends Controller
         return response()->noContent();
     }
 
-    public function reject(Request $request, User $user) 
+    public function reject(Request $request, Friend $friend): \Illuminate\Http\Response
     {
-        // $this->authorize('rejectFriend', $user);
+        $this->authorize('rejectFriend', $user);
         
         auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
 
@@ -78,19 +87,20 @@ class FriendController extends Controller
         return response()->noContent();
     }
 
-    public function remove(Request $request, User $user) {
+    public function remove(Request $request, Friend $friend): \Illuminate\Http\Response
+    {
 
-        // $this->authorize('removeFriend', $user);
+        $this->authorize('removeFriend', $friend);
          
         Friend::where([
             ['user_id', '=', $user->id],
             ['friend_id', '=', auth()->user()->id],
             ['friends', '=', 1]
-        ])->orWhere(
+        ])->orWhere([
             ['user_id', '=', auth()->user()->id],
             ['friend_id', '=', $user->id],
             ['friends', '=', 1]
-        )->delete();
+        ])->delete();
 
         return response()->noContent();
     }

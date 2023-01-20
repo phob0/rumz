@@ -47,6 +47,12 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         });
+
+        // My pivot route bindings
+
+        Route::bind('friend', function ($value) {
+            return \App\Models\Friend::where('friend_id', $value)->first();
+        });
     }
 
     /**
