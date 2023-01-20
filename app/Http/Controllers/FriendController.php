@@ -20,22 +20,22 @@ class FriendController extends Controller
 
     public function invite(Request $request, User $user): \Illuminate\Http\Response
     {
-        if (!is_null(
+        if (
             Friend::where([
                 ['user_id', '=', $user->id],
                 ['friend_id', '=', auth()->user()->id]
             ])->orWhere([
                 ['user_id', '=', auth()->user()->id],
                 ['friend_id', '=', $user->id]
-            ])->first()
-        )) {
+            ])->exists()
+        ) {
             abort(403);
         }
 
         Friend::create([
             'user_id' => auth()->user()->id,
             'friend_id' => $user->id,
-            'friends' => true
+            'friends' => 0
         ]);
 
         $user->notify(
