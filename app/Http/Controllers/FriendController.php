@@ -65,19 +65,15 @@ class FriendController extends Controller
 
     public function reject(Request $request, Friend $friend): \Illuminate\Http\Response
     {
-        $this->authorize('rejectFriend', $user);
+        $this->authorize('rejectFriend', $friend);
         
         auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
 
-        Friend::where([
-            ['user_id', '=', $user->id],
-            ['friend_id', '=', auth()->user()->id],
-            ['friends', '=', 0]
-        ])->delete();
-
-        $user->notify(
-            new RejectFriendInvite($user, auth()->user()->name . ' has rejected your friend request.')
+        $friend->user->notify(
+            new RejectFriendInvite($friend->user, auth()->user(), auth()->user()->name . ' has rejected your friend request.')
         );
+
+        $friend->delete();
 
         return response()->noContent();
     }
