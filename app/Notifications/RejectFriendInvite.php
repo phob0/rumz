@@ -16,7 +16,7 @@ class RejectFriendinvite extends Notification implements NotificationTypes
     public User $user;
     public User $from;
     public string $message;
-    public bool $follow_up = true;
+    public bool $follow_up = false;
 
     /**
      * Create a new notification instance.
