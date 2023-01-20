@@ -29,6 +29,11 @@ class ProfileController extends Controller
         return JsonResource::make(auth()->user()->posts);
     }
 
+    public function lookupProfile(Request $request, User $user): JsonResource
+    {
+        return JsonResource::make($user);   
+    }
+
     public function update(UpdateProfileRequest $request): \Illuminate\Http\Response
     {
         $data = $request->validated();

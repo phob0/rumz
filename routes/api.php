@@ -115,6 +115,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::group(['prefix' => 'profile', 'as' => 'profiles'], function() {
         Route::get('', [ProfileController::class, 'profile'])->name('profile');
+        Route::get('lookup/{user}', [ProfileController::class, 'lookupProfile'])->name('lookupProfile');
         Route::get('posts', [ProfileController::class, 'posts'])->name('profilePosts');
         Route::post('update', [ProfileController::class, 'update'])->name('profileUpdate');
         Route::get('stripe-onboarding', [ProfileController::class, 'onboardingStripe'])->name('profileOnboarding');
