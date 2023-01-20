@@ -50,7 +50,7 @@ class FriendController extends Controller
     {
         $this->authorize('acceptFriend', $friend);
         
-        auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
+        auth()->user()->notifications->where('type', AcceptFriendInvite::class)->markAsRead();
 
         $friend->update([
             'friends' => 1
@@ -67,7 +67,7 @@ class FriendController extends Controller
     {
         $this->authorize('rejectFriend', $friend);
         
-        auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
+        auth()->user()->notifications->where('type', RejectFriendInvite::class)->markAsRead();
 
         $friend->user->notify(
             new RejectFriendInvite($friend->user, auth()->user(), auth()->user()->name . ' has rejected your friend request.')
