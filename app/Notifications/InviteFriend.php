@@ -15,7 +15,7 @@ class InviteFriend extends Notification implements NotificationTypes
 
     public User $user;
     public string $message;
-    public bool $follow_up = false;
+    public bool $follow_up = true;
 
     /**
      * Create a new notification instance.
