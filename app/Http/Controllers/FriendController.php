@@ -48,19 +48,16 @@ class FriendController extends Controller
 
     public function accept(Request $request, Friend $friend): \Illuminate\Http\Response
     {
-        $this->authorize('acceptFriend', $user);
+        $this->authorize('acceptFriend', $friend);
         
         auth()->user()->notifications->where('type', InviteFriend::class)->markAsRead();
 
-        Friend::where([
-            ['user_id', '=', $user->id],
-            ['friend_id', '=', auth()->user()->id],
-        ])->first()->update([
+        $friend->update([
             'friends' => 1
         ]);
 
-        $user->notify(
-            new AcceptFriendInvite($user, auth()->user()->name . ' has accepted your friend request.')
+        $friend->user->notify(
+            new AcceptFriendInvite($friend->user, auth()->user()->name . ' has accepted your friend request.')
         );
 
         return response()->noContent();

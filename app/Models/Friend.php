@@ -15,9 +15,14 @@ class Friend extends Model
         'friends',
     ];
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function friend(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'friend_id');
+    }
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Models\User::class, 'id', 'user_id');
     }
 
 }

@@ -22,7 +22,7 @@ class FriendPolicy
 
     public function acceptFriend(User $user, Friend $friend)
     {
-        return !$friend->friends && $friend->user_id === $user->id;
+        return !$friend->friends && $friend->friend_id === $user->id;
     }
 
 
