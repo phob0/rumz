@@ -23,12 +23,10 @@ class FriendController extends Controller
         if (
             Friend::where([
                 ['user_id', '=', $user->id],
-                ['friend_id', '=', auth()->user()->id],
-                ['friends', '=', 1]
+                ['friend_id', '=', auth()->user()->id]
             ])->orWhere([
                 ['user_id', '=', auth()->user()->id],
-                ['friend_id', '=', $user->id],
-                ['friends', '=', 1]
+                ['friend_id', '=', $user->id]
             ])->exists()
         ) {
             abort(403);
