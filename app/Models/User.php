@@ -119,6 +119,11 @@ class User extends Authenticatable
         return $hasFriends->merge($isFriends)->unique();
     }
 
+    public function scopeIsFriend($query, $current_user, $rum_user)
+    {
+        return $query->find($current_user)->friends->contains(fn ($user) => $user->id === $rum_user);
+    }
+
     public function favourites(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
         return $this->hasManyThrough(
