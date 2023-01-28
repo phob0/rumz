@@ -13,7 +13,7 @@ class MessageController extends Controller
 
     public function send(Request $request, $channel): \Illuminate\Http\Response
     {
-        $this->authorize('send', $channel);
+        // $this->authorize('send', $channel);
 
         $message = Message::create([
             'user_id' => auth()->user()->id,
