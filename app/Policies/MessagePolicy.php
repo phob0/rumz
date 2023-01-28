@@ -25,6 +25,8 @@ class MessagePolicy
         // else
         // get both user ids
         // compare channel with algorythm users id 
+        // 
+        return true;
     }
 
     public function history(User $user, $channel)
