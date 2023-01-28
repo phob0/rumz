@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Friend;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Notifications\InviteFriend;
 use App\Notifications\AcceptFriendInvite;
@@ -49,8 +50,10 @@ class FriendController extends Controller
     public function accept(Request $request, Friend $friend): \Illuminate\Http\Response
     {
         $this->authorize('acceptFriend', $friend);
-        
-        auth()->user()->notifications->where('type', AcceptFriendInvite::class)->markAsRead();
+
+        Notification::find(
+            auth()->user()->notifications->where('type', AcceptFriendInvite::class)->id
+        )->forceDelete();
 
         $friend->update([
             'friends' => 1
@@ -67,7 +70,7 @@ class FriendController extends Controller
     {
         $this->authorize('rejectFriend', $friend);
         
-        auth()->user()->notifications->where('type', RejectFriendInvite::class)->markAsRead();
+        auth()->user()->notifications->where('type', RejectFriendInvite::class)->forceDelete();
 
         $friend->user->notify(
             new RejectFriendInvite($friend->user, auth()->user(), auth()->user()->name . ' has rejected your friend request.')
