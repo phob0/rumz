@@ -72,7 +72,7 @@ class FriendController extends Controller
     {
         $this->authorize('rejectFriend', $friend);
         
-        $notification = auth()->user()->notifications->where('type', AcceptFriendInvite::class)->first();
+        $notification = auth()->user()->notifications->where('type', InviteFriend::class)->first();
 
         if (!is_null($notification)) {
             Notification::find($notification->id)->forceDelete();
