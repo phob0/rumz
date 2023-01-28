@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
+use App\Http\Resources\ProfileResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
@@ -31,7 +32,7 @@ class ProfileController extends Controller
 
     public function lookupProfile(Request $request, User $user): JsonResource
     {
-        return JsonResource::make($user);   
+        return ProfileResource::make($user, ['is_friend' => User::isFriend(auth()->user()->id, $user->id)]);   
     }
 
     public function update(UpdateProfileRequest $request): \Illuminate\Http\Response
