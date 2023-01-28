@@ -28,7 +28,7 @@ class FriendPolicy
 
     public function rejectFriend(User $user, Friend $friend)
     {
-        return !$friend->friends && $friend->user_id === $user->id;
+        return !$friend->friends && $friend->friend_id === $user->id;
     }
 
     public function removeFriend(User $user, Friend $friend)
