@@ -51,7 +51,11 @@ class FriendController extends Controller
     {
         $this->authorize('acceptFriend', $friend);
 
-        auth()->user()->notifications->where('type', AcceptFriendInvite::class)->forceDelete();
+        $notification = auth()->user()->notifications->where('type', InviteFriend::class)->first();
+
+        if (!is_null($notification)) {
+            Notification::find($notification->id)->forceDelete();
+        }
 
         $friend->update([
             'friends' => 1
@@ -68,7 +72,11 @@ class FriendController extends Controller
     {
         $this->authorize('rejectFriend', $friend);
         
-        auth()->user()->notifications->where('type', RejectFriendInvite::class)->forceDelete();
+        $notification = auth()->user()->notifications->where('type', AcceptFriendInvite::class)->first();
+
+        if (!is_null($notification)) {
+            Notification::find($notification->id)->forceDelete();
+        }
 
         $friend->user->notify(
             new RejectFriendInvite($friend->user, auth()->user(), auth()->user()->name . ' has rejected your friend request.')
