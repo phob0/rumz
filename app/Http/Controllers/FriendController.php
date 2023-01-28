@@ -83,15 +83,7 @@ class FriendController extends Controller
 
         $this->authorize('removeFriend', $friend);
          
-        Friend::where([
-            ['user_id', '=', $user->id],
-            ['friend_id', '=', auth()->user()->id],
-            ['friends', '=', 1]
-        ])->orWhere([
-            ['user_id', '=', auth()->user()->id],
-            ['friend_id', '=', $user->id],
-            ['friends', '=', 1]
-        ])->delete();
+        $friend->delete();
 
         return response()->noContent();
     }

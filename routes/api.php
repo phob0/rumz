@@ -137,7 +137,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::patch('accept/{user_friend}', [FriendController::class, 'accept'])->name('acceptFriends');
         Route::patch('reject/{user_friend}', [FriendController::class, 'reject'])->name('rejectFriends');
         
-        Route::patch('remove/{user_friend}', [FriendController::class, 'remove'])->name('removeFriends');
+        Route::patch('remove/{friend}', [FriendController::class, 'remove'])->name('removeFriends');
     });
 
     Route::group(['prefix' => 'chat', 'as' => 'chats'], function() {
