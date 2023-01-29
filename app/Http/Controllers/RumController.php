@@ -259,7 +259,9 @@ class RumController extends Controller implements NotificationTypes
 
     public function leaveRum(Request $request, Rum $rum, $type = 'user'): \Illuminate\Http\Response
     {
-        if ($tytype === 'user') {
+        $user = auth()->user;
+
+        if ($type === 'user') {
             $rum->joined()
             ->where('rum_id', $rum->id)
             ->where('user_id', $user->id)
