@@ -54,6 +54,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::patch('grant/{rum}/{user}', [RumController::class, 'grant'])->name('grantRum');
         Route::patch('reject/{rum}/{user}', [RumController::class, 'reject'])->name('rejectRum');
         Route::patch('report/{rum}', [RumController::class, 'reportRum'])->name('reportRum');
+        Route::patch('leave/{rum}/{type}', [RumController::class, 'leaveRum'])->name('leaveRum')->whereIn('type', ['user', 'admin']);
         Route::group(['prefix' => 'member', 'as' => 'members'], function() {
             Route::patch('ban-unban/{action}/{rum}/{user}', [RumController::class, 'banUnbanMember'])->name('banUnbanMemberRum')->whereIn('action', ['ban', 'unban']);
             // add group for admin invite

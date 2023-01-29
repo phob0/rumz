@@ -257,6 +257,24 @@ class RumController extends Controller implements NotificationTypes
         return response()->noContent();
     }
 
+    public function leaveRum(Request $request, Rum $rum, $type = 'user'): \Illuminate\Http\Response
+    {
+        if ($tytype === 'user') {
+            $rum->joined()
+            ->where('rum_id', $rum->id)
+            ->where('user_id', $user->id)
+            ->first()->delete();
+        } else {
+            $rum->joined_admins()
+            ->where('rum_id', $rum->id)
+            ->where('user_id', $user->id)
+            ->first()->delete();
+        }
+
+        return response()->noContent();
+
+    }
+
     public function grant(Request $request, Rum $rum, User $user): \Illuminate\Http\Response
     {
         $this->authorize('grant', [$rum, $user]);
