@@ -71,6 +71,7 @@ class CommentReport extends Notification
             "comment" => $this->comment,
             "reply" => $this->reply,
             "follow_up" => $this->follow_up,
+            // TODO: add notification type
         ];
     }
 }

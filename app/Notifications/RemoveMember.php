@@ -7,8 +7,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Interfaces\NotificationTypes;
 
-class RemoveMember extends Notification
+class RemoveMember extends Notification implements NotificationTypes
 {
     use Queueable;
 
@@ -63,7 +64,8 @@ class RemoveMember extends Notification
         return [
             'rum' => $this->rum,
             'message' => $this->message,
-            'follow_up' => $this->follow_up
+            'follow_up' => $this->follow_up,
+            'notification_type' => self::MEMBER_REMOVAL
         ];
     }
 }

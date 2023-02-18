@@ -7,13 +7,15 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Interfaces\NotificationTypes;
 
-class BanUnbanMember extends Notification
+class BanUnbanMember extends Notification implements NotificationTypes
 {
     use Queueable;
 
     public Rum $rum;
     public string $message;
+    public bool $ban = false;
     public bool $follow_up = false;
 
     /**
@@ -21,10 +23,11 @@ class BanUnbanMember extends Notification
      *
      * @return void
      */
-    public function __construct(Rum $rum, $message)
+    public function __construct(Rum $rum, $message, $ban = false)
     {
         $this->rum = $rum;
         $this->message = $message;
+        $this->ban = $ban;
     }
 
     /**
@@ -64,6 +67,7 @@ class BanUnbanMember extends Notification
             'rum' => $this->rum,
             'message' => $this->message,
             "follow_up" => $this->follow_up,
+            'notification_type' => $this->ban ? self::BAN_MEMBER : self::UNBAN_MEMBER
         ];
     }
 }

@@ -479,7 +479,7 @@ class RumController extends Controller implements NotificationTypes
             'Your ban from this rum has been removed.';
 
         $user->notify(
-            new BanUnbanMember($rum, $message)
+            new BanUnbanMember($rum, $message, $ban)
         );
 
         return response()->noContent();

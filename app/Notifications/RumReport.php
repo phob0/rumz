@@ -65,6 +65,7 @@ class RumReport extends Notification
             "rum" => $this->rum,
             "user" => $notifiable,
             'follow_up' => $this->follow_up
+            // TODO: add notification type
         ];
     }
 }

@@ -5,6 +5,8 @@
 /storage/*.key
 /vendor
 .env
+.htaccess
+ignore_htaccess
 .env.backup
 .phpunit.result.cache
 docker-compose.override.yml

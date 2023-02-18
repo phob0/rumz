@@ -6,8 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Interfaces\NotificationTypes;
 
-class NewMember extends Notification implements ShouldQueue
+class NewMember extends Notification implements ShouldQueue, NotificationTypes
 {
     use Queueable;
 
@@ -59,7 +60,8 @@ class NewMember extends Notification implements ShouldQueue
     {
         return [
             'message' => $this->message,
-            'follow_up' => $this->follow_up
+            'follow_up' => $this->follow_up,
+            'notification_type' => self::NEW_MEMBER
         ];
     }
 }

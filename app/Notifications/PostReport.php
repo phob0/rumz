@@ -64,6 +64,7 @@ class PostReport extends Notification
             "message" => $this->message,
             "rum_post" => $this->rumPost,
             'follow_up' => $this->follow_up
+            // TODO: add notification type
         ];
     }
 }

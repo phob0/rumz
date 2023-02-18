@@ -8,8 +8,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Interfaces\NotificationTypes;
 
-class RumSubscriptionPaymentInfo extends Notification
+class RumSubscriptionPaymentInfo extends Notification implements NotificationTypes
 {
     use Queueable;
 
@@ -64,7 +65,8 @@ class RumSubscriptionPaymentInfo extends Notification
         return [
             "message" => $this->message,
             "rum" => $this->rum,
-            'follow_up' => $this->follow_up
+            'follow_up' => $this->follow_up,
+            'notification_type' => self::ROOM_SUBSCRIPTION_PAYMENT_INFO
         ];
     }
 }

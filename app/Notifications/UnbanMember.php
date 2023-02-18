@@ -10,6 +10,13 @@ use Illuminate\Notifications\Notification;
 
 class UnbanMember extends Notification
 {
+
+    /**
+     * 
+     * DEPRECATED VERSION, PLEASE IGNORE FOR NOW
+     * 
+     */
+
     use Queueable;
 
     public Rum $rum;
