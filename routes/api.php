@@ -194,6 +194,15 @@ Route::get('/test_stripe', function(Request $request) {
 
     \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
+    $connected_account = "acct_1LTnIOPJhHLfy5Xm";
+
+    $paymentIntent = $stripe->paymentIntents->retrieve(
+        'pi_3MdHHZAB46hIM0CM1tbCY5pp',
+        []
+      );
+
+      return $paymentIntent;
+
 //    return \Stripe\Charge::create([
 //        'amount'   => 1000,
 //        'currency' => 'usd',
@@ -210,24 +219,24 @@ Route::get('/test_stripe', function(Request $request) {
 //        'confirm' => true,
 //    ], ['stripe_account' => 'acct_1LTnIOPJhHLfy5Xm']);
 
-    $charge =  \Stripe\Charge::create([
-        "amount" => 1000,
-        "currency" => "usd",
-//        "source" => "tok_visa",
-        "source" => "acct_1LTnIOPJhHLfy5Xm",
-//        for simple card charge
-//        "transfer_data" => [
-//            "amount" => 877,
-//            "destination" => "acct_1LTe3uPLLPTwYFpQ",
-//        ],
-    ]);
+//     $charge =  \Stripe\Charge::create([
+//         "amount" => 1000,
+//         "currency" => "usd",
+// //        "source" => "tok_visa",
+//         "source" => "acct_1LTnIOPJhHLfy5Xm",
+// //        for simple card charge
+// //        "transfer_data" => [
+// //            "amount" => 877,
+// //            "destination" => "acct_1LTe3uPLLPTwYFpQ",
+// //        ],
+//     ]);
 
-    return \Stripe\Transfer::create([
-        "amount" => 900,
-        "currency" => "usd",
-        "source_transaction" => $charge->id,
-        "destination" => "acct_1LTe3uPLLPTwYFpQ",
-    ]);
+    // return \Stripe\Transfer::create([
+    //     "amount" => 900,
+    //     "currency" => "usd",
+    //     "source_transaction" => $charge->id,
+    //     "destination" => "acct_1LTe3uPLLPTwYFpQ",
+    // ]);
 
 //    return $stripe->refunds->create([
 //        'charge' => 'py_1LTc3zAB46hIM0CMXf9zoye6',

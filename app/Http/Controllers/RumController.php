@@ -203,7 +203,7 @@ class RumController extends Controller implements NotificationTypes
           'stripe_version' => '2022-08-01',
         ]);
         $paymentIntent = $stripe->paymentIntents->create([
-          'amount' => '2000',
+          'amount' => '200',
           'currency' => 'eur',
           'customer' => $customer->id,
           'automatic_payment_methods' => [
@@ -215,8 +215,7 @@ class RumController extends Controller implements NotificationTypes
           [
             'paymentIntent' => $paymentIntent->client_secret,
             'ephemeralKey' => $ephemeralKey->secret,
-            'customer' => $customer->id,
-            'publishableKey' => 'pk_test_51LKYxtAB46hIM0CMW29z9xypBPIhyYYG3IfzQOVggTJfTeiBTfDS1gQdxK9OTjbUw8iPXKZ1jz8nmHG5qnDRuIBD00hsYy7x5E'
+            'customer' => $customer->id
           ]
         );
 
@@ -257,6 +256,14 @@ class RumController extends Controller implements NotificationTypes
                 "destination" => "acct_1LTe3uPLLPTwYFpQ",
             ]);
             */
+
+            /**
+             * get stripe connected account id | rumz->admin->stripe_id
+             * get payers payment intent id | get from front-end
+             * get the last charge id from the payment intent
+             * create a new transfer
+             */
+
             DB::transaction(function() use($rum, $request, $transfer) {
                 $subscription = $rum->subscriptions()->updateOrCreate([
                     'user_id' => auth()->user()->id,
