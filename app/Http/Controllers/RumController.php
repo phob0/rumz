@@ -232,37 +232,22 @@ class RumController extends Controller implements NotificationTypes
 
             // remove quantity from subscription_items
             // add default value to stripe_product column
-            /*
-            $parsedAmount = $this->parseAmount($request->amount);
 
-            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+            $connected_account = $rum->master->stripe_id;
 
-            $charge =  $stripe->charges->create([
-                "amount" => $parsedAmount,
-                "currency" => "usd",
-                //        "source" => "tok_visa",
-                "source" => "acct_1LTnIOPJhHLfy5Xm",
-                //        for simple card charge
-                //        "transfer_data" => [
-                //            "amount" => 877,
-                //            "destination" => "acct_1LTe3uPLLPTwYFpQ",
-                //        ],
-            ]);
+            $paymentIntent = $stripe->paymentIntents->retrieve(
+                $request->paymentIntent,
+                []
+            );
+
+            $lastCharge = end($paymentIntent->charges->data);
 
             $transfer = $stripe->transfers->create([
-                "amount" => $this->subtractAdminTax($parsedAmount),
+                "amount" => $this->subtractAdminTax($lastCharge->amount),
                 "currency" => "usd",
-                "source_transaction" => $charge->id,
-                "destination" => "acct_1LTe3uPLLPTwYFpQ",
+                "source_transaction" => $lastCharge->id,
+                "destination" => $connected_account,
             ]);
-            */
-
-            /**
-             * get stripe connected account id | rumz->admin->stripe_id
-             * get payers payment intent id | get from front-end
-             * get the last charge id from the payment intent
-             * create a new transfer
-             */
 
             DB::transaction(function() use($rum, $request, $transfer) {
                 $subscription = $rum->subscriptions()->updateOrCreate([

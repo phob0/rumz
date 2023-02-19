@@ -190,6 +190,7 @@ Route::post('/dev-login', function(Request $request) {
  * */
 
 Route::get('/test_stripe', function(Request $request) {
+    /*
     $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
     \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -211,6 +212,7 @@ Route::get('/test_stripe', function(Request $request) {
     ]);
 
       return $transfer;
+      */
 
 //    return \Stripe\Charge::create([
 //        'amount'   => 1000,
