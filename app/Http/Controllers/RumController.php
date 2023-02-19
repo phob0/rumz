@@ -191,6 +191,38 @@ class RumController extends Controller implements NotificationTypes
         return JsonResource::collection(RumHashtag::where('hashtag', 'like', $request->q.'%')->get('hashtag'));
     }
 
+    public function paymentSheet(Request $request, Rum $rum): \Illuminate\Http\Response
+    {
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+        // Use an existing Customer ID if this is a returning customer.
+        $customer = $stripe->customers->create();
+        $ephemeralKey = $stripe->ephemeralKeys->create([
+          'customer' => $customer->id,
+        ], [
+          'stripe_version' => '2022-08-01',
+        ]);
+        $paymentIntent = $stripe->paymentIntents->create([
+          'amount' => '2000',
+          'currency' => 'eur',
+          'customer' => $customer->id,
+          'automatic_payment_methods' => [
+            'enabled' => 'true',
+          ],
+        ]);
+        
+        return response()->json(
+          [
+            'paymentIntent' => $paymentIntent->client_secret,
+            'ephemeralKey' => $ephemeralKey->secret,
+            'customer' => $customer->id,
+            'publishableKey' => 'pk_test_51LKYxtAB46hIM0CMW29z9xypBPIhyYYG3IfzQOVggTJfTeiBTfDS1gQdxK9OTjbUw8iPXKZ1jz8nmHG5qnDRuIBD00hsYy7x5E'
+          ]
+        );
+
+
+    }
+
     public function join(Request $request, Rum $rum, $type = 'free'): \Illuminate\Http\Response
     {
         $this->authorize('join', [$rum, $type]);
@@ -201,7 +233,7 @@ class RumController extends Controller implements NotificationTypes
 
             // remove quantity from subscription_items
             // add default value to stripe_product column
-
+            /*
             $parsedAmount = $this->parseAmount($request->amount);
 
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
@@ -224,7 +256,7 @@ class RumController extends Controller implements NotificationTypes
                 "source_transaction" => $charge->id,
                 "destination" => "acct_1LTe3uPLLPTwYFpQ",
             ]);
-
+            */
             DB::transaction(function() use($rum, $request, $transfer) {
                 $subscription = $rum->subscriptions()->updateOrCreate([
                     'user_id' => auth()->user()->id,

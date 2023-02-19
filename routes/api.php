@@ -51,6 +51,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('members/{rum}', [RumController::class, 'membersList'])->name('membersListRum');
         Route::get('hashtag-suggestions/{q?}', [RumController::class, 'hashtagSuggestions'])->name('hashtagSuggestions'); /* q param */
         Route::patch('join/{rum}/{type}', [RumController::class, 'join'])->name('joinRum')->whereIn('type', ['private', 'confidential', 'paid', 'free']);
+        Route::patch('payment-sheet/{rum}', [RumController::class, 'paymentSheet'])->name('paymentSheetRum');
         Route::patch('grant/{rum}/{user}', [RumController::class, 'grant'])->name('grantRum');
         Route::patch('reject/{rum}/{user}', [RumController::class, 'reject'])->name('rejectRum');
         Route::patch('report/{rum}', [RumController::class, 'reportRum'])->name('reportRum');
