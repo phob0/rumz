@@ -201,7 +201,16 @@ Route::get('/test_stripe', function(Request $request) {
         []
       );
 
-      return $paymentIntent;
+    $lastCharge = end($paymentIntent->charges->data);
+
+    $transfer = $stripe->transfers->create([
+        "amount" => ($lastCharge->amount - ($lastCharge->amount * 0.1)),
+        "currency" => "usd",
+        "source_transaction" => $lastCharge->id,
+        "destination" => $connected_account,
+    ]);
+
+      return $transfer;
 
 //    return \Stripe\Charge::create([
 //        'amount'   => 1000,
