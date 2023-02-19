@@ -191,7 +191,7 @@ class RumController extends Controller implements NotificationTypes
         return JsonResource::collection(RumHashtag::where('hashtag', 'like', $request->q.'%')->get('hashtag'));
     }
 
-    public function paymentSheet(Request $request, Rum $rum): \Illuminate\Http\Response
+    public function paymentSheet(Request $request, Rum $rum): \Illuminate\Http\JsonResponse
     {
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
