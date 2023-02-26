@@ -121,11 +121,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('update', [ProfileController::class, 'update'])->name('profileUpdate');
         Route::get('stripe-onboarding', [ProfileController::class, 'onboardingStripe'])->name('profileOnboarding');
 
-        Route::get('/return-onboarding', [ProfileController::class, 'returnOnboarding'])->name('profileReturnOnboarding');
-        Route::get('/reauth-onboarding', function(Request $request) {
-            return response()->json(['warning' => 'Your stripe onboarding link has expired, please try again']);
-        });
-
         /*
          * TODO: check balance stripe
          */
@@ -160,6 +155,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [RumController::class, 'index'])->name('homepage');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
+
+Route::group(['prefix' => 'stripe', 'as' => 'stripe'], function() {
+    Route::get('/return-onboarding', [ProfileController::class, 'returnOnboarding'])->name('profileReturnOnboarding');
+    Route::get('/reauth-onboarding', function(Request $request) {
+    return response()->json(['warning' => 'Your stripe onboarding link has expired, please try again']);
+});
 });
 
 Route::get('/create-stripe-account/{user}', [Controller::class, 'createStripeAccount'])->name('createStripeAccount');
