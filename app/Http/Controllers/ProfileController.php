@@ -47,7 +47,7 @@ class ProfileController extends Controller
             Arr::except($data, 'image')
         );
 
-        $profile = auth()->user();
+        $profile = auth()->user()->refresh();
 
         if (is_null(auth()->user()->image) && !is_null($data['image'])) {
             $profile->image()->create([
