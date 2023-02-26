@@ -70,7 +70,7 @@ class ProfileController extends Controller
         }
 
         if(
-            (is_null($profile->stripe_id) || $profile->stripe_id == ""))
+            (is_null($profile->stripe_id) || $profile->stripe_id == "")
         ) {
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
