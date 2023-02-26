@@ -104,8 +104,8 @@ class ProfileController extends Controller
         return response()->json([
             'stripe_onboarding_response' => $stripe->accountLinks->create([
                 'account' => auth()->user()->stripe_id,
-                'refresh_url' => env('APP_URL') . '/profile/reauth-onboarding',
-                'return_url' => env('APP_URL') . '/profile/return-onboarding',
+                'refresh_url' => env('APP_URL') . 'api/profile/reauth-onboarding',
+                'return_url' => env('APP_URL') . 'api/profile/return-onboarding',
                 'type' => 'account_onboarding',
             ])
         ]);
