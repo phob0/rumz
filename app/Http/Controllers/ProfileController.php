@@ -111,13 +111,14 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function returnOnboarding(Request $request): \Illuminate\Http\JsonResponse
+    public function returnOnboarding(Request $request)
     {
-        auth()->user()->update([
-            'stripe_onboarding' => true
-        ]);
+        // auth()->user()->update([
+        //     'stripe_onboarding' => true
+        // ]);
+        // return response()->json(['info' => 'Your stripe onboarding is now complete.']);
 
-        return response()->json(['info' => 'Your stripe onboarding is now complete.']);
+        return html_entity_decode('<script>window.close();</script>');
     }
 
     public function addBalance(Request $request)
