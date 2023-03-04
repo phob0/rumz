@@ -193,6 +193,8 @@ class RumController extends Controller implements NotificationTypes
 
     public function paymentSheet(Request $request, Rum $rum): \Illuminate\Http\JsonResponse
     {
+        Log::info('request amount for stripe is'.$request->amount);
+
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
         // Use an existing Customer ID if this is a returning customer.
@@ -229,11 +231,11 @@ class RumController extends Controller implements NotificationTypes
         $this->authorize('join', [$rum, $type]);
 
         if($type === 'paid') {
-            // add rum_id to cashier subscriptions table
-            // remove quantity column
+            // TODO: add rum_id to cashier subscriptions table
+            // TODO: remove quantity column
 
-            // remove quantity from subscription_items
-            // add default value to stripe_product column
+            // TODO: remove quantity from subscription_items
+            // TODO: add default value to stripe_product column
 
             $connected_account = $rum->master->stripe_id;
 
