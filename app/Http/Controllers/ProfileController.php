@@ -117,6 +117,8 @@ class ProfileController extends Controller
             'stripe_onboarding' => true
         ]);
         return response()->json(['info' => 'Your stripe onboarding is now complete.']);
+
+        // return html_entity_decode('<script>window.close();</script>');
     }
 
     public function addBalance(Request $request)
