@@ -214,7 +214,8 @@ class RumController extends Controller implements NotificationTypes
         
         return response()->json(
           [
-            'paymentIntent' => $paymentIntent->client_secret,
+            'paymentIntentID' => $paymentIntent->id,
+            'paymentIntentSecret' => $paymentIntent->client_secret,
             'ephemeralKey' => $ephemeralKey->secret,
             'customer' => $customer->id
           ]
