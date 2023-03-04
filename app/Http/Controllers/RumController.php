@@ -202,10 +202,10 @@ class RumController extends Controller implements NotificationTypes
         ], [
           'stripe_version' => '2022-08-01',
         ]);
-        
+
         $paymentIntent = $stripe->paymentIntents->create([
-          'amount' => $request->amount,
-          'currency' => 'eur',
+          'amount' => $this->parseAmount($request->amount),
+          'currency' => 'usd',
           'customer' => $customer->id,
           'automatic_payment_methods' => [
             'enabled' => 'true',
