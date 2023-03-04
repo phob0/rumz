@@ -237,6 +237,8 @@ class RumController extends Controller implements NotificationTypes
             // TODO: remove quantity from subscription_items
             // TODO: add default value to stripe_product column
 
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
             $connected_account = $rum->master->stripe_id;
 
             $paymentIntent = $stripe->paymentIntents->retrieve(
