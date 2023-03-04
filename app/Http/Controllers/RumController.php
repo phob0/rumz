@@ -193,7 +193,7 @@ class RumController extends Controller implements NotificationTypes
 
     public function paymentSheet(Request $request, Rum $rum): \Illuminate\Http\JsonResponse
     {
-        Log::info('request amount for stripe is'.$request->amount);
+        \Log::info('request amount for stripe is'.$request->amount);
 
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
