@@ -104,8 +104,8 @@ class ProfileController extends Controller
         return response()->json([
             'stripe_onboarding_response' => $stripe->accountLinks->create([
                 'account' => auth()->user()->stripe_id,
-                'refresh_url' => 'rumz://app',
-                'return_url' => 'rumz://app',
+                'refresh_url' => 'http://rumz://app',
+                'return_url' => 'http://rumz://app',
                 'type' => 'account_onboarding',
             ])
         ]);
