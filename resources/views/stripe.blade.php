@@ -24,7 +24,7 @@
         <script>
             setTimeout(closePortal, 1500);
             function closePortal(){
-                window.location.href = 'rumz://app/EditRoomNav/return-onboarding';
+                window.location.href = 'rumz://app/EditRoomPage/return-onboarding';
             }
         </script>
     </body>

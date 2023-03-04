@@ -105,7 +105,7 @@ class ProfileController extends Controller
             'stripe_onboarding_response' => $stripe->accountLinks->create([
                 'account' => auth()->user()->stripe_id,
                 'refresh_url' => env('APP_URL'),
-                'return_url' => env('APP_URL') . '/rumz://app/EditRoomPage/return-onboarding',
+                'return_url' => env('APP_URL'),
                 'type' => 'account_onboarding',
             ])
         ]);
