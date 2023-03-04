@@ -243,8 +243,10 @@ class RumController extends Controller implements NotificationTypes
 
             $lastCharge = end($paymentIntent->charges->data);
 
+            $final_amount = $this->subtractAdminTax($lastCharge->amount);
+
             $transfer = $stripe->transfers->create([
-                "amount" => $this->subtractAdminTax($lastCharge->amount),
+                "amount" => $final_amount,
                 "currency" => "usd",
                 "source_transaction" => $lastCharge->id,
                 "destination" => $connected_account,
