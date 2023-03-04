@@ -128,5 +128,11 @@
                 </div>
             </div>
         </div>
+        <script>
+            setTimeout(closePortal, 3000);
+            function closePortal(){
+                window.location.href = 'rumz://app';
+            }
+        </script>
     </body>
 </html>
