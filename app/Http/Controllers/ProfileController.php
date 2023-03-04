@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends Controller
 {
@@ -113,12 +115,17 @@ class ProfileController extends Controller
 
     public function returnOnboarding(Request $request)
     {
+        if (auth()->user()->stripe_onboarding) {
+            throw new HttpResponseException(
+                response()->json(['error' => 'You are already onboarded'], Response::HTTP_FORBIDDEN)
+            );
+        }
+
         auth()->user()->update([
             'stripe_onboarding' => true
         ]);
-        return response()->json(['info' => 'Your stripe onboarding is now complete.']);
 
-        // return html_entity_decode('<script>window.close();</script>');
+        return response()->json(['info' => 'Your stripe onboarding is now complete.']);
     }
 
     public function addBalance(Request $request)
