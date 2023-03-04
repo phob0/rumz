@@ -152,16 +152,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('clear-all', [NotificationController::class, 'clearAll'])->name('clearAllNotification');
     });
 
+    Route::group(['prefix' => 'stripe', 'as' => 'stripe'], function() {
+        Route::get('/return-onboarding', [ProfileController::class, 'returnOnboarding'])->name('profileReturnOnboarding');
+        Route::get('/reauth-onboarding', function(Request $request) {
+            return response()->json(['warning' => 'Your stripe onboarding link has expired, please try again']);
+        });
+    });
+
     Route::get('/', [RumController::class, 'index'])->name('homepage');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-});
-
-Route::group(['prefix' => 'stripe', 'as' => 'stripe'], function() {
-    Route::get('/return-onboarding', [ProfileController::class, 'returnOnboarding'])->name('profileReturnOnboarding');
-    Route::get('/reauth-onboarding', function(Request $request) {
-        return response()->json(['warning' => 'Your stripe onboarding link has expired, please try again']);
-    });
 });
 
 Route::get('/create-stripe-account/{user}', [Controller::class, 'createStripeAccount'])->name('createStripeAccount');
