@@ -65,6 +65,22 @@ class RumController extends Controller implements NotificationTypes
         );
     }
 
+    public function feedRums(Request $request, $type): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        if ($type === 'current') {
+            // TODO: adaug alea din my-rums
+            return JsonResource::collection(
+                auth()->user()->joinedRums()->with('posts')->get()->concat(
+                    auth()->user()->subscribedRums()->with('posts')->get()
+                )
+            );
+        } else if($type === 'my') {
+            return JsonResource::collection(auth()->user()->rums()->with('posts')->get());
+        } else {
+            return JsonResource::collection(Rum::with('posts')->where('type', '!=', 'confidential')->get());
+        }
+    }
+
     /**
      * @deprecated
      * @throws \Illuminate\Auth\Access\AuthorizationException

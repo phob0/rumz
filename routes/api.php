@@ -39,9 +39,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     })->name('user');
     //rum routes
     Route::group(['prefix' => 'rum', 'as' => 'rums'], function() {
+        // =========================== SOON DEPRECATED ==========================
         Route::get('my-rums', [RumController::class, 'myRums'])->name('myRums');
         Route::get('explore', [RumController::class, 'explore'])->name('exploreRum');
         Route::get('current-rums', [RumController::class, 'currentRums'])->name('currentRums');
+        //=======================================================================
+        Route::get('feed/{type}', [RumController::class, 'feedRums'])->name('feedRums')->whereIn('type', ['my', 'explore', 'current']);
+        
         Route::post('create', [RumController::class, 'store'])->name('storeRum');
         Route::get('view/{rum}', [RumController::class, 'view'])->name('viewRum');
         Route::get('edit/{rum}', [RumController::class, 'edit'])->name('editRum');
