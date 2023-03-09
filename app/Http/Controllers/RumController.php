@@ -44,7 +44,7 @@ class RumController extends Controller implements NotificationTypes
     {
         return JsonResource::collection(Rum::where('type', '!=', 'confidential')->get());
     }
-
+    // TODO: DEPRECATE explore, myRums and currentRums
     public function explore(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         return JsonResource::collection(Rum::with('posts')->where('type', '!=', 'confidential')->get());

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Friend;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Spatie\Searchable\Search;
 use App\Notifications\InviteFriend;
 use App\Notifications\AcceptFriendInvite;
 use App\Notifications\RejectFriendInvite;
@@ -95,6 +96,21 @@ class FriendController extends Controller
         $friend->delete();
 
         return response()->noContent();
+    }
+
+    public function search(Request $request): \Spatie\Searchable\SearchResultCollection
+    {
+        $authID = auth()->user()->id;
+
+        return (new Spatie\Searchable\Search())
+            ->registerModel(App\Models\User::class, function(Spatie\Searchable\ModelSearchAspect $modelSearchAspect) {
+                $modelSearchAspect
+                   ->addSearchableAttribute('name')
+                   ->addSearchableAttribute('email')
+                   ->addExactSearchableAttribute('phone')
+                   ->whereHas('isFriends', fn($query) => $query->where('user_id', $authID))
+                   ->orWhereHas('hasFriends', fn($query) => $query->where('friend_id', $authID));
+         })->search($request->q)->pluck('searchable');
     }
 
 }

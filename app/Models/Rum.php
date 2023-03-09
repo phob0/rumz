@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class Rum extends Model
+class Rum extends Model implements Searchable
 {
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory, HasUuid, SoftDeletes;
@@ -53,6 +55,14 @@ class Rum extends Model
         'admins',
         'subscribed',
     ];
+
+    public function getSearchResult(): SearchResult
+    {
+        return new \Spatie\Searchable\SearchResult(
+            $this,
+            'Rums'
+        );
+    }
 
     public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {

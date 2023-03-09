@@ -8,8 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\HasUuid;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Searchable
 {
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasApiTokens, HasFactory, Notifiable, HasUuid;
@@ -56,6 +58,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getSearchResult(): SearchResult
+    {
+        return new \Spatie\Searchable\SearchResult(
+            $this,
+            'Users'
+        );
+    }
 
     public function image(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
