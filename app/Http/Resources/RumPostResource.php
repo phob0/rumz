@@ -17,13 +17,16 @@ class RumPostResource extends JsonResource
     {
         $response = parent::toArray($request);
 
-        $response[] = [
-//            "users_like" => $this->usersLike ? $this->usersLike : false,
-//            "users_dislike" => $this->usersDislike ? $this->usersDislike : false,
-//            "comments" => $this->comments ? $this->comments : false,
-            "liked" => $this->usersLike->isNotEmpty() ? $this->usersLike->contains(fn($item) => $item->id === auth()->user()->id) : false,
-            "disliked" => $this->usersDislike->isNotEmpty() ? $this->usersDislike->contains(fn($item) => $item->id === auth()->user()->id) : false,
-        ];
+//         $response[] += [
+// //            "users_like" => $this->usersLike ? $this->usersLike : false,
+// //            "users_dislike" => $this->usersDislike ? $this->usersDislike : false,
+// //            "comments" => $this->comments ? $this->comments : false,
+//             "liked" => $this->usersLike->isNotEmpty() ? $this->usersLike->contains(fn($item) => $item->id === auth()->user()->id) : false,
+//             "disliked" => $this->usersDislike->isNotEmpty() ? $this->usersDislike->contains(fn($item) => $item->id === auth()->user()->id) : false,
+//         ];
+
+        $response['liked'] = $this->usersLike->isNotEmpty() ? $this->usersLike->contains(fn($item) => $item->id === auth()->user()->id) : false;
+        $response['disliked'] = $this->usersDislike->isNotEmpty() ? $this->usersDislike->contains(fn($item) => $item->id === auth()->user()->id) : false;
 
         return $response;
     }

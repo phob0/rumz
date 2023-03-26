@@ -21,6 +21,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Http\Resources\RumPostResource;
 
 class RumPostController extends Controller
 {
@@ -71,11 +72,11 @@ class RumPostController extends Controller
         ]));
     }
 
-    public function edit(RumPost $rumPost): JsonResource
+    public function edit(RumPost $rumPost): RumPostResource
     {
         $this->authorize('edit', $rumPost);
 
-        return JsonResource::make($rumPost);
+        return RumPostResource::make($rumPost);
     }
 
     public function update(UpdateRumPostRequest $request, RumPost $rumPost): \Illuminate\Http\Response

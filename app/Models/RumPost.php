@@ -33,8 +33,8 @@ class RumPost extends Model
     ];
 
     protected $with = [
-//        'usersLike',
-//        'usersDislike',
+    //    'usersLike',
+    //    'usersDislike',
 //        'comments',
         'images',
         'master',
