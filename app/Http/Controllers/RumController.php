@@ -89,7 +89,7 @@ class RumController extends Controller implements NotificationTypes
     {
         $this->authorize('view', $rum);
 
-        return RumPostResource::collection($rum->posts);
+        return RumPostResource::collection($rum->posts()->orderBy('created_at', 'desc')->get());
     }
 
     public function store(StoreRumRequest $request): JsonResource
@@ -229,7 +229,7 @@ class RumController extends Controller implements NotificationTypes
             'enabled' => 'true',
           ],
         ]);
-        
+
         return response()->json(
           [
             'paymentIntentID' => $paymentIntent->id,

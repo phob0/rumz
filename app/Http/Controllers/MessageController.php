@@ -31,7 +31,7 @@ class MessageController extends Controller
         // $this->authorize('history', $channel);
 
         return JsonResource::collection(
-            Message::where('channel', $channel)->orderBy('created_at', 'DESC')->paginate(5)
+            Message::where('channel', $channel)->orderBy('created_at', 'DESC')->paginate(20)
         );
     }
 

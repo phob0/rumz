@@ -30,7 +30,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             if (\DB::connection()->getDriverName() !== "sqlite") {
-                $table->dropUnique('phone');
+                $table->dropUnique('users_phone_unique');
                 $table->unique('email');
             }
         });

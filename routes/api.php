@@ -45,7 +45,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('current-rums', [RumController::class, 'currentRums'])->name('currentRums');
         //=======================================================================
         Route::get('feed/{type}', [RumController::class, 'feedRums'])->name('feedRums')->whereIn('type', ['my', 'explore', 'current']);
-        
+
         Route::post('create', [RumController::class, 'store'])->name('storeRum');
         Route::get('view/{rum}', [RumController::class, 'view'])->name('viewRum');
         Route::get('edit/{rum}', [RumController::class, 'edit'])->name('editRum');
@@ -78,6 +78,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('search/{q?}', [RumController::class, 'search'])->name('searchRum');
 
         Route::group(['prefix' => 'post', 'as' => 'posts'], function() {
+            Route::get('{rum}', [RumPostController::class, 'index'])->name('RumPostPage');
             Route::post('create', [RumPostController::class, 'store'])->name('storeRumPost');
             Route::get('edit/{rum_post}', [RumPostController::class, 'edit'])->name('editRumPost');
             Route::put('update/{rum_post}', [RumPostController::class, 'update'])->name('updateRumPost');
@@ -109,7 +110,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
                 });
             });
             Route::post('lookup-metadata', [RumPostController::class, 'lookupMetadata'])->name('lookupMetadata');
-            Route::get('{rum}', [RumPostController::class, 'index'])->name('postPage');
         });
     });
 
@@ -126,7 +126,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('stripe-onboarding', [ProfileController::class, 'onboardingStripe'])->name('profileOnboarding');
 
         /*
-         * TODO: check balance stripe
+         * TODO: OPTIONAL check balance stripe
          */
     });
 
@@ -134,10 +134,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('lookup', [FriendController::class, 'lookup'])->name('lookupFriends');
         Route::get('search/{q?}', [FriendController::class, 'search'])->name('searchFriends');
         Route::patch('invite/{user}', [FriendController::class, 'invite'])->name('inviteFriends');
-        
+
         Route::patch('accept/{user_friend}', [FriendController::class, 'accept'])->name('acceptFriends');
         Route::patch('reject/{user_friend}', [FriendController::class, 'reject'])->name('rejectFriends');
-        
+
         Route::patch('remove/{friend}', [FriendController::class, 'remove'])->name('removeFriends');
     });
 

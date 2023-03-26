@@ -21,10 +21,11 @@ use Faker\Generator as Faker;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * 
+     * =========================================== !!!!! =========================================
      * IMPORTANT!! BEFORE RUNNING COMMENT FROM RUM MODEL DEFAULT WITH`S is_granted and is_admin
-     * 
+     * ===========================================================================================
      */
+
     /**
      * Seed the application's database.
      *
