@@ -575,9 +575,7 @@ class RumController extends Controller implements NotificationTypes
                 })
                 ->search($request->q);
 
-        } else if($type === 'explore') {
-            
-        }
+        } else if($type === 'explore') {}
 
     }
 

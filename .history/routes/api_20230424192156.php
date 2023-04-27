@@ -75,8 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
             Route::patch('remove/{rum}/{user}', [RumController::class, 'removeMember'])->name('removeMemberRum');
         });
-        Route::get('search/{type}/{q?}', [RumController::class, 'search'])
-        ->whereIn('type', ['current', 'explore'])->name('searchRum');
+        Route::get('search/{q?}', [RumController::class, 'search'])->name('searchRum');
 
         Route::group(['prefix' => 'post', 'as' => 'posts'], function() {
             Route::get('{rum}', [RumPostController::class, 'index'])->name('RumPostPage');

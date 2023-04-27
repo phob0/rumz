@@ -562,23 +562,11 @@ class RumController extends Controller implements NotificationTypes
         return response()->noContent();
     }
 
-    public function search(Request $request, $type): \Spatie\Searchable\SearchResultCollection
+    public function search(Request $request): \Spatie\Searchable\SearchResultCollection
     {
-        if ($type === 'current') {
-            return (new Search())
-                // ->registerModel(Rum::class, ['title', 'description'])
-                ->registerModel(Rum::class, function($modelSearchAspect) {
-                    $modelSearchAspect
-                       ->addSearchableAttribute('title') // return results for partial matches on usernames
-                       ->addExactSearchableAttribute('description') // only return results that exactly match the e-mail address
-                       ->where('type', '!=', 'confidential');
-                })
-                ->search($request->q);
-
-        } else if($type === 'explore') {
-            
-        }
-
+        return (new Search())
+            ->registerModel(Rum::class, ['title', 'description'])
+            ->search($request->q);
     }
 
     private function parseAmount($amount): float|int
