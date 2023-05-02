@@ -570,13 +570,27 @@ class RumController extends Controller implements NotificationTypes
                 ->registerModel(Rum::class, function($modelSearchAspect) {
                     $modelSearchAspect
                        ->addSearchableAttribute('title') // return results for partial matches on usernames
-                       ->addExactSearchableAttribute('description') // only return results that exactly match the e-mail address
-                       ->where('type', '!=', 'confidential');
+                       ->addExactSearchableAttribute('description')
+                       ->where(function($subQuery)
+                        {   
+                            $subQuery->whereHas('users', fn($query) =>  $query->where('users.id', auth()->user()->id))
+                            ->orWhereHas('subscribed', fn($query) =>  $query->where('users.id', auth()->user()->id))
+                            ->orWhereHas('admins', fn($query) =>  $query->where('users.id', auth()->user()->id))
+                            ->orWhere('user_id', auth()->user()->id);
+                        });
                 })
                 ->search($request->q);
 
         } else if($type === 'explore') {
-            
+            return (new Search())
+                // ->registerModel(Rum::class, ['title', 'description'])
+                ->registerModel(Rum::class, function($modelSearchAspect) {
+                    $modelSearchAspect
+                       ->addSearchableAttribute('title') // return results for partial matches on usernames
+                       ->addExactSearchableAttribute('description') // only return results that exactly match the e-mail address
+                       ->where('type', '!=', 'confidential');
+                })
+                ->search($request->q);
         }
 
     }
