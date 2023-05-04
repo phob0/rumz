@@ -102,7 +102,10 @@ class FriendController extends Controller
     {
         $authID = auth()->user()->id;
 
-        return (new \Spatie\Searchable\Search())
+        if (is_null($request->q)) {
+            return JsonResource::collection(auth()->user()->friends)->collection;
+        } else {
+            return (new \Spatie\Searchable\Search())
             ->registerModel(\App\Models\User::class, function(\Spatie\Searchable\ModelSearchAspect $modelSearchAspect) use($authID) {
                 $modelSearchAspect
                    ->addSearchableAttribute('name')
@@ -110,7 +113,9 @@ class FriendController extends Controller
                    ->addExactSearchableAttribute('phone')
                    ->whereHas('isFriends', fn($query) => $query->where('user_id', $authID))
                    ->orWhereHas('hasFriends', fn($query) => $query->where('friend_id', $authID));
-         })->search($request->q)->pluck('searchable');
+            })->search($request->q)->pluck('searchable');
+        }
+        
     }
 
 }
