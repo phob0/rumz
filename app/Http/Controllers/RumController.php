@@ -47,7 +47,17 @@ class RumController extends Controller implements NotificationTypes
     // TODO: DEPRECATE explore, myRums and currentRums
     public function explore(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return JsonResource::collection(Rum::with('posts')->where('type', '!=', 'confidential')->get());
+        return JsonResource::collection(
+            Rum::with([
+                    'posts'
+                ])
+                ->where(function($subQuery)
+                {
+                    $subQuery->where('user_id', '!=', auth()->user()->id)
+                    ->whereDoesntHave('users', fn($q) => $q->where('users.id', auth()->user()->id))
+                    ->whereDoesntHave('admins', fn($q) => $q->where('users.id', auth()->user()->id))
+                    ->whereDoesntHave('subscribed', fn($q) => $q->where('users.id', auth()->user()->id));
+                })->where('type', '!=', 'confidential')->get());
     }
 
     public function myRums(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -57,10 +67,13 @@ class RumController extends Controller implements NotificationTypes
 
     public function currentRums(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        // TODO: adaug alea din my-rums
         return JsonResource::collection(
-            auth()->user()->joinedRums()->with('posts')->get()->concat(
+            auth()->user()->joinedRums()->with('posts')->get()
+            ->concat(
                 auth()->user()->subscribedRums()->with('posts')->get()
+            )
+            ->concat(
+                auth()->user()->rums()->with('posts')->get()
             )
         );
     }
@@ -68,10 +81,13 @@ class RumController extends Controller implements NotificationTypes
     public function feedRums(Request $request, $type): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         if ($type === 'current') {
-            // TODO: adaug alea din my-rums
             return JsonResource::collection(
-                auth()->user()->joinedRums()->with('posts')->get()->concat(
+                auth()->user()->joinedRums()->with('posts')->get()
+                ->concat(
                     auth()->user()->subscribedRums()->with('posts')->get()
+                )
+                ->concat(
+                    auth()->user()->rums()->with('posts')->get()
                 )
             );
         } else if($type === 'my') {
@@ -567,8 +583,12 @@ class RumController extends Controller implements NotificationTypes
         if ($type === 'current') {
             if (is_null($request->q)) {
                 return JsonResource::collection(
-                    auth()->user()->joinedRums()->with('posts')->get()->concat(
+                    auth()->user()->joinedRums()->with('posts')->get()
+                    ->concat(
                         auth()->user()->subscribedRums()->with('posts')->get()
+                    )
+                    ->concat(
+                        auth()->user()->rums()->with('posts')->get()
                     )
                 )->collection;
             } else {
@@ -591,7 +611,17 @@ class RumController extends Controller implements NotificationTypes
 
         } else if($type === 'explore') {
             if (is_null($request->q)) {
-                return JsonResource::collection(Rum::with('posts')->where('type', '!=', 'confidential')->get())->collection;
+                return JsonResource::collection(
+                    Rum::with([
+                            'posts'
+                        ])
+                        ->where(function($subQuery)
+                        {
+                            $subQuery->where('user_id', '!=', auth()->user()->id)
+                            ->whereDoesntHave('users', fn($q) => $q->where('users.id', auth()->user()->id))
+                            ->whereDoesntHave('admins', fn($q) => $q->where('users.id', auth()->user()->id))
+                            ->whereDoesntHave('subscribed', fn($q) => $q->where('users.id', auth()->user()->id));
+                        })->where('type', '!=', 'confidential')->get())->collection;
             } else {
                 return (new Search())
                 // ->registerModel(Rum::class, ['title', 'description'])
@@ -599,6 +629,13 @@ class RumController extends Controller implements NotificationTypes
                     $modelSearchAspect
                        ->addSearchableAttribute('title') // return results for partial matches on usernames
                        ->addExactSearchableAttribute('description') // only return results that exactly match the e-mail address
+                       ->where(function($subQuery)
+                        {   
+                            $subQuery->where('user_id', '!=', auth()->user()->id)
+                            ->whereDoesntHave('users', fn($q) => $q->where('users.id', auth()->user()->id))
+                            ->whereDoesntHave('admins', fn($q) => $q->where('users.id', auth()->user()->id))
+                            ->whereDoesntHave('subscribed', fn($q) => $q->where('users.id', auth()->user()->id));
+                        })
                        ->where('type', '!=', 'confidential');
                 })
                 ->search($request->q)->pluck('searchable');
