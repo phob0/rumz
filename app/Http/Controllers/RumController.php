@@ -562,10 +562,17 @@ class RumController extends Controller implements NotificationTypes
         return response()->noContent();
     }
 
-    public function search(Request $request, $type): \Spatie\Searchable\SearchResultCollection
+    public function search(Request $request, $type): \Spatie\Searchable\SearchResultCollection|\Illuminate\Support\Collection
     {
         if ($type === 'current') {
-            return (new Search())
+            if (is_null($request->q)) {
+                return JsonResource::collection(
+                    auth()->user()->joinedRums()->with('posts')->get()->concat(
+                        auth()->user()->subscribedRums()->with('posts')->get()
+                    )
+                )->collection;
+            } else {
+                return (new Search())
                 // ->registerModel(Rum::class, ['title', 'description'])
                 ->registerModel(Rum::class, function($modelSearchAspect) {
                     $modelSearchAspect
@@ -579,10 +586,14 @@ class RumController extends Controller implements NotificationTypes
                             ->orWhere('user_id', auth()->user()->id);
                         });
                 })
-                ->search($request->q);
+                ->search($request->q)->pluck('searchable');
+            }
 
         } else if($type === 'explore') {
-            return (new Search())
+            if (is_null($request->q)) {
+                return JsonResource::collection(Rum::with('posts')->where('type', '!=', 'confidential')->get())->collection;
+            } else {
+                return (new Search())
                 // ->registerModel(Rum::class, ['title', 'description'])
                 ->registerModel(Rum::class, function($modelSearchAspect) {
                     $modelSearchAspect
@@ -590,7 +601,8 @@ class RumController extends Controller implements NotificationTypes
                        ->addExactSearchableAttribute('description') // only return results that exactly match the e-mail address
                        ->where('type', '!=', 'confidential');
                 })
-                ->search($request->q);
+                ->search($request->q)->pluck('searchable');
+            }
         }
 
     }

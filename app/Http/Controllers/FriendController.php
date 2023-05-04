@@ -102,8 +102,8 @@ class FriendController extends Controller
     {
         $authID = auth()->user()->id;
 
-        return (new Spatie\Searchable\Search())
-            ->registerModel(App\Models\User::class, function(Spatie\Searchable\ModelSearchAspect $modelSearchAspect) {
+        return (new \Spatie\Searchable\Search())
+            ->registerModel(\App\Models\User::class, function(\Spatie\Searchable\ModelSearchAspect $modelSearchAspect) use($authID) {
                 $modelSearchAspect
                    ->addSearchableAttribute('name')
                    ->addSearchableAttribute('email')
