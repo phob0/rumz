@@ -108,7 +108,7 @@ class FriendController extends Controller
             return (new \Spatie\Searchable\Search())
             ->registerModel(\App\Models\User::class, function(\Spatie\Searchable\ModelSearchAspect $modelSearchAspect) use($authID) {
                 $modelSearchAspect
-                   ->addSearchableAttribute('name')
+                   ->addExactSearchableAttribute('name')
                    ->addSearchableAttribute('email')
                    ->addExactSearchableAttribute('phone')
                    ->whereHas('isFriends', fn($query) => $query->where('user_id', $authID))
