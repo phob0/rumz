@@ -98,7 +98,7 @@ class FriendController extends Controller
         return response()->noContent();
     }
 
-    public function search(Request $request): \Spatie\Searchable\SearchResultCollection
+    public function search(Request $request): \Spatie\Searchable\SearchResultCollection|\Illuminate\Support\Collection
     {
         $authID = auth()->user()->id;
 
